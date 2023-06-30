@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { registerWithEamil } from "@/utils/firebase/auth";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { setDocument } from "@/utils/firebase/db";
+import { authService } from "@/utils/firebase/firebaseClient";
 
 const Signup = () => {
   const router = useRouter();
@@ -21,11 +23,16 @@ const Signup = () => {
     e.preventDefault();
     const signupError = await registerWithEamil(email, password);
     if (signupError === null) {
+      setDocument("users", authService.currentUser.uid, {
+        firstLogin: true,
+        myTeam: [],
+      });
       router.push("/");
     } else {
       console.log(signupError);
     }
   };
+
   return (
     <div>
       <form onSubmit={onSignup}>

@@ -10,6 +10,13 @@ module.exports = withPWA({
 
   webpack: (config) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
+
+    // svgr 설정 추가
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ["@svgr/webpack"],
+    });
+
     return config;
   },
   images: {
