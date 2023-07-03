@@ -50,6 +50,7 @@ const Sidebar = () => {
                 width={14}
                 height={14}
                 style={{ marginLeft: "7px" }}
+                fill={"#7D7E87"}
               />
               <MenuText>홈</MenuText>
             </Menu>
@@ -86,7 +87,7 @@ const Container = styled.div`
   min-width: 240px;
   min-height: 100vh;
   height: 100%;
-  border: 0.5px solid ${colors.border.deepgray};
+  border-right: 0.5px solid ${colors.border.deepgray};
 `;
 
 const Wrapper = styled.div`
@@ -103,6 +104,7 @@ const ProfileContainer = styled.div`
   align-items: center;
   border-bottom: 1px solid ${colors.border.gray};
   padding: 15px 15px;
+  height: 61px;
 `;
 const MenuContainer = styled.div`
   padding: 8px;
