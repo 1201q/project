@@ -25,6 +25,7 @@ export default function Calendar({ currentDate, setCurrentDate }) {
     const endOfMonth = currentDate.endOf("month");
     const startOfWeek = startOfMonth.startOf("week");
     const endOfWeek = endOfMonth.endOf("week");
+    const today = dayjs();
 
     const calendar = [];
     let day = startOfWeek;
@@ -36,16 +37,19 @@ export default function Calendar({ currentDate, setCurrentDate }) {
         const isNextMonth = day.isAfter(endOfMonth);
         const isSunday = day.day() === 0;
         const isSaturday = day.day() === 6;
+        const isToday = day.isSame(today, "day");
 
         week.push(
-          <Date
-            key={day.format("YYYY-MM-DD")}
-            isPrevMonth={isPrevMonth}
-            isNextMonth={isNextMonth}
-            isSunday={isSunday}
-            isSaturday={isSaturday}
-          >
-            {day.format("D")}
+          <Date key={day.format("YYYY-MM-DD")}>
+            <DateText
+              isPrevMonth={isPrevMonth}
+              isNextMonth={isNextMonth}
+              isSunday={isSunday}
+              isSaturday={isSaturday}
+              isToday={isToday}
+            >
+              {day.format("D")}
+            </DateText>
           </Date>
         );
 
@@ -91,6 +95,7 @@ export default function Calendar({ currentDate, setCurrentDate }) {
 const Container = styled.div`
   width: 100%;
   height: 100vh;
+  overflow-x: scroll;
 `;
 
 const ControllerContainer = styled.div`
@@ -143,6 +148,7 @@ const Day = styled.div`
   text-align: center;
   width: 100%;
   min-width: 185px;
+
   padding: 5px 10px;
   font-size: 13px;
   color: ${colors.font.black};
@@ -154,18 +160,31 @@ const Date = styled.div`
   width: 100%;
   min-width: 185px;
   height: 100%;
+  min-height: 104px;
   border-right: 1px solid ${colors.border.deepgray};
   border-bottom: 1px solid ${colors.border.deepgray};
   padding: 10px 10px;
-  font-size: 15px;
-  text-align: start;
+`;
+
+const DateText = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: ${(props) => {
     if (props.isPrevMonth && !props.isSaturday && !props.isSunday)
       return "#dcdcdc"; // 이전 달 날짜
     if (props.isNextMonth && !props.isSaturday && !props.isSunday)
       return "#dcdcdc"; // 다음 달 날짜
-    if (props.isSunday) return colors.others.orange; // 일요일
-    if (props.isSaturday) return colors.others.blue; // 토요일
+    if (props.isSunday && !props.isToday) return colors.others.orange; // 일요일
+    if (props.isSaturday && !props.isToday) return colors.others.blue; // 토요일
+    if (props.isToday) return "white";
     return colors.font.black; // 현재 달 날짜
   }};
+  font-size: 13px;
+  background-color: ${(props) => {
+    if (props.isToday) return colors.others.blue;
+  }};
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
 `;
