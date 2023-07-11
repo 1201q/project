@@ -26,3 +26,14 @@ export const others = {
   gray: "#91919C",
   orange: "#FB6C46",
 };
+
+export const calendar = {
+  red: "#EC7063",
+  purple: "#AF7AC5",
+  blue: "#5DADE2",
+  mint: "#48C9B0",
+  green: "#58D68D",
+  yellow: "#F4D03F",
+  orange: "#F5B041",
+  gray: "#5D6D7E",
+};

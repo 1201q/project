@@ -1,17 +1,29 @@
 import styled from "styled-components";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import weekOfYear from "dayjs/plugin/weekOfYear";
+import isBetween from "dayjs/plugin/isBetween";
+
 import { useEffect, useState } from "react";
-import Todo from "./Todo";
+
 import Image from "next/image";
 import * as colors from "../../styles/colors";
 import AngleLeft from "../../assets/angle-small-left.svg";
 import AngleRight from "../../assets/angle-small-right.svg";
 import { motion } from "framer-motion";
+import Todo from "./Todo";
 
 dayjs.extend(isSameOrBefore);
+dayjs.extend(isBetween);
+dayjs.extend(weekOfYear);
 
 export default function Calendar({ currentDate, setCurrentDate }) {
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const handleDateClick = (clickedDay) => {
+    setSelectedDate(clickedDay);
+  };
+
   const monthControl = (mode) => {
     if (mode === "prev") {
       setCurrentDate(currentDate.add(-1, "month"));
@@ -19,6 +31,64 @@ export default function Calendar({ currentDate, setCurrentDate }) {
       setCurrentDate(currentDate.add(1, "month"));
     }
   };
+
+  const todoList = [
+    {
+      id: 1,
+      title: "할일 1",
+      start: dayjs("2023-06-11"),
+      end: dayjs("2023-06-27"),
+    },
+    {
+      id: 5,
+      title: "할일 2할일이할일이할일이할일이",
+      start: dayjs("2023-07-08"),
+      end: dayjs("2023-07-11"),
+    },
+    {
+      id: 2,
+      title: "할일 4",
+      start: dayjs("2023-07-10"),
+      end: dayjs("2023-07-12"),
+    },
+    {
+      id: 3,
+      title: "할일 3할일이할일이할일이할일이ㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷ",
+      start: dayjs("2023-07-11"),
+      end: dayjs("2023-07-17"),
+    },
+    {
+      id: 4,
+      title: "할일 5",
+      start: dayjs("2023-07-15"),
+      end: dayjs("2023-07-18"),
+    },
+
+    {
+      id: 6,
+      title: "할일 9",
+      start: dayjs("2023-08-05"),
+      end: dayjs("2023-08-06"),
+    },
+    {
+      id: 6,
+      title: "할일 10",
+      start: dayjs("2023-07-01"),
+      end: dayjs("2023-07-05"),
+    },
+    {
+      id: 6,
+      title: "할일 11",
+      start: dayjs("2023-07-01"),
+      end: dayjs("2023-07-01"),
+    },
+    {
+      id: 9,
+      title: "할일 11",
+      start: dayjs("2023-07-11"),
+      end: dayjs("2023-07-11"),
+    },
+  ];
 
   const renderCalendar = () => {
     const startOfMonth = currentDate.startOf("month");
@@ -28,7 +98,18 @@ export default function Calendar({ currentDate, setCurrentDate }) {
     const today = dayjs();
 
     const calendar = [];
+    const currentTodoList = returnCurrentTodoList(startOfWeek, endOfWeek);
+
+    const tempArr = makeArr(startOfWeek, endOfWeek);
+
+    // 함수
+    const renderTodoArr = setTodoList(currentTodoList, tempArr);
+
+    // 함수
+
     let day = startOfWeek;
+    let number = 0;
+
     while (day.isSameOrBefore(endOfWeek)) {
       const week = [];
 
@@ -40,7 +121,13 @@ export default function Calendar({ currentDate, setCurrentDate }) {
         const isToday = day.isSame(today, "day");
 
         week.push(
-          <Date key={day.format("YYYY-MM-DD")}>
+          <Date
+            key={day.format("YYYY-MM-DD")}
+            id={day.format("YYYY-MM-DD")}
+            onClick={() => {
+              handleDateClick(week[i].key);
+            }}
+          >
             <DateText
               isPrevMonth={isPrevMonth}
               isNextMonth={isNextMonth}
@@ -50,14 +137,128 @@ export default function Calendar({ currentDate, setCurrentDate }) {
             >
               {day.format("D")}
             </DateText>
+            <TodoContainer>
+              {renderTodoArr[number].map((item) => item.order).includes(1) ? (
+                <Todo
+                  day={day}
+                  data={
+                    renderTodoArr[number][
+                      renderTodoArr[number].map((item) => item.order).indexOf(1)
+                    ]
+                  }
+                />
+              ) : (
+                <BlankTodo />
+              )}
+            </TodoContainer>
+            <TodoContainer>
+              {renderTodoArr[number].map((item) => item.order).includes(2) ? (
+                <Todo
+                  day={day}
+                  data={
+                    renderTodoArr[number][
+                      renderTodoArr[number].map((item) => item.order).indexOf(2)
+                    ]
+                  }
+                />
+              ) : (
+                <BlankTodo />
+              )}
+            </TodoContainer>
+            <TodoContainer>
+              {renderTodoArr[number].map((item) => item.order).includes(3) ? (
+                <Todo
+                  day={day}
+                  data={
+                    renderTodoArr[number][
+                      renderTodoArr[number].map((item) => item.order).indexOf(3)
+                    ]
+                  }
+                />
+              ) : (
+                <BlankTodo />
+              )}
+            </TodoContainer>
+            <TodoContainer>
+              {renderTodoArr[number].map((item) => item.order).includes(4) ? (
+                <More>더보기</More>
+              ) : (
+                <BlankTodo />
+              )}
+            </TodoContainer>
           </Date>
         );
-
+        number++;
         day = day.add(1, "day");
       }
-      calendar.push(<Week key={week[0].key}>{week}</Week>);
+      calendar.push(
+        <Week id={week[0].key} key={week[0].key}>
+          {week}
+        </Week>
+      );
     }
+
     return calendar;
+  };
+
+  // 현재 보고 있는 달의 todo목록만 return
+  const returnCurrentTodoList = (startOfWeek, endOfWeek) => {
+    const currentMonthArr = todoList
+      .filter((item) => {
+        if (
+          item.start.isBetween(startOfWeek, endOfWeek, "day", "[]") ||
+          item.end.isBetween(startOfWeek, endOfWeek, "day", "[]")
+        ) {
+          return item;
+        }
+      })
+      .sort((a, b) => a.start - b.start);
+    return currentMonthArr;
+  };
+
+  // 임시 arr를 만듦
+  // 여기서 만든 arr에 따라 렌더링하게 됨.
+  const makeArr = (startOfWeek, endOfWeek) => {
+    let todolistSet = [];
+    let day = startOfWeek;
+
+    while (day.isSameOrBefore(endOfWeek)) {
+      todolistSet.push({
+        day: day,
+
+        more: false,
+      });
+      day = day.add(1, "day");
+    }
+    return todolistSet;
+  };
+
+  const setTodoList = (todolist, arr) => {
+    const todolistCopy = [...todolist];
+    let renderTodoList = [];
+
+    arr.map((item) => {
+      let list = [];
+      let count = 0;
+      todolist.map((todo, idx) => {
+        if (item.day.isBetween(todo.start, todo.end, "day", "[]")) {
+          count++;
+          // order_set
+
+          if (!todolistCopy[idx].order) {
+            todolistCopy[idx].order = count;
+          }
+
+          // order_set
+          list.push(todolistCopy[idx]);
+        }
+      });
+
+      renderTodoList.push(list);
+      list = [];
+    });
+
+    return renderTodoList;
   };
 
   return (
@@ -76,6 +277,7 @@ export default function Calendar({ currentDate, setCurrentDate }) {
         >
           <AngleRight width={20} height={20} fill={colors.font.black} />
         </ControlBtn>
+        <div>{selectedDate && dayjs(selectedDate).format("YYYY-MM-DD")}</div>
       </ControllerContainer>
       <DayHeaderContainer>
         <Day>일</Day>
@@ -149,21 +351,21 @@ const Day = styled.div`
   width: 100%;
   min-width: 185px;
 
-  padding: 5px 10px;
   font-size: 13px;
   color: ${colors.font.black};
   font-weight: 400;
 `;
 
 const Date = styled.div`
+  position: relative;
   /* 숫자로 된 일 */
   width: 100%;
   min-width: 185px;
   height: 100%;
   min-height: 104px;
-  border-right: 1px solid ${colors.border.deepgray};
+  /* border-right: 1px solid ${colors.border.deepgray}; */
   border-bottom: 1px solid ${colors.border.deepgray};
-  padding: 10px 10px;
+  cursor: pointer;
 `;
 
 const DateText = styled.div`
@@ -185,6 +387,36 @@ const DateText = styled.div`
     if (props.isToday) return colors.others.blue;
   }};
   border-radius: 50%;
+
   width: 20px;
   height: 20px;
+  margin: 6px 6px;
+`;
+
+// todo
+const TodoContainer = styled.div``;
+
+const BlankTodo = styled.div`
+  width: 100%;
+  height: 16px;
+  background: none;
+  margin-bottom: 2px;
+  padding: 1px 5px;
+`;
+
+const More = styled.a`
+  position: absolute;
+  top: 84px;
+  z-index: 100;
+  width: 100%;
+  margin-top: 2px;
+  padding-right: 5px;
+  color: ${colors.others.black};
+  text-align: right;
+  font-size: 12px;
+
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
 `;

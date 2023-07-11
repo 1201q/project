@@ -1,39 +1,42 @@
 import styled from "styled-components";
 import dayjs from "dayjs";
+import * as colors from "../../styles/colors";
 
-export default function Todo({ day, currentDate }) {
+export default function Todo({ day, data }) {
   return (
-    <Do day={day} currentDate={currentDate}>
-      <Wrapper>
-        <p>내 일정</p>
-      </Wrapper>
-    </Do>
+    <Container
+      order={data.order}
+      styledbgcolor={"#506EE2"}
+      styledfontcolor={"white"}
+    >
+      {dayjs(day).get("day") === 0 || dayjs(day).isSame(data.start) ? (
+        <Text>{data.title}</Text>
+      ) : null}
+    </Container>
   );
 }
 
-const Do = styled.div`
-  width: 100%;
-  opacity: ${({ day, currentDate }) => {
-    if (currentDate.get("month") !== day.get("month")) {
-      if (day.get("d") === 0) {
-        return "0.4";
-      } else if (day.get("d") === 6) {
-        return "0.4";
-      } else {
-        return 1;
-      }
-    }
-  }};
-`;
-
-const Wrapper = styled.div`
+const Container = styled.div`
   display: flex;
   align-items: center;
-  margin: 2px 6px;
-  padding: 1px 3px;
-  background-color: #e2ecf9;
-  color: #758496;
-  border-radius: 5px;
-  font-size: 11px;
-  font-weight: 600;
+  position: absolute;
+  top: ${(props) =>
+    props.order === 2 ? "48px" : props.order === 3 ? "66px" : "30px"};
+  z-index: 100;
+  width: 100%;
+  height: 17px;
+  background-color: ${colors.calendar.red};
+  color: white;
+  padding: 1px 5px;
+
+  cursor: pointer;
+`;
+
+const Text = styled.div`
+  overflow-x: hidden;
+  white-space: nowrap; /* 텍스트가 한 줄로 이어지도록 함 */
+  text-overflow: ellipsis;
+  font-size: 12px;
+  font-weight: 400;
+  z-index: 800;
 `;
