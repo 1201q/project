@@ -99,6 +99,10 @@ a {
   text-decoration: none;
 }
 
+button {
+  cursor: pointer;
+}
+
 button,
 input {
   font-family: Pretendard Variable;

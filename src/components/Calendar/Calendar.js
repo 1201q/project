@@ -4,24 +4,31 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import weekOfYear from "dayjs/plugin/weekOfYear";
 import isBetween from "dayjs/plugin/isBetween";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
-import Image from "next/image";
 import * as colors from "../../styles/colors";
 import AngleLeft from "../../assets/angle-small-left.svg";
 import AngleRight from "../../assets/angle-small-right.svg";
 import { motion } from "framer-motion";
 import Todo from "./Todo";
+import Modal from "./Modal";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
 dayjs.extend(weekOfYear);
 
 export default function Calendar({ currentDate, setCurrentDate }) {
+  const dateRef = useRef();
   const [selectedDate, setSelectedDate] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleDateClick = (clickedDay) => {
     setSelectedDate(clickedDay);
+  };
+
+  const handleOpenModal = (e) => {
+    e.stopPropagation();
+    setIsModalOpen(true);
   };
 
   const monthControl = (mode) => {
@@ -124,8 +131,10 @@ export default function Calendar({ currentDate, setCurrentDate }) {
           <Date
             key={day.format("YYYY-MM-DD")}
             id={day.format("YYYY-MM-DD")}
-            onClick={() => {
+            onClick={(e) => {
               handleDateClick(week[i].key);
+              handleOpenModal(e);
+              e.stopPropagation();
             }}
           >
             <DateText
@@ -277,7 +286,6 @@ export default function Calendar({ currentDate, setCurrentDate }) {
         >
           <AngleRight width={20} height={20} fill={colors.font.black} />
         </ControlBtn>
-        <div>{selectedDate && dayjs(selectedDate).format("YYYY-MM-DD")}</div>
       </ControllerContainer>
       <DayHeaderContainer>
         <Day>일</Day>
@@ -289,6 +297,13 @@ export default function Calendar({ currentDate, setCurrentDate }) {
         <Day>토</Day>
       </DayHeaderContainer>
       <DateContainer>{renderCalendar()}</DateContainer>
+      {isModalOpen && (
+        <Modal
+          setIsModalOpen={setIsModalOpen}
+          setSelectedDate={setSelectedDate}
+          selectedDate={selectedDate}
+        />
+      )}
     </Container>
   );
 }
