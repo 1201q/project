@@ -12,23 +12,31 @@ import AngleRight from "../../assets/angle-small-right.svg";
 import { motion } from "framer-motion";
 import Todo from "./Todo";
 import Modal from "./Modal";
+import { v4 as uuidv4 } from "uuid";
+import InfoPopup from "./InfoPopup";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
 dayjs.extend(weekOfYear);
 
 export default function Calendar({ currentDate, setCurrentDate }) {
-  const dateRef = useRef();
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTodoData, setSelectedTodoData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
 
   const handleDateClick = (clickedDay) => {
     setSelectedDate(clickedDay);
+    setIsModalOpen(true);
   };
 
-  const handleOpenModal = (e) => {
-    e.stopPropagation();
-    setIsModalOpen(true);
+  const handleTodoClick = (todoData, event) => {
+    setIsModalOpen(false);
+    setIsPopupOpen(true);
+    setSelectedTodoData(todoData);
+    setPopupPosition({ top: event.clientY, left: event.clientX });
   };
 
   const monthControl = (mode) => {
@@ -41,56 +49,56 @@ export default function Calendar({ currentDate, setCurrentDate }) {
 
   const todoList = [
     {
-      id: 1,
+      id: uuidv4(),
       title: "할일 1",
       start: dayjs("2023-06-11"),
       end: dayjs("2023-06-27"),
     },
     {
-      id: 5,
+      id: uuidv4(),
       title: "할일 2할일이할일이할일이할일이",
       start: dayjs("2023-07-08"),
       end: dayjs("2023-07-11"),
     },
     {
-      id: 2,
+      id: uuidv4(),
       title: "할일 4",
       start: dayjs("2023-07-10"),
       end: dayjs("2023-07-12"),
     },
     {
-      id: 3,
+      id: uuidv4(),
       title: "할일 3할일이할일이할일이할일이ㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷ",
       start: dayjs("2023-07-11"),
       end: dayjs("2023-07-17"),
     },
     {
-      id: 4,
+      id: uuidv4(),
       title: "할일 5",
       start: dayjs("2023-07-15"),
       end: dayjs("2023-07-18"),
     },
 
     {
-      id: 6,
+      id: uuidv4(),
       title: "할일 9",
       start: dayjs("2023-08-05"),
       end: dayjs("2023-08-06"),
     },
     {
-      id: 6,
+      id: uuidv4(),
       title: "할일 10",
       start: dayjs("2023-07-01"),
       end: dayjs("2023-07-05"),
     },
     {
-      id: 6,
+      id: uuidv4(),
       title: "할일 11",
       start: dayjs("2023-07-01"),
       end: dayjs("2023-07-01"),
     },
     {
-      id: 9,
+      id: uuidv4(),
       title: "할일 11",
       start: dayjs("2023-07-11"),
       end: dayjs("2023-07-11"),
@@ -131,10 +139,8 @@ export default function Calendar({ currentDate, setCurrentDate }) {
           <Date
             key={day.format("YYYY-MM-DD")}
             id={day.format("YYYY-MM-DD")}
-            onClick={(e) => {
+            onClick={() => {
               handleDateClick(week[i].key);
-              handleOpenModal(e);
-              e.stopPropagation();
             }}
           >
             <DateText
@@ -155,6 +161,7 @@ export default function Calendar({ currentDate, setCurrentDate }) {
                       renderTodoArr[number].map((item) => item.order).indexOf(1)
                     ]
                   }
+                  handleTodoClick={handleTodoClick}
                 />
               ) : (
                 <BlankTodo />
@@ -169,6 +176,7 @@ export default function Calendar({ currentDate, setCurrentDate }) {
                       renderTodoArr[number].map((item) => item.order).indexOf(2)
                     ]
                   }
+                  handleTodoClick={handleTodoClick}
                 />
               ) : (
                 <BlankTodo />
@@ -183,6 +191,7 @@ export default function Calendar({ currentDate, setCurrentDate }) {
                       renderTodoArr[number].map((item) => item.order).indexOf(3)
                     ]
                   }
+                  handleTodoClick={handleTodoClick}
                 />
               ) : (
                 <BlankTodo />
@@ -297,6 +306,14 @@ export default function Calendar({ currentDate, setCurrentDate }) {
         <Day>토</Day>
       </DayHeaderContainer>
       <DateContainer>{renderCalendar()}</DateContainer>
+
+      {isPopupOpen && (
+        <InfoPopup
+          setIsPopupOpen={setIsPopupOpen}
+          selectedTodoData={selectedTodoData}
+        />
+      )}
+
       {isModalOpen && (
         <Modal
           setIsModalOpen={setIsModalOpen}

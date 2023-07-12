@@ -2,15 +2,21 @@ import styled from "styled-components";
 import dayjs from "dayjs";
 import * as colors from "../../styles/colors";
 
-export default function Todo({ day, data }) {
+export default function Todo({ day, data, handleTodoClick }) {
   return (
     <Container
       order={data.order}
       styledbgcolor={"#506EE2"}
       styledfontcolor={"white"}
+      onClick={(event) => {
+        event.stopPropagation();
+        handleTodoClick(data, event);
+      }}
     >
       {dayjs(day).get("day") === 0 || dayjs(day).isSame(data.start) ? (
-        <Text>{data.title}</Text>
+        <>
+          <Text>{data.title}</Text>
+        </>
       ) : null}
     </Container>
   );
@@ -22,7 +28,7 @@ const Container = styled.div`
   position: absolute;
   top: ${(props) =>
     props.order === 2 ? "48px" : props.order === 3 ? "66px" : "30px"};
-  z-index: 100;
+  z-index: 1;
   width: 100%;
   height: 17px;
   background-color: ${colors.calendar.red};

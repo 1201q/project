@@ -1,16 +1,18 @@
 import dayjs from "dayjs";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import styled from "styled-components";
 import * as colors from "../../styles/colors";
 import X from "../../assets/x.svg";
-import { motion } from "framer-motion";
+import Check from "../../assets/check.svg";
+import { color, motion } from "framer-motion";
 
 export default function Modal({
   setIsModalOpen,
   setSelectedDate,
   selectedDate,
 }) {
-  console.log(selectedDate);
+  const [selectedColor, setSelectedColor] = useState(null);
+
   const modalRef = useRef();
 
   const handleCloseModal = (e) => {
@@ -21,9 +23,13 @@ export default function Modal({
 
   return (
     <Container>
-      <ModalContainer ref={modalRef}>
+      <ModalContainer
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.1 }}
+        ref={modalRef}
+      >
         <HeaderText>일정 추가하기</HeaderText>
-
         {/* 제목 input */}
         <TitleInputContainer>
           <SmallHeaderText>제목</SmallHeaderText>
@@ -42,7 +48,7 @@ export default function Modal({
                   onChange={(e) => {
                     setSelectedDate(e.target.value);
                   }}
-                  style={{ marginRight: "1px" }}
+                  style={{ marginRight: "8px" }}
                 />
                 <DatePicker type="time" defaultValue="09:00" />
               </InputWrapper>
@@ -56,7 +62,7 @@ export default function Modal({
                   onChange={(e) => {
                     setSelectedDate(e.target.value);
                   }}
-                  style={{ marginRight: "1px" }}
+                  style={{ marginRight: "8px" }}
                 />
                 <DatePicker type="time" defaultValue="23:59" />
               </InputWrapper>
@@ -85,6 +91,27 @@ export default function Modal({
             저장
           </SaveButton>
         </ButtonContainer>
+        <ColorPickerContainer>
+          <SmallHeaderText>색인</SmallHeaderText>
+          <ColorPickerWrapper>
+            {Object.keys(colors.calendar).map((key) => (
+              <ColorPickerButton
+                key={key}
+                styledbg={colors.calendar[key]}
+                onClick={() => setSelectedColor(key)}
+              >
+                {selectedColor === key && (
+                  <Check
+                    width={14}
+                    height={14}
+                    fill={colors.font.black}
+                    style={{ marginTop: "2px" }}
+                  />
+                )}
+              </ColorPickerButton>
+            ))}
+          </ColorPickerWrapper>
+        </ColorPickerContainer>
         <CloseButton onClick={() => setIsModalOpen(false)}>
           <X width={13} height={13} fill={colors.font.darkgray} />
         </CloseButton>
@@ -93,7 +120,9 @@ export default function Modal({
   );
 }
 
+// 컨테이너
 const Container = styled.div`
+  position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -106,14 +135,14 @@ const Container = styled.div`
   z-index: 101;
 `;
 
-const ModalContainer = styled.div`
+const ModalContainer = styled(motion.div)`
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 500px;
+  width: 530px;
   max-width: 90vw;
 
-  height: 400px;
+  height: 420px;
   background-color: white;
   padding: 25px;
   border-radius: 20px;
@@ -128,6 +157,7 @@ const DateSelectContainer = styled.div`
 const InputContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-bottom: 30px;
 `;
 
 const ButtonContainer = styled.div`
@@ -142,8 +172,16 @@ const TitleInputContainer = styled.div`
   margin-bottom: 30px;
 `;
 
+const ColorPickerContainer = styled.div``;
+
+// wrapper
 const InputWrapper = styled.div`
   display: flex;
+`;
+
+const ColorPickerWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 // header
@@ -212,4 +250,14 @@ const SaveButton = styled(motion.button)`
   color: ${(props) => props.styledfont};
   font-size: 15px;
   margin-left: 10px;
+`;
+
+const ColorPickerButton = styled.button`
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  border: 2px solid ${colors.border.deepgray};
+  background-color: ${(props) => props.styledbg};
 `;
