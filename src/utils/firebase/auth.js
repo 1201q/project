@@ -7,12 +7,21 @@ import {
   signInWithEmailAndPassword,
   signInWithRedirect,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 
 // 회원가입
-export async function registerWithEamil(email, password) {
+export async function registerWithEamil(email, password, displayName) {
   try {
-    await createUserWithEmailAndPassword(authService, email, password);
+    const userCredential = await createUserWithEmailAndPassword(
+      authService,
+      email,
+      password
+    );
+    const user = userCredential.user;
+    console.log(user);
+
+    await updateProfile(user, { displayName: displayName });
     return null;
   } catch (error) {
     return error.message.replace("Firebase: Error ", "");
@@ -60,5 +69,6 @@ export async function loginWithSocial(provider) {
 // 로그아웃
 export async function logout() {
   await signOut(authService);
-  return;
+  console.log("로그아웃");
+  return null;
 }

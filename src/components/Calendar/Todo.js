@@ -6,7 +6,7 @@ export default function Todo({ day, data, handleTodoClick }) {
   return (
     <Container
       order={data.order}
-      styledbgcolor={"#506EE2"}
+      styledbgcolor={colors.calendar[data.color]}
       styledfontcolor={"white"}
       onClick={(event) => {
         event.stopPropagation();
@@ -31,7 +31,8 @@ const Container = styled.div`
   z-index: 1;
   width: 100%;
   height: 17px;
-  background-color: ${colors.calendar.red};
+  background-color: ${(props) =>
+    props.styledbgcolor ? props.styledbgcolor : colors.calendar.red};
   color: white;
   padding: 1px 5px;
 

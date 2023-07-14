@@ -25,8 +25,6 @@ export default function Calendar({ currentDate, setCurrentDate }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
-
   const handleDateClick = (clickedDay) => {
     setSelectedDate(clickedDay);
     setIsModalOpen(true);
@@ -36,7 +34,6 @@ export default function Calendar({ currentDate, setCurrentDate }) {
     setIsModalOpen(false);
     setIsPopupOpen(true);
     setSelectedTodoData(todoData);
-    setPopupPosition({ top: event.clientY, left: event.clientX });
   };
 
   const monthControl = (mode) => {
@@ -50,58 +47,53 @@ export default function Calendar({ currentDate, setCurrentDate }) {
   const todoList = [
     {
       id: uuidv4(),
-      title: "할일 1",
-      start: dayjs("2023-06-11"),
-      end: dayjs("2023-06-27"),
-    },
-    {
-      id: uuidv4(),
-      title: "할일 2할일이할일이할일이할일이",
+      title: "1번에 배정받아야",
       start: dayjs("2023-07-08"),
       end: dayjs("2023-07-11"),
+      color: "yellow",
     },
     {
       id: uuidv4(),
-      title: "할일 4",
+      title: "얘는 2번에 배정받음",
       start: dayjs("2023-07-10"),
       end: dayjs("2023-07-12"),
+      color: "mint",
     },
     {
       id: uuidv4(),
       title: "할일 3할일이할일이할일이할일이ㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷ",
       start: dayjs("2023-07-11"),
       end: dayjs("2023-07-17"),
+      color: "green",
     },
     {
       id: uuidv4(),
       title: "할일 5",
       start: dayjs("2023-07-15"),
       end: dayjs("2023-07-18"),
+      color: "purple",
     },
 
     {
       id: uuidv4(),
-      title: "할일 9",
-      start: dayjs("2023-08-05"),
-      end: dayjs("2023-08-06"),
-    },
-    {
-      id: uuidv4(),
-      title: "할일 10",
-      start: dayjs("2023-07-01"),
-      end: dayjs("2023-07-05"),
-    },
-    {
-      id: uuidv4(),
       title: "할일 11",
-      start: dayjs("2023-07-01"),
-      end: dayjs("2023-07-01"),
+      start: dayjs("2023-07-13"),
+      end: dayjs("2023-07-13"),
+      color: "gray",
     },
     {
       id: uuidv4(),
       title: "할일 11",
       start: dayjs("2023-07-11"),
       end: dayjs("2023-07-11"),
+      color: "red",
+    },
+    {
+      id: uuidv4(),
+      title: "할일 15",
+      start: dayjs("2023-07-12"),
+      end: dayjs("2023-07-12"),
+      color: "red",
     },
   ];
 

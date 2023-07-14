@@ -10,20 +10,44 @@ import Home from "../assets/home.svg";
 import Check from "../assets/check-circle.svg";
 import List from "../assets/list.svg";
 import AngleRight from "../assets/angle-small-right.svg";
+import Lock from "../assets/lock.svg";
 import PlusLogo from "../assets/plus-small.svg";
+import { logout } from "@/utils/firebase/auth";
+import { useRouter } from "next/router";
 
-const Sidebar = () => {
+const Sidebar = ({ userData }) => {
+  const router = useRouter();
+
   return (
     <Container>
       <Wrapper>
+        {/* 프로필 */}
         <ProfileContainer>
-          <ProfileImage>나</ProfileImage>
-          <ProfileName>황준서</ProfileName>
+          <ProfileWrapper>
+            <ProfileImage>나</ProfileImage>
+            <ProfileName>
+              {userData.user ? userData.user.displayName : "익명"}
+            </ProfileName>
+          </ProfileWrapper>
+          <LogOutBtn
+            onClick={() => {
+              const confirm = window.confirm("로그아웃 하시겠어요?");
+
+              if (confirm) {
+                logout();
+                router.replace("/auth/login");
+              }
+            }}
+          >
+            <Lock width={17} height={17} style={{ marginTop: "2px" }} />
+          </LogOutBtn>
         </ProfileContainer>
+        {/* 검색 */}
         <InputContainer>
           <Search width={13} height={13} />
           <MenuInput placeholder="Search"></MenuInput>
         </InputContainer>
+        {/* 메뉴 */}
         <MenuContainer>
           <Menu whileTap={{ scale: 0.96 }}>
             <Home width={14} height={14} />
@@ -42,6 +66,7 @@ const Sidebar = () => {
             <MenuText>전체 일정</MenuText>
           </Menu>
         </MenuContainer>
+        {/* 팀 목록 */}
         <TeamContainer>
           <MenuHeader>나의 팀</MenuHeader>
           <Team>
@@ -70,6 +95,7 @@ const Sidebar = () => {
             </ProjectContainer>
           </Team>
         </TeamContainer>
+        {/* 새로운 팀 가입 */}
         <TeamContainer>
           <Menu whileTap={{ scale: 0.96 }}>
             <PlusLogo width={15} height={15} />
@@ -98,10 +124,16 @@ const Wrapper = styled.div`
   padding: 0px 0px;
 `;
 
+const ProfileWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 // 컨테이너
 const ProfileContainer = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   border-bottom: 1px solid ${colors.border.gray};
   padding: 15px 15px;
   height: 61px;
@@ -133,6 +165,7 @@ const ProjectContainer = styled.div`
 `;
 
 // 프로필
+
 const ProfileImage = styled.div`
   display: flex;
   align-items: center;
@@ -149,6 +182,11 @@ const ProfileName = styled.p`
   color: ${colors.font.black};
   font-weight: 800;
   font-size: 19px;
+`;
+
+const LogOutBtn = styled.button`
+  border: none;
+  background: none;
 `;
 
 // 메뉴

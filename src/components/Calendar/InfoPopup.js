@@ -104,6 +104,7 @@ const HeaderText = styled.p`
 const SmallHeaderText = styled.p`
   font-size: 14px;
   margin-bottom: 5px;
+  margin-top: 10px;
   color: ${colors.font.darkgray};
 `;
 
