@@ -26,7 +26,7 @@ const Sidebar = ({ userData }) => {
           <ProfileWrapper>
             <ProfileImage>나</ProfileImage>
             <ProfileName>
-              {userData.user ? userData.user.displayName : "익명"}
+              {userData ? userData.user.displayName : "익명"}
             </ProfileName>
           </ProfileWrapper>
           <LogOutBtn
