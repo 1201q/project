@@ -5,19 +5,65 @@ import * as colors from "../../styles/colors";
 import X from "../../assets/x.svg";
 import Check from "../../assets/check.svg";
 import { color, motion } from "framer-motion";
+import { useAuth } from "@/utils/context/authProvider";
+import { updateArrayField } from "@/utils/firebase/db";
+import { v4 as uuidv4 } from "uuid";
 
-export default function Modal({
-  setIsModalOpen,
-  setSelectedDate,
-  selectedDate,
-}) {
+export default function Modal({ setIsModalOpen, selectedDate }) {
+  const user = useAuth();
+  const [title, setTitle] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
+
+  const [startDate, setStartDate] = useState(selectedDate);
+  const [endDate, setEndDate] = useState(selectedDate);
+  const [startTime, setStartTime] = useState(dayjs().format("HH:mm"));
+  const [endTime, setEndTime] = useState("23:59");
 
   const modalRef = useRef();
 
-  const handleCloseModal = (e) => {
-    if (modalRef.current && !modalRef.current.contains(e.target)) {
+  const scheduleData = [
+    {
+      id: uuidv4(),
+      user: user.user.uid,
+      title: title,
+      color: selectedColor,
+      start: dayjs(`${startDate}${startTime}`).format(""),
+      end: dayjs(`${endDate}${endTime}`).format(""),
+    },
+  ];
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "title") {
+      setTitle(value);
+    } else if (name === "startdate") {
+      setStartDate(value);
+
+      // 끝 일자가 시작보다 이른 경우 같이 변경
+      if (dayjs(endDate).isBefore(value)) {
+        setEndDate(value);
+      }
+    } else if (name === "starttime") {
+      setStartTime(value);
+    } else if (name === "enddate") {
+      setEndDate(value);
+    } else if (name === "endtime") {
+      setEndTime(value);
+    }
+  };
+
+  const onUpdateSchedule = async () => {
+    const update = await updateArrayField(
+      "schedule",
+      user.user.uid,
+      "data",
+      scheduleData[0]
+    );
+
+    if (!update) {
       setIsModalOpen(false);
+    } else {
+      console.log(update);
     }
   };
 
@@ -33,9 +79,14 @@ export default function Modal({
         {/* 제목 input */}
         <TitleInputContainer>
           <SmallHeaderText>제목</SmallHeaderText>
-          <TitleInput type="text" placeholder="제목을 입력하세요" />
+          <TitleInput
+            type="text"
+            name="title"
+            placeholder="제목을 입력하세요"
+            value={title}
+            onChange={onChange}
+          />
         </TitleInputContainer>
-
         {/* 일자 셀렉 input */}
         <DateSelectContainer>
           <InputContainer>
@@ -44,13 +95,18 @@ export default function Modal({
               <InputWrapper>
                 <DatePicker
                   type="date"
-                  defaultValue={selectedDate}
-                  onChange={(e) => {
-                    setSelectedDate(e.target.value);
-                  }}
+                  name="startdate"
+                  value={startDate}
+                  onChange={onChange}
                   style={{ marginRight: "8px" }}
+                  required
                 />
-                <DatePicker type="time" defaultValue="09:00" />
+                <DatePicker
+                  type="time"
+                  name="starttime"
+                  value={startTime}
+                  onChange={onChange}
+                />
               </InputWrapper>
             </div>
             <div>
@@ -58,13 +114,19 @@ export default function Modal({
               <InputWrapper>
                 <DatePicker
                   type="date"
-                  defaultValue={selectedDate}
-                  onChange={(e) => {
-                    setSelectedDate(e.target.value);
-                  }}
+                  name="enddate"
+                  min={startDate}
+                  value={endDate}
+                  onChange={onChange}
                   style={{ marginRight: "8px" }}
                 />
-                <DatePicker type="time" defaultValue="23:59" />
+                <DatePicker
+                  type="time"
+                  name="endtime"
+                  value={endTime}
+                  onChange={onChange}
+                  min={startTime}
+                />
               </InputWrapper>
             </div>
           </InputContainer>
@@ -82,11 +144,13 @@ export default function Modal({
           >
             취소
           </SaveButton>
+
           <SaveButton
             styledbg={"#1A73E8"}
             styledfont={"white"}
             whileHover={{ opacity: 0.8 }}
             whileTap={{ scale: 0.95 }}
+            onClick={onUpdateSchedule}
           >
             저장
           </SaveButton>
