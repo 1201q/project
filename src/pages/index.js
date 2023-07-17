@@ -11,10 +11,16 @@ import {
   getDocs,
   collection,
   onSnapshot,
+  query,
+  where,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { addDocument, setDocument } from "@/utils/firebase/db";
+import {
+  addDocument,
+  observeDocumentChanges,
+  setDocument,
+} from "@/utils/firebase/db";
 import Sidebar from "@/components/Sidebar";
 import Calendar from "@/components/Calendar/Calendar";
 import dayjs from "dayjs";
@@ -46,6 +52,15 @@ export const getServerSideProps = async (ctx) => {
 export default function Home({ email, uid }) {
   const user = useAuth();
   const [currentDate, setCurrentDate] = useState(dayjs());
+  const [todoList, setTodoList] = useState([]);
+
+  useEffect(() => {
+    const getSchedule = (data) => {
+      setTodoList(data.data);
+    };
+    observeDocumentChanges("schedule", uid, getSchedule);
+  }, []);
+
   return (
     <>
       {!user.user ? (
@@ -53,7 +68,11 @@ export default function Home({ email, uid }) {
       ) : (
         <Container>
           <Sidebar userData={user} />
-          <Calendar currentDate={currentDate} setCurrentDate={setCurrentDate} />
+          <Calendar
+            currentDate={currentDate}
+            setCurrentDate={setCurrentDate}
+            realtimeTodoList={todoList}
+          />
         </Container>
       )}
     </>

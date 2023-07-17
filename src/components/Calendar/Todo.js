@@ -13,7 +13,7 @@ export default function Todo({ day, data, handleTodoClick }) {
         handleTodoClick(data, event);
       }}
     >
-      {dayjs(day).get("day") === 0 || dayjs(day).isSame(data.start) ? (
+      {dayjs(day).get("day") === 0 || dayjs(day).isSame(data.start, "date") ? (
         <>
           <Text>{data.title}</Text>
         </>

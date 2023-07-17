@@ -19,7 +19,11 @@ dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
 dayjs.extend(weekOfYear);
 
-export default function Calendar({ currentDate, setCurrentDate }) {
+export default function Calendar({
+  currentDate,
+  setCurrentDate,
+  realtimeTodoList = [],
+}) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTodoData, setSelectedTodoData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,58 +48,58 @@ export default function Calendar({ currentDate, setCurrentDate }) {
     }
   };
 
-  const todoList = [
-    {
-      id: uuidv4(),
-      title: "1번에 배정받아야",
-      start: dayjs("2023-07-08"),
-      end: dayjs("2023-07-11"),
-      color: "yellow",
-    },
-    {
-      id: uuidv4(),
-      title: "얘는 2번에 배정받음",
-      start: dayjs("2023-07-10"),
-      end: dayjs("2023-07-12"),
-      color: "mint",
-    },
-    {
-      id: uuidv4(),
-      title: "할일 3할일이할일이할일이할일이ㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷ",
-      start: dayjs("2023-07-11"),
-      end: dayjs("2023-07-17"),
-      color: "green",
-    },
-    {
-      id: uuidv4(),
-      title: "할일 5",
-      start: dayjs("2023-07-15"),
-      end: dayjs("2023-07-18"),
-      color: "purple",
-    },
+  // const todoList = [
+  //   {
+  //     id: uuidv4(),
+  //     title: "1번에 배정받아야",
+  //     start: dayjs("2023-07-08"),
+  //     end: dayjs("2023-07-11"),
+  //     color: "yellow",
+  //   },
+  //   {
+  //     id: uuidv4(),
+  //     title: "얘는 2번에 배정받음",
+  //     start: dayjs("2023-07-10"),
+  //     end: dayjs("2023-07-12"),
+  //     color: "mint",
+  //   },
+  //   {
+  //     id: uuidv4(),
+  //     title: "할일 3할일이할일이할일이할일이ㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷ",
+  //     start: dayjs("2023-07-11"),
+  //     end: dayjs("2023-07-17"),
+  //     color: "green",
+  //   },
+  //   {
+  //     id: uuidv4(),
+  //     title: "할일 5",
+  //     start: dayjs("2023-07-15"),
+  //     end: dayjs("2023-07-18"),
+  //     color: "purple",
+  //   },
 
-    {
-      id: uuidv4(),
-      title: "할일 11",
-      start: dayjs("2023-07-13"),
-      end: dayjs("2023-07-13"),
-      color: "gray",
-    },
-    {
-      id: uuidv4(),
-      title: "할일 11",
-      start: dayjs("2023-07-11"),
-      end: dayjs("2023-07-11"),
-      color: "red",
-    },
-    {
-      id: uuidv4(),
-      title: "할일 15",
-      start: dayjs("2023-07-12"),
-      end: dayjs("2023-07-12"),
-      color: "red",
-    },
-  ];
+  //   {
+  //     id: uuidv4(),
+  //     title: "할일 11",
+  //     start: dayjs("2023-07-13"),
+  //     end: dayjs("2023-07-13"),
+  //     color: "gray",
+  //   },
+  //   {
+  //     id: uuidv4(),
+  //     title: "할일 11",
+  //     start: dayjs("2023-07-11"),
+  //     end: dayjs("2023-07-11"),
+  //     color: "red",
+  //   },
+  //   {
+  //     id: uuidv4(),
+  //     title: "할일 15",
+  //     start: dayjs("2023-07-12"),
+  //     end: dayjs("2023-07-12"),
+  //     color: "red",
+  //   },
+  // ];
 
   const renderCalendar = () => {
     const startOfMonth = currentDate.startOf("month");
@@ -111,6 +115,7 @@ export default function Calendar({ currentDate, setCurrentDate }) {
 
     // 함수
     const renderTodoArr = setTodoList(currentTodoList, tempArr);
+    console.log(renderTodoArr);
 
     // 함수
 
@@ -213,11 +218,11 @@ export default function Calendar({ currentDate, setCurrentDate }) {
 
   // 현재 보고 있는 달의 todo목록만 return
   const returnCurrentTodoList = (startOfWeek, endOfWeek) => {
-    const currentMonthArr = todoList
+    const currentMonthArr = realtimeTodoList
       .filter((item) => {
         if (
-          item.start.isBetween(startOfWeek, endOfWeek, "day", "[]") ||
-          item.end.isBetween(startOfWeek, endOfWeek, "day", "[]")
+          dayjs(item.start).isBetween(startOfWeek, endOfWeek, "day", "[]") ||
+          dayjs(item.end).isBetween(startOfWeek, endOfWeek, "day", "[]")
         ) {
           return item;
         }
@@ -245,6 +250,7 @@ export default function Calendar({ currentDate, setCurrentDate }) {
 
   const setTodoList = (todolist, arr) => {
     const todolistCopy = [...todolist];
+
     let renderTodoList = [];
 
     arr.map((item) => {

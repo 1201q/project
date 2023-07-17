@@ -5,9 +5,26 @@ import * as colors from "../../styles/colors";
 import X from "../../assets/x.svg";
 import Check from "../../assets/check.svg";
 import { color, motion } from "framer-motion";
+import { deleteDocument, removeArrayItem } from "@/utils/firebase/db";
+import { useAuth } from "@/utils/context/authProvider";
 
 export default function InfoPopup({ setIsPopupOpen, selectedTodoData }) {
-  console.log(selectedTodoData);
+  const user = useAuth();
+
+  const onRemoveSchedule = async () => {
+    const remove = await removeArrayItem(
+      "schedule",
+      user.user.uid,
+      "data",
+      selectedTodoData.id
+    );
+
+    if (!remove) {
+      setIsPopupOpen(false);
+    } else {
+      console.log(remove);
+    }
+  };
 
   return (
     <Container
@@ -26,6 +43,15 @@ export default function InfoPopup({ setIsPopupOpen, selectedTodoData }) {
         <X width={13} height={13} fill={colors.font.darkgray} />
       </CloseButton>
       <ButtonContainer>
+        <SaveButton
+          whileHover={{ opacity: 0.8 }}
+          whileTap={{ scale: 0.95 }}
+          styledbg={"#d32f2f"}
+          styledfont={"white"}
+          onClick={onRemoveSchedule}
+        >
+          삭제
+        </SaveButton>
         <SaveButton
           onClick={() => setIsPopupOpen(false)}
           whileHover={{ backgroundColor: colors.background.gray }}

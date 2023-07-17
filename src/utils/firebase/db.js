@@ -3,12 +3,16 @@ import {
   getDoc,
   doc,
   setDoc,
+  deleteDoc,
   addDoc,
   collection,
+  onSnapshot,
   updateDoc,
   arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 
+// -------------------------------------------- 추가
 // document 이름 지정
 export async function setDocument(collectionId, documentId, data) {
   try {
@@ -48,3 +52,45 @@ export async function updateArrayField(collectionId, documentId, field, value) {
     return error;
   }
 }
+
+// -------------------------------------------- 업데이트
+// 특정 id(이름)을 가진 doc의 변화감지
+// callback 함수로 재활용 가능
+export const observeDocumentChanges = (collectionName, docId, callback) => {
+  const collectionRef = collection(dbService, collectionName);
+
+  const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
+    snapshot.forEach((doc) => {
+      if (doc.id === docId) {
+        callback(doc.data());
+      }
+    });
+  });
+};
+
+// -------------------------------------------- 삭제
+export const removeArrayItem = async (
+  collectionId,
+  documentId,
+  field,
+  selectedItemId
+) => {
+  try {
+    const docRef = doc(dbService, collectionId, documentId);
+    const docSnap = await getDoc(docRef);
+
+    const removeTarget = docSnap
+      .data()
+      .data.find((item) => item.id === selectedItemId);
+
+    await updateDoc(docRef, { [field]: arrayRemove(removeTarget) });
+    return null;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+export const deleteDocument = async (collectionName, docId) => {
+  await deleteDoc(doc(dbService, collectionName, docId));
+};
