@@ -10,7 +10,7 @@ export default function Todo({ day, data, handleTodoClick }) {
       styledfontcolor={"white"}
       onClick={(event) => {
         event.stopPropagation();
-        handleTodoClick(data, event);
+        handleTodoClick(data);
       }}
     >
       {dayjs(day).get("day") === 0 || dayjs(day).isSame(data.start, "date") ? (

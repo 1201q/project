@@ -14,6 +14,8 @@ import Todo from "./Todo";
 import Modal from "./Modal";
 import { v4 as uuidv4 } from "uuid";
 import InfoPopup from "./InfoPopup";
+import More from "./More";
+import MorePopup from "./MorePopup";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
@@ -26,18 +28,30 @@ export default function Calendar({
 }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTodoData, setSelectedTodoData] = useState(null);
+  const [selectedTodoArr, setSelectedTodoArr] = useState([]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
+  const [isMorePopupOpen, setIsMorePopupOpen] = useState(false);
+
+  const [morePopupPositionData, setMorePopupPositionData] = useState(null);
 
   const handleDateClick = (clickedDay) => {
     setSelectedDate(clickedDay);
     setIsModalOpen(true);
   };
 
-  const handleTodoClick = (todoData, event) => {
+  const handleTodoClick = (todoData) => {
     setIsModalOpen(false);
-    setIsPopupOpen(true);
+    setIsInfoPopupOpen(true);
     setSelectedTodoData(todoData);
+  };
+
+  const handleMoreClick = (todoArr, position) => {
+    setIsModalOpen(false);
+    setIsMorePopupOpen(true);
+    setSelectedTodoArr(todoArr);
+    setMorePopupPositionData(position);
   };
 
   const monthControl = (mode) => {
@@ -47,59 +61,6 @@ export default function Calendar({
       setCurrentDate(currentDate.add(1, "month"));
     }
   };
-
-  // const todoList = [
-  //   {
-  //     id: uuidv4(),
-  //     title: "1번에 배정받아야",
-  //     start: dayjs("2023-07-08"),
-  //     end: dayjs("2023-07-11"),
-  //     color: "yellow",
-  //   },
-  //   {
-  //     id: uuidv4(),
-  //     title: "얘는 2번에 배정받음",
-  //     start: dayjs("2023-07-10"),
-  //     end: dayjs("2023-07-12"),
-  //     color: "mint",
-  //   },
-  //   {
-  //     id: uuidv4(),
-  //     title: "할일 3할일이할일이할일이할일이ㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷ",
-  //     start: dayjs("2023-07-11"),
-  //     end: dayjs("2023-07-17"),
-  //     color: "green",
-  //   },
-  //   {
-  //     id: uuidv4(),
-  //     title: "할일 5",
-  //     start: dayjs("2023-07-15"),
-  //     end: dayjs("2023-07-18"),
-  //     color: "purple",
-  //   },
-
-  //   {
-  //     id: uuidv4(),
-  //     title: "할일 11",
-  //     start: dayjs("2023-07-13"),
-  //     end: dayjs("2023-07-13"),
-  //     color: "gray",
-  //   },
-  //   {
-  //     id: uuidv4(),
-  //     title: "할일 11",
-  //     start: dayjs("2023-07-11"),
-  //     end: dayjs("2023-07-11"),
-  //     color: "red",
-  //   },
-  //   {
-  //     id: uuidv4(),
-  //     title: "할일 15",
-  //     start: dayjs("2023-07-12"),
-  //     end: dayjs("2023-07-12"),
-  //     color: "red",
-  //   },
-  // ];
 
   const renderCalendar = () => {
     const startOfMonth = currentDate.startOf("month");
@@ -113,11 +74,7 @@ export default function Calendar({
 
     const tempArr = makeArr(startOfWeek, endOfWeek);
 
-    // 함수
     const renderTodoArr = setTodoList(currentTodoList, tempArr);
-    console.log(renderTodoArr);
-
-    // 함수
 
     let day = startOfWeek;
     let number = 0;
@@ -196,7 +153,11 @@ export default function Calendar({
             </TodoContainer>
             <TodoContainer>
               {renderTodoArr[number].map((item) => item.order).includes(4) ? (
-                <More>더보기</More>
+                <More
+                  data={renderTodoArr[number]}
+                  handleMoreClick={handleMoreClick}
+                  setIsMorePopupOpen={setIsMorePopupOpen}
+                />
               ) : (
                 <BlankTodo />
               )}
@@ -227,7 +188,7 @@ export default function Calendar({
           return item;
         }
       })
-      .sort((a, b) => a.start - b.start);
+      .sort((a, b) => dayjs(a.start) - dayjs(b.start));
     return currentMonthArr;
   };
 
@@ -305,9 +266,9 @@ export default function Calendar({
       </DayHeaderContainer>
       <DateContainer>{renderCalendar()}</DateContainer>
 
-      {isPopupOpen && (
+      {isInfoPopupOpen && (
         <InfoPopup
-          setIsPopupOpen={setIsPopupOpen}
+          setIsInfoPopupOpen={setIsInfoPopupOpen}
           selectedTodoData={selectedTodoData}
         />
       )}
@@ -319,6 +280,13 @@ export default function Calendar({
           selectedDate={selectedDate}
         />
       )}
+      {isMorePopupOpen && (
+        <MorePopup
+          setIsMorePopupOpen={setIsMorePopupOpen}
+          selectedTodoArr={selectedTodoArr}
+          morePopupPositionData={morePopupPositionData}
+        />
+      )}
     </Container>
   );
 }
@@ -326,7 +294,8 @@ export default function Calendar({
 // 컨테이너
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
+  /* height: 100%; */
+  max-height: 100vh;
   overflow-x: scroll;
 `;
 
@@ -341,7 +310,6 @@ const ControllerContainer = styled.div`
 const DayHeaderContainer = styled.div`
   display: flex;
   align-items: center;
-  /* border-top: ; */
   border-bottom: 1px solid ${colors.border.deepgray};
   height: 30px;
 `;
@@ -350,7 +318,7 @@ const DateContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-height: calc(100vh - 90px);
+  max-height: calc(100vh - 91px);
 `;
 
 // 컨트롤러 헤더
@@ -393,7 +361,7 @@ const Date = styled.div`
   min-width: 185px;
   height: 100%;
   min-height: 104px;
-  /* border-right: 1px solid ${colors.border.deepgray}; */
+
   border-bottom: 1px solid ${colors.border.deepgray};
   cursor: pointer;
 `;
@@ -432,21 +400,4 @@ const BlankTodo = styled.div`
   background: none;
   margin-bottom: 2px;
   padding: 1px 5px;
-`;
-
-const More = styled.a`
-  position: absolute;
-  top: 84px;
-  z-index: 100;
-  width: 100%;
-  margin-top: 2px;
-  padding-right: 5px;
-  color: ${colors.others.black};
-  text-align: right;
-  font-size: 12px;
-
-  &:hover {
-    text-decoration: underline;
-    cursor: pointer;
-  }
 `;

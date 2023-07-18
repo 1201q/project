@@ -8,7 +8,7 @@ import { color, motion } from "framer-motion";
 import { deleteDocument, removeArrayItem } from "@/utils/firebase/db";
 import { useAuth } from "@/utils/context/authProvider";
 
-export default function InfoPopup({ setIsPopupOpen, selectedTodoData }) {
+export default function InfoPopup({ setIsInfoPopupOpen, selectedTodoData }) {
   const user = useAuth();
 
   const onRemoveSchedule = async () => {
@@ -20,7 +20,7 @@ export default function InfoPopup({ setIsPopupOpen, selectedTodoData }) {
     );
 
     if (!remove) {
-      setIsPopupOpen(false);
+      setIsInfoPopupOpen(false);
     } else {
       console.log(remove);
     }
@@ -39,7 +39,7 @@ export default function InfoPopup({ setIsPopupOpen, selectedTodoData }) {
         {dayjs(selectedTodoData.start).format("YYYY-MM-DD")} ~
         {dayjs(selectedTodoData.end).format("YYYY-MM-DD")}
       </InfoText>
-      <CloseButton onClick={() => setIsPopupOpen(false)}>
+      <CloseButton onClick={() => setIsInfoPopupOpen(false)}>
         <X width={13} height={13} fill={colors.font.darkgray} />
       </CloseButton>
       <ButtonContainer>
@@ -53,7 +53,7 @@ export default function InfoPopup({ setIsPopupOpen, selectedTodoData }) {
           삭제
         </SaveButton>
         <SaveButton
-          onClick={() => setIsPopupOpen(false)}
+          onClick={() => setIsInfoPopupOpen(false)}
           whileHover={{ backgroundColor: colors.background.gray }}
           whileTap={{ scale: 0.95 }}
         >
