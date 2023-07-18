@@ -3,14 +3,18 @@ import dayjs from "dayjs";
 import * as colors from "../../styles/colors";
 import { useRef } from "react";
 
-export default function More({ data, handleMoreClick }) {
+export default function More({ selectedDate, data, handleMoreClick }) {
   const moreRef = useRef();
   return (
     <Container ref={moreRef}>
       <Text
         onClick={(event) => {
           event.stopPropagation();
-          handleMoreClick(data, moreRef.current.getBoundingClientRect());
+          handleMoreClick(
+            data,
+            selectedDate,
+            moreRef.current.getBoundingClientRect()
+          );
         }}
       >
         더보기

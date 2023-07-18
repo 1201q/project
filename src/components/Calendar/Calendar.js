@@ -47,11 +47,12 @@ export default function Calendar({
     setSelectedTodoData(todoData);
   };
 
-  const handleMoreClick = (todoArr, position) => {
+  const handleMoreClick = (todoArr, today, position) => {
     setIsModalOpen(false);
     setIsMorePopupOpen(true);
     setSelectedTodoArr(todoArr);
     setMorePopupPositionData(position);
+    setSelectedDate(today);
   };
 
   const monthControl = (mode) => {
@@ -154,6 +155,7 @@ export default function Calendar({
             <TodoContainer>
               {renderTodoArr[number].map((item) => item.order).includes(4) ? (
                 <More
+                  selectedDate={day}
                   data={renderTodoArr[number]}
                   handleMoreClick={handleMoreClick}
                   setIsMorePopupOpen={setIsMorePopupOpen}
@@ -270,6 +272,7 @@ export default function Calendar({
         <InfoPopup
           setIsInfoPopupOpen={setIsInfoPopupOpen}
           selectedTodoData={selectedTodoData}
+          setIsMorePopupOpen={setIsMorePopupOpen}
         />
       )}
 
@@ -282,9 +285,11 @@ export default function Calendar({
       )}
       {isMorePopupOpen && (
         <MorePopup
+          selectedDate={selectedDate}
           setIsMorePopupOpen={setIsMorePopupOpen}
           selectedTodoArr={selectedTodoArr}
           morePopupPositionData={morePopupPositionData}
+          handleTodoClick={handleTodoClick}
         />
       )}
     </Container>

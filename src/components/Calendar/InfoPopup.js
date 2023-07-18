@@ -8,7 +8,11 @@ import { color, motion } from "framer-motion";
 import { deleteDocument, removeArrayItem } from "@/utils/firebase/db";
 import { useAuth } from "@/utils/context/authProvider";
 
-export default function InfoPopup({ setIsInfoPopupOpen, selectedTodoData }) {
+export default function InfoPopup({
+  setIsInfoPopupOpen,
+  setIsMorePopupOpen,
+  selectedTodoData,
+}) {
   const user = useAuth();
 
   const onRemoveSchedule = async () => {
@@ -21,6 +25,7 @@ export default function InfoPopup({ setIsInfoPopupOpen, selectedTodoData }) {
 
     if (!remove) {
       setIsInfoPopupOpen(false);
+      setIsMorePopupOpen(false);
     } else {
       console.log(remove);
     }
@@ -76,7 +81,7 @@ const Container = styled(motion.div)`
   padding: 25px;
   border-radius: 20px;
   box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.15);
-  z-index: 100;
+  z-index: 101;
 `;
 
 const ButtonContainer = styled.div`
