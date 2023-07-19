@@ -16,6 +16,8 @@ import { v4 as uuidv4 } from "uuid";
 import InfoPopup from "./InfoPopup";
 import More from "./More";
 import MorePopup from "./MorePopup";
+import Toast from "./Toast";
+import { useCalendar } from "@/utils/context/CalendarContext";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
@@ -26,18 +28,22 @@ export default function Calendar({
   setCurrentDate,
   realtimeTodoList = [],
 }) {
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedTodoData, setSelectedTodoData] = useState(null);
-  const [selectedTodoArr, setSelectedTodoArr] = useState([]);
+  const {
+    selectedDate,
+    setSelectedDate,
+    selectedTodoData,
+    setSelectedTodoData,
+    selectedTodayScheduleArr,
+    setSelectedTodayScheduleArr,
+  } = useCalendar();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
   const [isMorePopupOpen, setIsMorePopupOpen] = useState(false);
-
   const [morePopupPositionData, setMorePopupPositionData] = useState(null);
 
-  const handleDateClick = (clickedDay) => {
-    setSelectedDate(clickedDay);
+  const handleDateClick = (selected) => {
+    setSelectedDate(selected);
     setIsModalOpen(true);
   };
 
@@ -50,7 +56,7 @@ export default function Calendar({
   const handleMoreClick = (todoArr, today, position) => {
     setIsModalOpen(false);
     setIsMorePopupOpen(true);
-    setSelectedTodoArr(todoArr);
+    setSelectedTodayScheduleArr(todoArr);
     setMorePopupPositionData(position);
     setSelectedDate(today);
   };
@@ -267,31 +273,21 @@ export default function Calendar({
         <Day>토</Day>
       </DayHeaderContainer>
       <DateContainer>{renderCalendar()}</DateContainer>
-
       {isInfoPopupOpen && (
         <InfoPopup
           setIsInfoPopupOpen={setIsInfoPopupOpen}
-          selectedTodoData={selectedTodoData}
           setIsMorePopupOpen={setIsMorePopupOpen}
         />
       )}
-
-      {isModalOpen && (
-        <Modal
-          setIsModalOpen={setIsModalOpen}
-          setSelectedDate={setSelectedDate}
-          selectedDate={selectedDate}
-        />
-      )}
+      {isModalOpen && <Modal setIsModalOpen={setIsModalOpen} />}
       {isMorePopupOpen && (
         <MorePopup
-          selectedDate={selectedDate}
           setIsMorePopupOpen={setIsMorePopupOpen}
-          selectedTodoArr={selectedTodoArr}
           morePopupPositionData={morePopupPositionData}
           handleTodoClick={handleTodoClick}
         />
       )}
+      <Toast />
     </Container>
   );
 }

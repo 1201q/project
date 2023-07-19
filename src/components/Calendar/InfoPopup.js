@@ -6,15 +6,12 @@ import X from "../../assets/x.svg";
 import Check from "../../assets/check.svg";
 import { color, motion } from "framer-motion";
 import { deleteDocument, removeArrayItem } from "@/utils/firebase/db";
-import { useAuth } from "@/utils/context/authProvider";
+import { useAuth } from "@/utils/context/auth/AuthProvider";
+import { useCalendar } from "@/utils/context/CalendarContext";
 
-export default function InfoPopup({
-  setIsInfoPopupOpen,
-  setIsMorePopupOpen,
-  selectedTodoData,
-}) {
+export default function InfoPopup({ setIsInfoPopupOpen, setIsMorePopupOpen }) {
   const user = useAuth();
-
+  const { selectedTodoData } = useCalendar();
   const onRemoveSchedule = async () => {
     const remove = await removeArrayItem(
       "schedule",

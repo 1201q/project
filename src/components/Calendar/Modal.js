@@ -4,13 +4,15 @@ import styled from "styled-components";
 import * as colors from "../../styles/colors";
 import X from "../../assets/x.svg";
 import Check from "../../assets/check.svg";
-import { color, motion } from "framer-motion";
-import { useAuth } from "@/utils/context/authProvider";
+import { motion } from "framer-motion";
+import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { updateArrayField } from "@/utils/firebase/db";
 import { v4 as uuidv4 } from "uuid";
+import { useCalendar } from "@/utils/context/CalendarContext";
 
-export default function Modal({ setIsModalOpen, selectedDate }) {
+export default function Modal({ setIsModalOpen }) {
   const user = useAuth();
+  const { selectedDate } = useCalendar();
   const [title, setTitle] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
 
@@ -29,6 +31,7 @@ export default function Modal({ setIsModalOpen, selectedDate }) {
       color: selectedColor,
       start: dayjs(`${startDate}${startTime}`).format(""),
       end: dayjs(`${endDate}${endTime}`).format(""),
+      isCompleted: false,
     },
   ];
 

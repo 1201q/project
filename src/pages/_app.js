@@ -1,4 +1,5 @@
-import { AuthProvider } from "@/utils/context/authProvider";
+import { AuthProvider } from "@/utils/context/auth/AuthProvider";
+import { CalendarProvider } from "@/utils/context/CalendarContext";
 import "../styles/globals.css";
 import Head from "next/head";
 import { authService } from "@/utils/firebase/firebaseClient";
@@ -13,9 +14,11 @@ export default function App({
         <title>테스트</title>
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <AuthProvider>
-        <Component {...pageProps} />
-      </AuthProvider>
+      <CalendarProvider>
+        <AuthProvider>
+          <Component {...pageProps} />
+        </AuthProvider>
+      </CalendarProvider>
     </>
   );
 }

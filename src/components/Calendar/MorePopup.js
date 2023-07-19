@@ -4,17 +4,17 @@ import styled from "styled-components";
 import * as colors from "../../styles/colors";
 import X from "../../assets/x.svg";
 import Check from "../../assets/check.svg";
-import { color, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { deleteDocument, removeArrayItem } from "@/utils/firebase/db";
-import { useAuth } from "@/utils/context/authProvider";
+import { useAuth } from "@/utils/context/auth/AuthProvider";
+import { useCalendar } from "@/utils/context/CalendarContext";
 
 export default function MorePopup({
-  selectedDate,
   morePopupPositionData,
   setIsMorePopupOpen,
-  selectedTodoArr,
   handleTodoClick,
 }) {
+  const { selectedDate, selectedTodayScheduleArr } = useCalendar();
   return (
     <Container
       styledmarginx={morePopupPositionData.left}
@@ -27,7 +27,7 @@ export default function MorePopup({
           </HeaderText>
         </HeaderContainer>
         <ScheduleContainer>
-          {selectedTodoArr.map((item) => (
+          {selectedTodayScheduleArr.map((item) => (
             <Schedule
               onClick={() => {
                 handleTodoClick(item);
@@ -117,4 +117,5 @@ const Schedule = styled.div`
   padding: 5px;
   color: white;
   background-color: ${(props) => props.styledbgcolor};
+  cursor: pointer;
 `;

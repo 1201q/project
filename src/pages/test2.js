@@ -2,7 +2,7 @@ import { logout } from "@/utils/firebase/auth";
 
 import nookies from "nookies";
 import { admin } from "@/utils/firebase/firebaseAdmin";
-import { useAuth } from "@/utils/context/authProvider";
+import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useRouter } from "next/router";
 import { authService, dbService } from "@/utils/firebase/firebaseClient";
 import {
