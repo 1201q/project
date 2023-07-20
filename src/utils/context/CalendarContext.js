@@ -34,11 +34,11 @@ export const CalendarModalProvider = ({ children }) => {
   const [isAddScheduleModalOpen, setIsAddScheduleModalOpen] = useState(false);
 
   return (
-    <ModalContext.Provider
+    <CalendarModalContext.Provider
       value={{ isAddScheduleModalOpen, setIsAddScheduleModalOpen }}
     >
       {children}
-    </ModalContext.Provider>
+    </CalendarModalContext.Provider>
   );
 };
 
