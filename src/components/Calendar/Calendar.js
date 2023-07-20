@@ -1,51 +1,38 @@
 import styled from "styled-components";
+import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import weekOfYear from "dayjs/plugin/weekOfYear";
 import isBetween from "dayjs/plugin/isBetween";
-
-import { useEffect, useState, useRef } from "react";
-
 import * as colors from "../../styles/colors";
+// svg
 import AngleLeft from "../../assets/angle-small-left.svg";
 import AngleRight from "../../assets/angle-small-right.svg";
-import { motion } from "framer-motion";
-import Todo from "./Todo";
-import Modal from "./Modal";
-import { v4 as uuidv4 } from "uuid";
-import InfoPopup from "./InfoPopup";
-import More from "./More";
-import MorePopup from "./MorePopup";
-import Toast from "./Toast";
+// 컴포넌트
+import AddScheduleModal from "./Modal/AddSchedule";
+import DetailInfoPopup from "./Modal/DetailInfo";
+import MoreListPopup from "./Modal/MoreList";
+// context
 import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
+import Date from "./Contents/Date";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
 dayjs.extend(weekOfYear);
 
-export default function Calendar({
-  currentDate,
-  setCurrentDate,
-  realtimeTodoList = [],
-}) {
+export default function Calendar() {
   const {
-    selectedDate,
+    currentDate,
+    setCurrentDate,
     setSelectedDate,
-    selectedTodoData,
-    setSelectedTodoData,
-    selectedTodayScheduleArr,
-    setSelectedTodayScheduleArr,
+    scheduleList = [],
   } = useCalendar();
 
   const {
     isAddScheduleModalOpen,
     setIsAddScheduleModalOpen,
     isDetailInfoPopupOpen,
-    setIsDetailInfoPopupOpen,
     isMoreListPopupOpen,
-    setIsMoreListPopupOpen,
-    moreListPopupPosition,
-    setMoreListPopupPosition,
   } = useCalendarModal();
 
   const handleDateClick = (selected) => {
@@ -53,147 +40,17 @@ export default function Calendar({
     setIsAddScheduleModalOpen(true);
   };
 
-  const handleTodoClick = (todoData) => {
-    setIsAddScheduleModalOpen(false);
-    setIsDetailInfoPopupOpen(true);
-    setSelectedTodoData(todoData);
-  };
-
-  const handleMoreClick = (todoArr, today, position) => {
-    setIsAddScheduleModalOpen(false);
-    setIsMoreListPopupOpen(true);
-    setSelectedTodayScheduleArr(todoArr);
-    setMoreListPopupPosition(position);
-    setSelectedDate(today);
-  };
-
   const monthControl = (mode) => {
     if (mode === "prev") {
-      setCurrentDate(currentDate.add(-1, "month"));
+      setCurrentDate(dayjs(currentDate).add(-1, "month"));
     } else if (mode === "next") {
-      setCurrentDate(currentDate.add(1, "month"));
+      setCurrentDate(dayjs(currentDate).add(1, "month"));
     }
-  };
-
-  const renderCalendar = () => {
-    const startOfMonth = currentDate.startOf("month");
-    const endOfMonth = currentDate.endOf("month");
-    const startOfWeek = startOfMonth.startOf("week");
-    const endOfWeek = endOfMonth.endOf("week");
-    const today = dayjs();
-
-    const calendar = [];
-    const currentTodoList = returnCurrentTodoList(startOfWeek, endOfWeek);
-
-    const tempArr = makeArr(startOfWeek, endOfWeek);
-
-    const renderTodoArr = setTodoList(currentTodoList, tempArr);
-
-    let day = startOfWeek;
-    let number = 0;
-
-    while (day.isSameOrBefore(endOfWeek)) {
-      const week = [];
-
-      for (let i = 0; i < 7; i++) {
-        const isPrevMonth = day.isBefore(startOfMonth);
-        const isNextMonth = day.isAfter(endOfMonth);
-        const isSunday = day.day() === 0;
-        const isSaturday = day.day() === 6;
-        const isToday = day.isSame(today, "day");
-
-        week.push(
-          <Date
-            key={day.format("YYYY-MM-DD")}
-            id={day.format("YYYY-MM-DD")}
-            onClick={() => {
-              handleDateClick(week[i].key);
-            }}
-          >
-            <DateText
-              isPrevMonth={isPrevMonth}
-              isNextMonth={isNextMonth}
-              isSunday={isSunday}
-              isSaturday={isSaturday}
-              isToday={isToday}
-            >
-              {day.format("D")}
-            </DateText>
-            <TodoContainer>
-              {renderTodoArr[number].map((item) => item.order).includes(1) ? (
-                <Todo
-                  day={day}
-                  data={
-                    renderTodoArr[number][
-                      renderTodoArr[number].map((item) => item.order).indexOf(1)
-                    ]
-                  }
-                  handleTodoClick={handleTodoClick}
-                />
-              ) : (
-                <BlankTodo />
-              )}
-            </TodoContainer>
-            <TodoContainer>
-              {renderTodoArr[number].map((item) => item.order).includes(2) ? (
-                <Todo
-                  day={day}
-                  data={
-                    renderTodoArr[number][
-                      renderTodoArr[number].map((item) => item.order).indexOf(2)
-                    ]
-                  }
-                  handleTodoClick={handleTodoClick}
-                />
-              ) : (
-                <BlankTodo />
-              )}
-            </TodoContainer>
-            <TodoContainer>
-              {renderTodoArr[number].map((item) => item.order).includes(3) ? (
-                <Todo
-                  day={day}
-                  data={
-                    renderTodoArr[number][
-                      renderTodoArr[number].map((item) => item.order).indexOf(3)
-                    ]
-                  }
-                  handleTodoClick={handleTodoClick}
-                />
-              ) : (
-                <BlankTodo />
-              )}
-            </TodoContainer>
-            <TodoContainer>
-              {renderTodoArr[number].map((item) => item.order).includes(4) ? (
-                <More
-                  selectedDate={day}
-                  data={renderTodoArr[number]}
-                  handleMoreClick={handleMoreClick}
-                  setIsMoreListPopupOpen={setIsMoreListPopupOpen}
-                />
-              ) : (
-                <BlankTodo />
-              )}
-            </TodoContainer>
-          </Date>
-        );
-        number++;
-        day = day.add(1, "day");
-      }
-      calendar.push(
-        <Week id={week[0].key} key={week[0].key}>
-          {week}
-        </Week>
-      );
-    }
-
-    return calendar;
   };
 
   // 현재 보고 있는 달의 todo목록만 return
   const returnCurrentTodoList = (startOfWeek, endOfWeek) => {
-    const currentMonthArr = realtimeTodoList
+    const currentMonthArr = scheduleList
       .filter((item) => {
         if (
           dayjs(item.start).isBetween(startOfWeek, endOfWeek, "day", "[]") ||
@@ -252,10 +109,69 @@ export default function Calendar({
     return renderTodoList;
   };
 
+  const renderCalendar = () => {
+    const startOfMonth = dayjs(currentDate).startOf("month");
+    const endOfMonth = dayjs(currentDate).endOf("month");
+    const startOfWeek = startOfMonth.startOf("week");
+    const endOfWeek = endOfMonth.endOf("week");
+    const today = dayjs();
+
+    const calendar = [];
+    const currentTodoList = returnCurrentTodoList(startOfWeek, endOfWeek);
+    const tempArr = makeArr(startOfWeek, endOfWeek);
+    const renderTodoArr = setTodoList(currentTodoList, tempArr);
+
+    let day = startOfWeek;
+    let number = 0;
+
+    while (day.isSameOrBefore(endOfWeek)) {
+      const week = [];
+
+      for (let i = 0; i < 7; i++) {
+        const isPrevMonth = day.isBefore(startOfMonth);
+        const isNextMonth = day.isAfter(endOfMonth);
+        const isSunday = day.day() === 0;
+        const isSaturday = day.day() === 6;
+        const isToday = day.isSame(today, "day");
+
+        week.push(
+          <DateContainer
+            key={day.format("YYYY-MM-DD")}
+            id={day.format("YYYY-MM-DD")}
+            onClick={() => {
+              handleDateClick(week[i].key);
+            }}
+          >
+            <Date
+              day={day}
+              isPrevMonth={isPrevMonth}
+              isNextMonth={isNextMonth}
+              isSunday={isSunday}
+              isSaturday={isSaturday}
+              isToday={isToday}
+              renderTodo={renderTodoArr[number]}
+            />
+          </DateContainer>
+        );
+        number++;
+        day = day.add(1, "day");
+      }
+      calendar.push(
+        <Week id={week[0].key} key={week[0].key}>
+          {week}
+        </Week>
+      );
+    }
+
+    return calendar;
+  };
+
   return (
     <Container>
       <ControllerContainer>
-        <CurrentDateText>{currentDate.format("YYYY년 M월")}</CurrentDateText>
+        <CurrentDateText>
+          {dayjs(currentDate).format("YYYY년 M월")}
+        </CurrentDateText>
         <ControlBtn
           whileTap={{ scale: 0.9 }}
           onClick={() => monthControl("prev")}
@@ -270,18 +186,18 @@ export default function Calendar({
         </ControlBtn>
       </ControllerContainer>
       <DayHeaderContainer>
-        <Day>일</Day>
-        <Day>월</Day>
-        <Day>화</Day>
-        <Day>수</Day>
-        <Day>목</Day>
-        <Day>금</Day>
-        <Day>토</Day>
+        <DayHeader>일</DayHeader>
+        <DayHeader>월</DayHeader>
+        <DayHeader>화</DayHeader>
+        <DayHeader>수</DayHeader>
+        <DayHeader>목</DayHeader>
+        <DayHeader>금</DayHeader>
+        <DayHeader>토</DayHeader>
       </DayHeaderContainer>
-      <DateContainer>{renderCalendar()}</DateContainer>
-      {isDetailInfoPopupOpen && <InfoPopup />}
-      {isAddScheduleModalOpen && <Modal />}
-      {isMoreListPopupOpen && <MorePopup handleTodoClick={handleTodoClick} />}
+      <MainContainer>{renderCalendar()}</MainContainer>
+      {isDetailInfoPopupOpen && <DetailInfoPopup />}
+      {isAddScheduleModalOpen && <AddScheduleModal />}
+      {isMoreListPopupOpen && <MoreListPopup />}
     </Container>
   );
 }
@@ -309,11 +225,23 @@ const DayHeaderContainer = styled.div`
   height: 30px;
 `;
 
-const DateContainer = styled.div`
+const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
   max-height: calc(100vh - 91px);
+`;
+
+const DateContainer = styled.div`
+  position: relative;
+  /* 숫자로 된 일 */
+  width: 100%;
+  min-width: 185px;
+  height: 100%;
+  min-height: 104px;
+
+  border-bottom: 1px solid ${colors.border.deepgray};
+  cursor: pointer;
 `;
 
 // 컨트롤러 헤더
@@ -338,7 +266,7 @@ const Week = styled.div`
   height: 100%;
 `;
 
-const Day = styled.div`
+const DayHeader = styled.div`
   /* 요일 */
   text-align: center;
   width: 100%;
@@ -347,52 +275,4 @@ const Day = styled.div`
   font-size: 13px;
   color: ${colors.font.black};
   font-weight: 400;
-`;
-
-const Date = styled.div`
-  position: relative;
-  /* 숫자로 된 일 */
-  width: 100%;
-  min-width: 185px;
-  height: 100%;
-  min-height: 104px;
-
-  border-bottom: 1px solid ${colors.border.deepgray};
-  cursor: pointer;
-`;
-
-const DateText = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: ${(props) => {
-    if (props.isPrevMonth && !props.isSaturday && !props.isSunday)
-      return "#dcdcdc"; // 이전 달 날짜
-    if (props.isNextMonth && !props.isSaturday && !props.isSunday)
-      return "#dcdcdc"; // 다음 달 날짜
-    if (props.isSunday && !props.isToday) return colors.others.orange; // 일요일
-    if (props.isSaturday && !props.isToday) return colors.others.blue; // 토요일
-    if (props.isToday) return "white";
-    return colors.font.black; // 현재 달 날짜
-  }};
-  font-size: 13px;
-  background-color: ${(props) => {
-    if (props.isToday) return colors.others.blue;
-  }};
-  border-radius: 50%;
-
-  width: 20px;
-  height: 20px;
-  margin: 6px 6px;
-`;
-
-// todo
-const TodoContainer = styled.div``;
-
-const BlankTodo = styled.div`
-  width: 100%;
-  height: 16px;
-  background: none;
-  margin-bottom: 2px;
-  padding: 1px 5px;
 `;

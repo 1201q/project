@@ -1,19 +1,23 @@
 import dayjs from "dayjs";
-
 import styled from "styled-components";
-import * as colors from "../../styles/colors";
-import X from "../../assets/x.svg";
-import Check from "../../assets/check.svg";
-import { color, motion } from "framer-motion";
-import { deleteDocument, removeArrayItem } from "@/utils/firebase/db";
+import { motion } from "framer-motion";
+import * as colors from "../../../styles/colors";
+
+// svg
+import X from "../../../assets/x.svg";
+import Check from "../../../assets/check.svg";
+
+// 함수, context
+import { removeArrayItem } from "@/utils/firebase/db";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 
-export default function InfoPopup() {
+export default function DetailInfoPopup() {
   const user = useAuth();
   const { selectedTodoData } = useCalendar();
   const { setIsDetailInfoPopupOpen, setIsMoreListPopupOpen } =
     useCalendarModal();
+
   const onRemoveSchedule = async () => {
     const remove = await removeArrayItem(
       "schedule",

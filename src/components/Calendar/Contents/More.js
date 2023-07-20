@@ -1,10 +1,28 @@
 import styled from "styled-components";
-import dayjs from "dayjs";
-import * as colors from "../../styles/colors";
+import * as colors from "../../../styles/colors";
 import { useRef } from "react";
+import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 
-export default function More({ selectedDate, data, handleMoreClick }) {
+export default function More({ data }) {
   const moreRef = useRef();
+
+  const { selectedDate, setSelectedDate, setSelectedTodayScheduleArr } =
+    useCalendar();
+
+  const {
+    setIsAddScheduleModalOpen,
+    setIsMoreListPopupOpen,
+    setMoreListPopupPosition,
+  } = useCalendarModal();
+
+  const handleMoreClick = (todoArr, today, position) => {
+    setIsAddScheduleModalOpen(false);
+    setIsMoreListPopupOpen(true);
+    setSelectedTodayScheduleArr(todoArr);
+    setMoreListPopupPosition(position);
+    setSelectedDate(today);
+  };
+
   return (
     <Container ref={moreRef}>
       <Text

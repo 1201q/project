@@ -1,31 +1,17 @@
-import { logout } from "@/utils/firebase/auth";
-
+import { useEffect } from "react";
 import nookies from "nookies";
-import { admin } from "@/utils/firebase/firebaseAdmin";
-import { useAuth } from "@/utils/context/auth/AuthProvider";
-import { useRouter } from "next/router";
-import { authService, dbService } from "@/utils/firebase/firebaseClient";
-import {
-  doc,
-  getDoc,
-  getDocs,
-  collection,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
-import { useEffect, useState } from "react";
-import styled from "styled-components";
-import {
-  addDocument,
-  observeDocumentChanges,
-  setDocument,
-} from "@/utils/firebase/db";
-import Sidebar from "@/components/Sidebar";
-import Calendar from "@/components/Calendar/Calendar";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import styled from "styled-components";
+import { admin } from "@/utils/firebase/firebaseAdmin";
+import { observeDocumentChanges } from "@/utils/firebase/db";
+// 컴포넌트
+import Sidebar from "@/components/Sidebar";
+import Calendar from "@/components/Calendar/Calendar";
 import Loading from "@/components/Loading";
+// context
+import { useCalendar } from "@/utils/context/CalendarContext";
+import { useAuth } from "@/utils/context/auth/AuthProvider";
 
 dayjs.extend(isSameOrBefore);
 
@@ -49,14 +35,13 @@ export const getServerSideProps = async (ctx) => {
   }
 };
 
-export default function Home({ email, uid }) {
+export default function Home({ uid }) {
   const user = useAuth();
-  const [currentDate, setCurrentDate] = useState(dayjs());
-  const [todoList, setTodoList] = useState([]);
+  const { setScheduleList } = useCalendar();
 
   useEffect(() => {
     const getSchedule = (data) => {
-      setTodoList(data.data);
+      setScheduleList(data.data);
     };
     observeDocumentChanges("schedule", uid, getSchedule);
   }, []);
@@ -68,11 +53,7 @@ export default function Home({ email, uid }) {
       ) : (
         <Container>
           <Sidebar userData={user} />
-          <Calendar
-            currentDate={currentDate}
-            setCurrentDate={setCurrentDate}
-            realtimeTodoList={todoList}
-          />
+          <Calendar />
         </Container>
       )}
     </>

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import dayjs from "dayjs";
-import * as colors from "../../styles/colors";
+import * as colors from "../../../styles/colors";
 
 export default function Todo({ day, data, handleTodoClick }) {
   return (

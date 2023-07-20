@@ -1,17 +1,30 @@
 import dayjs from "dayjs";
-
-import styled from "styled-components";
-import * as colors from "../../styles/colors";
-import X from "../../assets/x.svg";
-import Check from "../../assets/check.svg";
 import { motion } from "framer-motion";
-import { deleteDocument, removeArrayItem } from "@/utils/firebase/db";
-import { useAuth } from "@/utils/context/auth/AuthProvider";
+import styled from "styled-components";
+import * as colors from "../../../styles/colors";
+
+// svg
+import X from "../../../assets/x.svg";
+import Check from "../../../assets/check.svg";
+
 import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 
-export default function MorePopup({ handleTodoClick }) {
-  const { selectedDate, selectedTodayScheduleArr } = useCalendar();
-  const { moreListPopupPosition, setIsMoreListPopupOpen } = useCalendarModal();
+export default function MoreListPopup() {
+  const { selectedDate, setSelectedTodoData, selectedTodayScheduleArr } =
+    useCalendar();
+  const {
+    setIsAddScheduleModalOpen,
+    setIsDetailInfoPopupOpen,
+    moreListPopupPosition,
+    setIsMoreListPopupOpen,
+  } = useCalendarModal();
+
+  const handleTodoClick = (todoData) => {
+    setIsAddScheduleModalOpen(false);
+    setIsDetailInfoPopupOpen(true);
+    setSelectedTodoData(todoData);
+  };
+
   return (
     <Container
       styledmarginx={moreListPopupPosition.left}

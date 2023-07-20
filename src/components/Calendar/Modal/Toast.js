@@ -1,9 +1,9 @@
 import dayjs from "dayjs";
 import { useRef, useState } from "react";
 import styled from "styled-components";
-import * as colors from "../../styles/colors";
+import * as colors from "../../../styles/colors";
 import { color, motion } from "framer-motion";
-import Check from "../../assets/check.svg";
+import Check from "../../../assets/check.svg";
 
 export default function Toast({ text }) {
   return (

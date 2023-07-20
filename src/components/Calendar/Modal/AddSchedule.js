@@ -1,22 +1,27 @@
 import dayjs from "dayjs";
 import { useRef, useState } from "react";
-import styled from "styled-components";
-import * as colors from "../../styles/colors";
-import X from "../../assets/x.svg";
-import Check from "../../assets/check.svg";
 import { motion } from "framer-motion";
+import styled from "styled-components";
+import { v4 as uuidv4 } from "uuid";
+import * as colors from "../../../styles/colors";
+
+// svg
+import X from "../../../assets/x.svg";
+import Check from "../../../assets/check.svg";
+
+// 함수, context
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { updateArrayField } from "@/utils/firebase/db";
-import { v4 as uuidv4 } from "uuid";
 import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 
-export default function Modal() {
+export default function AddScheduleModal() {
   const user = useAuth();
   const { selectedDate } = useCalendar();
   const { setIsAddScheduleModalOpen } = useCalendarModal();
+
+  // state
   const [title, setTitle] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
-
   const [startDate, setStartDate] = useState(selectedDate);
   const [endDate, setEndDate] = useState(selectedDate);
   const [startTime, setStartTime] = useState(dayjs().format("HH:mm"));
