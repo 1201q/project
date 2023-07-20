@@ -17,7 +17,7 @@ import InfoPopup from "./InfoPopup";
 import More from "./More";
 import MorePopup from "./MorePopup";
 import Toast from "./Toast";
-import { useCalendar } from "@/utils/context/CalendarContext";
+import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
@@ -37,27 +37,33 @@ export default function Calendar({
     setSelectedTodayScheduleArr,
   } = useCalendar();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
-  const [isMorePopupOpen, setIsMorePopupOpen] = useState(false);
-  const [morePopupPositionData, setMorePopupPositionData] = useState(null);
+  const {
+    isAddScheduleModalOpen,
+    setIsAddScheduleModalOpen,
+    isDetailInfoPopupOpen,
+    setIsDetailInfoPopupOpen,
+    isMoreListPopupOpen,
+    setIsMoreListPopupOpen,
+    moreListPopupPosition,
+    setMoreListPopupPosition,
+  } = useCalendarModal();
 
   const handleDateClick = (selected) => {
     setSelectedDate(selected);
-    setIsModalOpen(true);
+    setIsAddScheduleModalOpen(true);
   };
 
   const handleTodoClick = (todoData) => {
-    setIsModalOpen(false);
-    setIsInfoPopupOpen(true);
+    setIsAddScheduleModalOpen(false);
+    setIsDetailInfoPopupOpen(true);
     setSelectedTodoData(todoData);
   };
 
   const handleMoreClick = (todoArr, today, position) => {
-    setIsModalOpen(false);
-    setIsMorePopupOpen(true);
+    setIsAddScheduleModalOpen(false);
+    setIsMoreListPopupOpen(true);
     setSelectedTodayScheduleArr(todoArr);
-    setMorePopupPositionData(position);
+    setMoreListPopupPosition(position);
     setSelectedDate(today);
   };
 
@@ -164,7 +170,7 @@ export default function Calendar({
                   selectedDate={day}
                   data={renderTodoArr[number]}
                   handleMoreClick={handleMoreClick}
-                  setIsMorePopupOpen={setIsMorePopupOpen}
+                  setIsMoreListPopupOpen={setIsMoreListPopupOpen}
                 />
               ) : (
                 <BlankTodo />
@@ -273,21 +279,9 @@ export default function Calendar({
         <Day>토</Day>
       </DayHeaderContainer>
       <DateContainer>{renderCalendar()}</DateContainer>
-      {isInfoPopupOpen && (
-        <InfoPopup
-          setIsInfoPopupOpen={setIsInfoPopupOpen}
-          setIsMorePopupOpen={setIsMorePopupOpen}
-        />
-      )}
-      {isModalOpen && <Modal setIsModalOpen={setIsModalOpen} />}
-      {isMorePopupOpen && (
-        <MorePopup
-          setIsMorePopupOpen={setIsMorePopupOpen}
-          morePopupPositionData={morePopupPositionData}
-          handleTodoClick={handleTodoClick}
-        />
-      )}
-      <Toast />
+      {isDetailInfoPopupOpen && <InfoPopup />}
+      {isAddScheduleModalOpen && <Modal />}
+      {isMoreListPopupOpen && <MorePopup handleTodoClick={handleTodoClick} />}
     </Container>
   );
 }

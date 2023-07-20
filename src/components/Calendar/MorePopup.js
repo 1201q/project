@@ -7,18 +7,15 @@ import Check from "../../assets/check.svg";
 import { motion } from "framer-motion";
 import { deleteDocument, removeArrayItem } from "@/utils/firebase/db";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
-import { useCalendar } from "@/utils/context/CalendarContext";
+import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 
-export default function MorePopup({
-  morePopupPositionData,
-  setIsMorePopupOpen,
-  handleTodoClick,
-}) {
+export default function MorePopup({ handleTodoClick }) {
   const { selectedDate, selectedTodayScheduleArr } = useCalendar();
+  const { moreListPopupPosition, setIsMoreListPopupOpen } = useCalendarModal();
   return (
     <Container
-      styledmarginx={morePopupPositionData.left}
-      styledmarginy={morePopupPositionData.top}
+      styledmarginx={moreListPopupPosition.left}
+      styledmarginy={moreListPopupPosition.top}
     >
       <Wrapper>
         <HeaderContainer>
@@ -39,7 +36,7 @@ export default function MorePopup({
             </Schedule>
           ))}
         </ScheduleContainer>
-        <CloseButton onClick={() => setIsMorePopupOpen(false)}>
+        <CloseButton onClick={() => setIsMoreListPopupOpen(false)}>
           <X width={11} height={11} fill={colors.font.darkgray} />
         </CloseButton>
       </Wrapper>

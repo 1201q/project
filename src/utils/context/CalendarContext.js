@@ -32,10 +32,22 @@ export const useCalendar = () => {
 // modal, nonmodal
 export const CalendarModalProvider = ({ children }) => {
   const [isAddScheduleModalOpen, setIsAddScheduleModalOpen] = useState(false);
+  const [isDetailInfoPopupOpen, setIsDetailInfoPopupOpen] = useState(false);
+  const [isMoreListPopupOpen, setIsMoreListPopupOpen] = useState(false);
+  const [moreListPopupPosition, setMoreListPopupPosition] = useState(null);
 
   return (
     <CalendarModalContext.Provider
-      value={{ isAddScheduleModalOpen, setIsAddScheduleModalOpen }}
+      value={{
+        isAddScheduleModalOpen,
+        setIsAddScheduleModalOpen,
+        isDetailInfoPopupOpen,
+        setIsDetailInfoPopupOpen,
+        isMoreListPopupOpen,
+        setIsMoreListPopupOpen,
+        moreListPopupPosition,
+        setMoreListPopupPosition,
+      }}
     >
       {children}
     </CalendarModalContext.Provider>

@@ -7,11 +7,13 @@ import Check from "../../assets/check.svg";
 import { color, motion } from "framer-motion";
 import { deleteDocument, removeArrayItem } from "@/utils/firebase/db";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
-import { useCalendar } from "@/utils/context/CalendarContext";
+import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 
-export default function InfoPopup({ setIsInfoPopupOpen, setIsMorePopupOpen }) {
+export default function InfoPopup() {
   const user = useAuth();
   const { selectedTodoData } = useCalendar();
+  const { setIsDetailInfoPopupOpen, setIsMoreListPopupOpen } =
+    useCalendarModal();
   const onRemoveSchedule = async () => {
     const remove = await removeArrayItem(
       "schedule",
@@ -21,8 +23,8 @@ export default function InfoPopup({ setIsInfoPopupOpen, setIsMorePopupOpen }) {
     );
 
     if (!remove) {
-      setIsInfoPopupOpen(false);
-      setIsMorePopupOpen(false);
+      setIsDetailInfoPopupOpen(false);
+      setIsMoreListPopupOpen(false);
     } else {
       console.log(remove);
     }
@@ -41,7 +43,7 @@ export default function InfoPopup({ setIsInfoPopupOpen, setIsMorePopupOpen }) {
         {dayjs(selectedTodoData.start).format("YYYY-MM-DD")} ~
         {dayjs(selectedTodoData.end).format("YYYY-MM-DD")}
       </InfoText>
-      <CloseButton onClick={() => setIsInfoPopupOpen(false)}>
+      <CloseButton onClick={() => setIsDetailInfoPopupOpen(false)}>
         <X width={13} height={13} fill={colors.font.darkgray} />
       </CloseButton>
       <ButtonContainer>
@@ -55,7 +57,7 @@ export default function InfoPopup({ setIsInfoPopupOpen, setIsMorePopupOpen }) {
           삭제
         </SaveButton>
         <SaveButton
-          onClick={() => setIsInfoPopupOpen(false)}
+          onClick={() => setIsDetailInfoPopupOpen(false)}
           whileHover={{ backgroundColor: colors.background.gray }}
           whileTap={{ scale: 0.95 }}
         >

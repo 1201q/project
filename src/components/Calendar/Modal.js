@@ -8,11 +8,12 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { updateArrayField } from "@/utils/firebase/db";
 import { v4 as uuidv4 } from "uuid";
-import { useCalendar } from "@/utils/context/CalendarContext";
+import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 
-export default function Modal({ setIsModalOpen }) {
+export default function Modal() {
   const user = useAuth();
   const { selectedDate } = useCalendar();
+  const { setIsAddScheduleModalOpen } = useCalendarModal();
   const [title, setTitle] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
 
@@ -64,7 +65,7 @@ export default function Modal({ setIsModalOpen }) {
     );
 
     if (!update) {
-      setIsModalOpen(false);
+      setIsAddScheduleModalOpen(false);
     } else {
       console.log(update);
     }
@@ -142,7 +143,7 @@ export default function Modal({ setIsModalOpen }) {
             styledbg={"white"}
             styledfont={colors.font.darkgray}
             onClick={() => {
-              setIsModalOpen(false);
+              setIsAddScheduleModalOpen(false);
             }}
           >
             취소
@@ -179,7 +180,7 @@ export default function Modal({ setIsModalOpen }) {
             ))}
           </ColorPickerWrapper>
         </ColorPickerContainer>
-        <CloseButton onClick={() => setIsModalOpen(false)}>
+        <CloseButton onClick={() => setIsAddScheduleModalOpen(false)}>
           <X width={13} height={13} fill={colors.font.darkgray} />
         </CloseButton>
       </ModalContainer>
