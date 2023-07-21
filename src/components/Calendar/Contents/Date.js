@@ -54,7 +54,7 @@ export default function DateComponents({
       ))}
       <TodoContainer>
         {renderTodo.map((item) => item.order).includes(4) ? (
-          <More data={renderTodo} />
+          <More data={renderTodo} clickedDay={day} />
         ) : (
           <BlankTodo />
         )}

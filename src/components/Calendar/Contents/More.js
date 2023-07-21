@@ -2,12 +2,12 @@ import styled from "styled-components";
 import * as colors from "../../../styles/colors";
 import { useRef } from "react";
 import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
+import dayjs from "dayjs";
 
-export default function More({ data }) {
+export default function More({ data, clickedDay }) {
   const moreRef = useRef();
 
-  const { selectedDate, setSelectedDate, setSelectedTodayScheduleArr } =
-    useCalendar();
+  const { setSelectedDate, setSelectedTodayScheduleArr } = useCalendar();
 
   const {
     setIsAddScheduleModalOpen,
@@ -15,12 +15,12 @@ export default function More({ data }) {
     setMoreListPopupPosition,
   } = useCalendarModal();
 
-  const handleMoreClick = (todoArr, today, position) => {
+  const handleMoreClick = (todoArr, position) => {
+    setSelectedDate(clickedDay);
     setIsAddScheduleModalOpen(false);
     setIsMoreListPopupOpen(true);
     setSelectedTodayScheduleArr(todoArr);
     setMoreListPopupPosition(position);
-    setSelectedDate(today);
   };
 
   return (
@@ -28,11 +28,7 @@ export default function More({ data }) {
       <Text
         onClick={(event) => {
           event.stopPropagation();
-          handleMoreClick(
-            data,
-            selectedDate,
-            moreRef.current.getBoundingClientRect()
-          );
+          handleMoreClick(data, moreRef.current.getBoundingClientRect());
         }}
       >
         더보기
