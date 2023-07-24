@@ -7,6 +7,7 @@ import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 
 // svg
 import Check from "../../../assets/check.svg";
+import Complete from "./Complete";
 
 export default function DateComponents({
   day,
@@ -43,9 +44,7 @@ export default function DateComponents({
         {dayjs(day).format("D")}
       </DateText>
       {renderTodo.some((item) => item.isCompleted) && (
-        <CompletedIcon>
-          <Check width={11} height={11} fill={"#dcdcdc"} />
-        </CompletedIcon>
+        <Complete data={renderTodo} clickedDay={day} />
       )}
 
       {[1, 2, 3].map((orderNumber) => (
@@ -65,6 +64,7 @@ export default function DateComponents({
           )}
         </TodoContainer>
       ))}
+
       <TodoContainer>
         {renderTodo.map((item) => item.order).includes(4) ? (
           <More data={renderTodo} clickedDay={day} />
@@ -99,25 +99,6 @@ const DateText = styled.div`
   width: 20px;
   height: 20px;
   margin: 6px 6px;
-`;
-
-const CompletedIcon = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  right: 0;
-
-  width: 20px;
-  height: 20px;
-  margin: 6px 6px;
-
-  svg {
-    :hover {
-      fill: ${colors.calendar.green};
-    }
-  }
 `;
 
 // todo

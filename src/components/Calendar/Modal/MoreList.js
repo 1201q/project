@@ -5,7 +5,6 @@ import * as colors from "../../../styles/colors";
 
 // svg
 import X from "../../../assets/x.svg";
-import Check from "../../../assets/check.svg";
 
 import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 
@@ -21,8 +20,12 @@ export default function MoreListPopup() {
 
   const handleTodoClick = (todoData) => {
     setIsAddScheduleModalOpen(false);
-    setIsDetailInfoPopupOpen(true);
-    setSelectedTodoData(todoData);
+    setIsDetailInfoPopupOpen(false);
+
+    setTimeout(() => {
+      setIsDetailInfoPopupOpen(true);
+      setSelectedTodoData(todoData);
+    }, 50);
   };
 
   return (

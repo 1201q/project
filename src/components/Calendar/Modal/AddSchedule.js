@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
@@ -8,11 +8,17 @@ import * as colors from "../../../styles/colors";
 // svg
 import X from "../../../assets/x.svg";
 import Check from "../../../assets/check.svg";
+import Calendar from "../../../assets/calendar.svg";
 
 // 함수, context
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { updateArrayField } from "@/utils/firebase/db";
 import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
+
+// datepicker
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { enUS } from "date-fns/locale";
 
 export default function AddScheduleModal() {
   const user = useAuth();
@@ -22,10 +28,8 @@ export default function AddScheduleModal() {
   // state
   const [title, setTitle] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
-  const [startDate, setStartDate] = useState(selectedDate);
-  const [endDate, setEndDate] = useState(selectedDate);
-  const [startTime, setStartTime] = useState(dayjs().format("HH:mm"));
-  const [endTime, setEndTime] = useState("23:59");
+  const [startDate, setStartDate] = useState(new Date(selectedDate));
+  const [endDate, setEndDate] = useState(new Date(selectedDate));
 
   const modalRef = useRef();
 
@@ -35,31 +39,11 @@ export default function AddScheduleModal() {
       user: user.user.uid,
       title: title,
       color: selectedColor,
-      start: dayjs(`${startDate}${startTime}`).format(""),
-      end: dayjs(`${endDate}${endTime}`).format(""),
+      start: dayjs(`${startDate}`).format(""),
+      end: dayjs(`${endDate}`).format(""),
       isCompleted: false,
     },
   ];
-
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "title") {
-      setTitle(value);
-    } else if (name === "startdate") {
-      setStartDate(value);
-
-      // 끝 일자가 시작보다 이른 경우 같이 변경
-      if (dayjs(endDate).isBefore(value)) {
-        setEndDate(value);
-      }
-    } else if (name === "starttime") {
-      setStartTime(value);
-    } else if (name === "enddate") {
-      setEndDate(value);
-    } else if (name === "endtime") {
-      setEndTime(value);
-    }
-  };
 
   const onUpdateSchedule = async () => {
     const update = await updateArrayField(
@@ -93,52 +77,65 @@ export default function AddScheduleModal() {
             name="title"
             placeholder="제목을 입력하세요"
             value={title}
-            onChange={onChange}
+            onChange={(e) => setTitle(e.target.value)}
           />
         </TitleInputContainer>
         {/* 일자 셀렉 input */}
         <DateSelectContainer>
-          <InputContainer>
-            <div>
-              <SmallHeaderText>시작</SmallHeaderText>
-              <InputWrapper>
-                <InputPicker
-                  type="date"
-                  name="startdate"
-                  value={startDate}
-                  onChange={onChange}
-                  style={{ marginRight: "8px" }}
-                  required
-                />
-                <InputPicker
-                  type="time"
-                  name="starttime"
-                  value={startTime}
-                  onChange={onChange}
-                />
-              </InputWrapper>
-            </div>
-            <div>
-              <SmallHeaderText>끝</SmallHeaderText>
-              <InputWrapper>
-                <InputPicker
-                  type="date"
-                  name="enddate"
-                  min={startDate}
-                  value={endDate}
-                  onChange={onChange}
-                  style={{ marginRight: "8px" }}
-                />
-                <InputPicker
-                  type="time"
-                  name="endtime"
-                  value={endTime}
-                  onChange={onChange}
-                  min={startTime}
-                />
-              </InputWrapper>
-            </div>
-          </InputContainer>
+          {/* start */}
+          <DatePickerContainer>
+            <SmallHeaderText>시작</SmallHeaderText>
+            <DatePicker
+              locale={enUS}
+              selected={startDate}
+              showTimeSelect
+              dateFormat="yyyy-MM-dd HH:mm"
+              onChange={(startdate) => {
+                setStartDate(startdate);
+
+                if (dayjs(endDate).isBefore(dayjs(startdate))) {
+                  const newStart = new Date(startdate);
+                  newStart.setHours(23);
+                  newStart.setMinutes(59);
+                  setEndDate(newStart);
+                }
+              }}
+              customInput={
+                <InputDatePicker>
+                  {dayjs(startDate).format("YYYY-MM-DD HH:mm")}
+                  <Calendar
+                    width={13}
+                    height={13}
+                    style={{ position: "absolute", right: 10 }}
+                    fill={colors.others.gray}
+                  />
+                </InputDatePicker>
+              }
+            />
+          </DatePickerContainer>
+          {/* end */}
+          <DatePickerContainer>
+            <SmallHeaderText>끝</SmallHeaderText>
+            <DatePicker
+              locale={enUS}
+              selected={endDate}
+              showTimeSelect
+              dateFormat="yyyy-MM-dd HH:mm"
+              onChange={(date) => setEndDate(date)}
+              minDate={startDate}
+              customInput={
+                <InputDatePicker>
+                  {dayjs(endDate).format("YYYY-MM-DD HH:mm")}{" "}
+                  <Calendar
+                    width={13}
+                    height={13}
+                    style={{ position: "absolute", right: 10 }}
+                    fill={colors.others.gray}
+                  />
+                </InputDatePicker>
+              }
+            />
+          </DatePickerContainer>
         </DateSelectContainer>
         {/* 버튼 컨테이너 */}
         <ButtonContainer>
@@ -224,13 +221,11 @@ const ModalContainer = styled(motion.div)`
 
 const DateSelectContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  margin-bottom: 30px;
 `;
 
-const InputContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 30px;
+const DatePickerContainer = styled.div`
+  margin-right: 20px;
 `;
 
 const ButtonContainer = styled.div`
@@ -248,9 +243,6 @@ const TitleInputContainer = styled.div`
 const ColorPickerContainer = styled.div``;
 
 // wrapper
-const InputWrapper = styled.div`
-  display: flex;
-`;
 
 const ColorPickerWrapper = styled.div`
   display: flex;
@@ -271,25 +263,30 @@ const SmallHeaderText = styled.p`
 `;
 
 // input
-const InputPicker = styled.input`
-  width: 110px;
-  padding: 2px 4px;
-  font-size: 13px;
-  background-color: ${colors.background.gray};
-  border: none;
-  border-radius: 5px;
-  outline: none;
-`;
-
 const TitleInput = styled.input`
   width: 100%;
   padding: 10px;
-
   border: none;
   background-color: ${colors.background.gray};
   border-radius: 7px;
   outline: none;
   font-size: 15px;
+`;
+
+const InputDatePicker = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 155px;
+  padding: 6px 10px;
+  font-size: 13px;
+  background-color: ${colors.background.gray};
+  color: ${colors.font.darkgray};
+  font-weight: 400;
+  border: none;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
 `;
 
 // button

@@ -15,7 +15,9 @@ export default function Todo({ day, data, handleTodoClick }) {
     >
       {dayjs(day).get("day") === 0 || dayjs(day).isSame(data.start, "date") ? (
         <>
-          <Text>{data.title}</Text>
+          <Text>
+            {data.title} {data.isCompleted && " (완료)"}
+          </Text>
         </>
       ) : null}
     </Container>

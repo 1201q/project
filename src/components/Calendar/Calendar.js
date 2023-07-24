@@ -92,16 +92,15 @@ export default function Calendar() {
     arr.map((item) => {
       let list = [];
       let count = 0;
+
       todolist.map((todo, idx) => {
         if (item.day.isBetween(todo.start, todo.end, "day", "[]")) {
           count++;
-          // order_set
 
           if (!todolistCopy[idx].order) {
             todolistCopy[idx].order = count;
           }
 
-          // order_set
           list.push(todolistCopy[idx]);
         }
       });
