@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import styled from "styled-components";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import * as colors from "../../../styles/colors";
 
 // svg
@@ -8,29 +9,34 @@ import X from "../../../assets/x.svg";
 import Check from "../../../assets/check.svg";
 
 // 함수, context
-import { removeArrayItem } from "@/utils/firebase/db";
+import { removeArrayItem, toggleArrayItem } from "@/utils/firebase/db";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 
 export default function DetailInfoPopup() {
-  const user = useAuth();
   const { selectedTodoData } = useCalendar();
   const { setIsDetailInfoPopupOpen, setIsMoreListPopupOpen } =
     useCalendarModal();
 
-  const onRemoveSchedule = async () => {
-    const remove = await removeArrayItem(
-      "schedule",
-      user.user.uid,
-      "data",
-      selectedTodoData.id
-    );
+  const [checked, setChecked] = useState(selectedTodoData.isCompleted);
+  const user = useAuth();
 
-    if (!remove) {
-      setIsDetailInfoPopupOpen(false);
-      setIsMoreListPopupOpen(false);
-    } else {
-      console.log(remove);
+  const onRemoveSchedule = async () => {
+    const confirm = window.confirm("삭제하시겠어요?");
+
+    if (confirm) {
+      const remove = await removeArrayItem(
+        "schedule",
+        user.user.uid,
+        "data",
+        selectedTodoData.id
+      );
+      if (!remove) {
+        setIsDetailInfoPopupOpen(false);
+        setIsMoreListPopupOpen(false);
+      } else {
+        console.log(remove);
+      }
     }
   };
 
@@ -40,16 +46,43 @@ export default function DetailInfoPopup() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.1 }}
     >
-      <SmallHeaderText>제목</SmallHeaderText>
-      <InfoText>{selectedTodoData.title}</InfoText>
-      <SmallHeaderText>일시</SmallHeaderText>
-      <InfoText>
-        {dayjs(selectedTodoData.start).format("YYYY-MM-DD")} ~
-        {dayjs(selectedTodoData.end).format("YYYY-MM-DD")}
-      </InfoText>
+      <InfoContainer>
+        <SmallHeaderText>제목</SmallHeaderText>
+        <InfoText>{selectedTodoData.title}</InfoText>
+        <SmallHeaderText>일시</SmallHeaderText>
+        <InfoText>
+          {dayjs(selectedTodoData.start).format("YYYY-MM-DD")} ~
+          {dayjs(selectedTodoData.end).format("YYYY-MM-DD")}
+        </InfoText>
+        <SmallHeaderText>상태</SmallHeaderText>
+        <InfoText>1</InfoText>
+      </InfoContainer>
       <CloseButton onClick={() => setIsDetailInfoPopupOpen(false)}>
         <X width={13} height={13} fill={colors.font.darkgray} />
       </CloseButton>
+      <CheckBoxContainer
+        onClick={() => {
+          toggleArrayItem(
+            "schedule",
+            user.user.uid,
+            "data",
+            selectedTodoData.id
+          );
+
+          setChecked((prev) => !prev);
+        }}
+      >
+        <HiddenCheckBox type="checkbox" checked={checked} onChange={() => {}} />
+        <CheckBox checked={checked}>
+          <Check
+            width={15}
+            height={15}
+            fill="white"
+            style={{ marginLeft: "3px", marginTop: "3px" }}
+          />
+        </CheckBox>
+      </CheckBoxContainer>
+
       <ButtonContainer>
         <SaveButton
           whileHover={{ opacity: 0.8 }}
@@ -77,9 +110,9 @@ const Container = styled(motion.div)`
   bottom: 0;
   right: 0;
   margin: 20px;
-  width: 400px;
+  width: 280px;
   max-width: 90vw;
-  height: 210px;
+  height: 300px;
   background-color: white;
   padding: 25px;
   border-radius: 20px;
@@ -93,6 +126,17 @@ const ButtonContainer = styled.div`
   right: 0;
   margin: 25px;
   display: flex;
+`;
+
+const InfoContainer = styled.div`
+  margin-top: 20px;
+`;
+
+const CheckBoxContainer = styled.div`
+  position: absolute;
+  top: 5px;
+  right: 45px;
+  margin: 20px;
 `;
 
 // button
@@ -142,6 +186,32 @@ const SmallHeaderText = styled.p`
   color: ${colors.font.darkgray};
 `;
 
-const InfoText = styled.p`
+const InfoText = styled.div`
   margin-bottom: 15px;
+  word-wrap: break-word;
+`;
+
+// checkbox
+
+const CheckBox = styled.div`
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  border: ${(props) =>
+    props.checked ? `solid 2px ${colors.others.blue}` : `solid 2px #d5dadd`};
+  background: ${(props) => (props.checked ? colors.others.blue : "#d5dadd")};
+  border-radius: 50%;
+  cursor: pointer;
+
+  transition: all 0.2s;
+`;
+
+const HiddenCheckBox = styled.input`
+  border: none;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  position: absolute;
+  overflow: hidden;
 `;

@@ -53,7 +53,7 @@ export async function updateArrayField(collectionId, documentId, field, value) {
   }
 }
 
-// -------------------------------------------- 업데이트
+// -------------------------------------------- 실시가 업데이트 감시
 // 특정 id(이름)을 가진 doc의 변화감지
 // callback 함수로 재활용 가능
 export const observeDocumentChanges = (collectionName, docId, callback) => {
@@ -93,4 +93,33 @@ export const removeArrayItem = async (
 
 export const deleteDocument = async (collectionName, docId) => {
   await deleteDoc(doc(dbService, collectionName, docId));
+};
+
+// -------------------------------------------- 수정
+// 스케줄 arr 특정 인덱스의 부울 변환
+export const toggleArrayItem = async (
+  collectionId,
+  documentId,
+  field,
+  selectedItemId
+) => {
+  try {
+    const docRef = doc(dbService, collectionId, documentId);
+    const docSnap = await getDoc(docRef);
+
+    const dataArray = docSnap.data()[field];
+    const itemIndex = dataArray.findIndex((item) => item.id === selectedItemId);
+
+    if (itemIndex !== -1) {
+      let updatedItem = { ...dataArray[itemIndex] };
+      updatedItem.isCompleted = !updatedItem.isCompleted;
+      let updatedDataArray = [...dataArray];
+      updatedDataArray[itemIndex] = updatedItem;
+
+      await updateDoc(docRef, { [field]: updatedDataArray });
+    }
+    return null;
+  } catch (error) {
+    return error;
+  }
 };

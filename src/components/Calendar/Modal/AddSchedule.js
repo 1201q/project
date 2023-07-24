@@ -102,7 +102,7 @@ export default function AddScheduleModal() {
             <div>
               <SmallHeaderText>시작</SmallHeaderText>
               <InputWrapper>
-                <DatePicker
+                <InputPicker
                   type="date"
                   name="startdate"
                   value={startDate}
@@ -110,7 +110,7 @@ export default function AddScheduleModal() {
                   style={{ marginRight: "8px" }}
                   required
                 />
-                <DatePicker
+                <InputPicker
                   type="time"
                   name="starttime"
                   value={startTime}
@@ -121,7 +121,7 @@ export default function AddScheduleModal() {
             <div>
               <SmallHeaderText>끝</SmallHeaderText>
               <InputWrapper>
-                <DatePicker
+                <InputPicker
                   type="date"
                   name="enddate"
                   min={startDate}
@@ -129,7 +129,7 @@ export default function AddScheduleModal() {
                   onChange={onChange}
                   style={{ marginRight: "8px" }}
                 />
-                <DatePicker
+                <InputPicker
                   type="time"
                   name="endtime"
                   value={endTime}
@@ -271,7 +271,7 @@ const SmallHeaderText = styled.p`
 `;
 
 // input
-const DatePicker = styled.input`
+const InputPicker = styled.input`
   width: 110px;
   padding: 2px 4px;
   font-size: 13px;

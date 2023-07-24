@@ -31,6 +31,8 @@ export default function Calendar() {
   const {
     isAddScheduleModalOpen,
     setIsAddScheduleModalOpen,
+    setIsDetailInfoPopupOpen,
+    setIsMoreListPopupOpen,
     isDetailInfoPopupOpen,
     isMoreListPopupOpen,
   } = useCalendarModal();
@@ -46,6 +48,8 @@ export default function Calendar() {
     } else if (mode === "next") {
       setCurrentDate(dayjs(currentDate).add(1, "month"));
     }
+    setIsDetailInfoPopupOpen(false);
+    setIsMoreListPopupOpen(false);
   };
 
   // 현재 보고 있는 달의 todo목록만 return
@@ -168,23 +172,33 @@ export default function Calendar() {
 
   return (
     <Container>
-      <ControllerContainer>
-        <CurrentDateText>
-          {dayjs(currentDate).format("YYYY년 M월")}
-        </CurrentDateText>
-        <ControlBtn
-          whileTap={{ scale: 0.9 }}
-          onClick={() => monthControl("prev")}
-        >
-          <AngleLeft width={20} height={20} fill={colors.font.black} />
-        </ControlBtn>
-        <ControlBtn
-          whileTap={{ scale: 0.9 }}
-          onClick={() => monthControl("next")}
-        >
-          <AngleRight width={20} height={20} fill={colors.font.black} />
-        </ControlBtn>
-      </ControllerContainer>
+      <HeaderContainer>
+        <ControlContainer>
+          <CurrentDateText>
+            {dayjs(currentDate).format("YYYY년 M월")}
+          </CurrentDateText>
+          <DateControlBtn
+            whileTap={{ scale: 0.9 }}
+            onClick={() => monthControl("prev")}
+          >
+            <AngleLeft width={20} height={20} fill={colors.font.black} />
+          </DateControlBtn>
+          <DateControlBtn
+            whileTap={{ scale: 0.9 }}
+            onClick={() => monthControl("next")}
+          >
+            <AngleRight width={20} height={20} fill={colors.font.black} />
+          </DateControlBtn>
+        </ControlContainer>
+        <ControlContainer>
+          <ControlBtn
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setCurrentDate(dayjs())}
+          >
+            오늘
+          </ControlBtn>
+        </ControlContainer>
+      </HeaderContainer>
       <DayHeaderContainer>
         <DayHeader>일</DayHeader>
         <DayHeader>월</DayHeader>
@@ -210,12 +224,18 @@ const Container = styled.div`
   overflow-x: scroll;
 `;
 
-const ControllerContainer = styled.div`
+const HeaderContainer = styled.div`
+  position: relative;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 15px 25px;
   border-bottom: 1px solid ${colors.border.gray};
   height: 61px;
+`;
+
+const ControlContainer = styled.div`
+  display: flex;
 `;
 
 const DayHeaderContainer = styled.div`
@@ -250,14 +270,28 @@ const CurrentDateText = styled.p`
   font-size: 25px;
   font-weight: 700;
   color: ${colors.font.black};
+  cursor: pointer;
 `;
 
-const ControlBtn = styled(motion.button)`
+const DateControlBtn = styled(motion.button)`
   background: none;
   border: none;
   cursor: pointer;
   padding-left: 5px;
   margin-top: 3px;
+`;
+
+const ControlBtn = styled(motion.button)`
+  font-weight: 800;
+  height: 30px;
+  background: none;
+  border: 2px solid ${colors.border.deepgray};
+  color: ${colors.font.black};
+  border-radius: 7px;
+  cursor: pointer;
+  margin-top: 3px;
+  padding: 0px 13px;
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.05);
 `;
 
 // 달력
