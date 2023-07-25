@@ -221,8 +221,7 @@ export default function Calendar() {
 const Container = styled.div`
   width: 100%;
   /* height: 100%; */
-  max-height: 100vh;
-  overflow-x: scroll;
+  max-height: 99vh;
 `;
 
 const HeaderContainer = styled.div`
@@ -243,14 +242,14 @@ const DayHeaderContainer = styled.div`
   display: flex;
   align-items: center;
   border-bottom: 1px solid ${colors.border.deepgray};
-  height: 30px;
+  height: 29px;
 `;
 
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-height: calc(100vh - 91px);
+  max-height: calc(99vh - 91px);
 `;
 
 const DateContainer = styled.div`

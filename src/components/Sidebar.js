@@ -49,19 +49,27 @@ const Sidebar = ({ userData }) => {
         </InputContainer>
         {/* 메뉴 */}
         <MenuContainer>
-          <Menu whileTap={{ scale: 0.96 }}>
+          <Menu
+            whileTap={{ scale: 0.98 }}
+            initial={{ scale: 1 }}
+            onClick={() => router.push("/")}
+          >
             <Home width={14} height={14} />
             <MenuText>홈</MenuText>
           </Menu>
-          <Menu whileTap={{ scale: 0.96 }}>
+          <Menu
+            whileTap={{ scale: 0.98 }}
+            initial={{ scale: 1 }}
+            onClick={() => router.push("/team")}
+          >
             <Search width={14} height={14} />
             <MenuText>탐색</MenuText>
           </Menu>
-          <Menu whileTap={{ scale: 0.96 }}>
+          <Menu whileTap={{ scale: 0.98 }}>
             <Check width={14} height={14} />
             <MenuText>오늘 할 일</MenuText>
           </Menu>
-          <Menu whileTap={{ scale: 0.96 }}>
+          <Menu whileTap={{ scale: 0.98 }}>
             <List width={14} height={14} />
             <MenuText>전체 일정</MenuText>
           </Menu>
