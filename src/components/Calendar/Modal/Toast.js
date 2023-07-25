@@ -24,7 +24,7 @@ const Container = styled(motion.div)`
   top: 20px;
   left: 50%;
   /* transform: translate(-50%, -50%); */
-  width: 180px;
+  width: 160px;
   height: 40px;
   background-color: ${colors.calendar.mint};
   box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.05);
@@ -41,7 +41,7 @@ const IconContainer = styled.div`
   height: 22px;
   min-width: 22px;
   border-radius: 50%;
-  background-color: white;
+  /* background-color: white; */
   display: flex;
   align-items: center;
   justify-content: center;

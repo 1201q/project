@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useAnimationControls } from "framer-motion";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import * as colors from "../../../styles/colors";
@@ -9,6 +9,7 @@ import * as colors from "../../../styles/colors";
 import X from "../../../assets/x.svg";
 import Check from "../../../assets/check.svg";
 import Calendar from "../../../assets/calendar.svg";
+import Ex from "../../../assets/cross-small.svg";
 
 // 함수, context
 import { useAuth } from "@/utils/context/auth/AuthProvider";
@@ -18,18 +19,21 @@ import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 // datepicker
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { enUS } from "date-fns/locale";
+import { enUS, ko } from "date-fns/locale";
 
 export default function AddScheduleModal() {
   const user = useAuth();
+  const titleInputRef = useRef();
+  const controls = useAnimationControls();
   const { selectedDate } = useCalendar();
   const { setIsAddScheduleModalOpen } = useCalendarModal();
 
   // state
   const [title, setTitle] = useState("");
-  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedColor, setSelectedColor] = useState("red");
   const [startDate, setStartDate] = useState(new Date(selectedDate));
   const [endDate, setEndDate] = useState(new Date(selectedDate));
+  const [error, setError] = useState(false);
 
   const modalRef = useRef();
 
@@ -46,25 +50,43 @@ export default function AddScheduleModal() {
   ];
 
   const onUpdateSchedule = async () => {
-    const update = await updateArrayField(
-      "schedule",
-      user.user.uid,
-      "data",
-      scheduleData[0]
-    );
+    if (title !== "" && !error) {
+      const update = await updateArrayField(
+        "schedule",
+        user.user.uid,
+        "data",
+        scheduleData[0]
+      );
 
-    if (!update) {
-      setIsAddScheduleModalOpen(false);
+      if (!update) {
+        setIsAddScheduleModalOpen(false);
+      } else {
+        console.log(update);
+      }
     } else {
-      console.log(update);
+      shakeModal();
+      setError(true);
+      titleInputRef.current.focus();
+
+      setTimeout(() => {
+        setError(false);
+      }, 1500);
     }
+  };
+
+  const shakeModal = () => {
+    controls.start({
+      x: [-10, 10, -10, 10, 0],
+      transition: {
+        duration: 0.3,
+      },
+    });
   };
 
   return (
     <Container>
       <ModalContainer
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
+        animate={controls}
         transition={{ duration: 0.1 }}
         ref={modalRef}
       >
@@ -73,12 +95,26 @@ export default function AddScheduleModal() {
         <TitleInputContainer>
           <SmallHeaderText>제목</SmallHeaderText>
           <TitleInput
+            ref={titleInputRef}
             type="text"
             name="title"
             placeholder="제목을 입력하세요"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            errorborder={error}
+            errorbg={error}
           />
+          {error && (
+            <ErrorPopup
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <IconContainer>
+                <Ex width={17} height={17} fill={colors.calendar.red} />
+              </IconContainer>
+              제목을 입력해주세요.
+            </ErrorPopup>
+          )}
         </TitleInputContainer>
         {/* 일자 셀렉 input */}
         <DateSelectContainer>
@@ -86,7 +122,7 @@ export default function AddScheduleModal() {
           <DatePickerContainer>
             <SmallHeaderText>시작</SmallHeaderText>
             <DatePicker
-              locale={enUS}
+              locale={ko}
               selected={startDate}
               showTimeSelect
               dateFormat="yyyy-MM-dd HH:mm"
@@ -117,7 +153,7 @@ export default function AddScheduleModal() {
           <DatePickerContainer>
             <SmallHeaderText>끝</SmallHeaderText>
             <DatePicker
-              locale={enUS}
+              locale={ko}
               selected={endDate}
               showTimeSelect
               dateFormat="yyyy-MM-dd HH:mm"
@@ -152,11 +188,12 @@ export default function AddScheduleModal() {
           </SaveButton>
 
           <SaveButton
-            styledbg={"#1A73E8"}
+            styledbg={error ? "#D32F2F" : "#1A73E8"}
             styledfont={"white"}
             whileHover={{ opacity: 0.8 }}
             whileTap={{ scale: 0.95 }}
             onClick={onUpdateSchedule}
+            style={error && { pointerEvents: "none" }}
           >
             저장
           </SaveButton>
@@ -174,7 +211,7 @@ export default function AddScheduleModal() {
                   <Check
                     width={14}
                     height={14}
-                    fill={colors.font.black}
+                    fill={"white"}
                     style={{ marginTop: "2px" }}
                   />
                 )}
@@ -238,9 +275,22 @@ const ButtonContainer = styled.div`
 
 const TitleInputContainer = styled.div`
   margin-bottom: 30px;
+  height: 70px;
 `;
 
 const ColorPickerContainer = styled.div``;
+
+const IconContainer = styled.div`
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+`;
 
 // wrapper
 
@@ -266,11 +316,17 @@ const SmallHeaderText = styled.p`
 const TitleInput = styled.input`
   width: 100%;
   padding: 10px;
-  border: none;
-  background-color: ${colors.background.gray};
+
   border-radius: 7px;
+
   outline: none;
   font-size: 15px;
+  background-color: ${(props) =>
+    props.errorbg ? "rgba(236, 112, 99, 0.1)" : colors.background.gray};
+  border: ${(props) =>
+    props.errorborder
+      ? "2px solid rgba(236, 112, 99, 0.5)"
+      : `1px solid ${colors.background.gray}`};
 `;
 
 const InputDatePicker = styled.div`
@@ -330,4 +386,25 @@ const ColorPickerButton = styled.button`
   border: none;
   border: 2px solid ${colors.border.deepgray};
   background-color: ${(props) => props.styledbg};
+`;
+
+// popup
+const ErrorPopup = styled(motion.div)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+
+  right: 0;
+  background-color: ${colors.calendar.red};
+  color: white;
+  border-radius: 10px;
+  border: 2px solid ${colors.border.deepgray};
+  width: 160px;
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.05);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 7px 6px;
+  margin-top: 5px;
+  margin-right: 25px;
 `;
