@@ -3,7 +3,6 @@ import nookies from "nookies";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { admin } from "@/utils/firebase/firebaseAdmin";
 import Sidebar from "@/components/Sidebar";
-
 import Loading from "@/components/Loading";
 
 export const getServerSideProps = async (ctx) => {

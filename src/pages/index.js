@@ -18,6 +18,16 @@ dayjs.extend(isSameOrBefore);
 export const getServerSideProps = async (ctx) => {
   try {
     const cookies = nookies.get(ctx);
+
+    if (!cookies.token) {
+      return {
+        redirect: {
+          destination: "/auth/login",
+          permanent: false,
+        },
+      };
+    }
+
     const token = await admin.auth().verifyIdToken(cookies.token);
     const { uid, email } = token;
 

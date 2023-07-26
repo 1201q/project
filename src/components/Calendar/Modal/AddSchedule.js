@@ -193,7 +193,7 @@ export default function AddScheduleModal() {
             whileHover={{ opacity: 0.8 }}
             whileTap={{ scale: 0.95 }}
             onClick={onUpdateSchedule}
-            style={error && { pointerEvents: "none" }}
+            style={error && { cursor: "not-allowed" }}
           >
             저장
           </SaveButton>

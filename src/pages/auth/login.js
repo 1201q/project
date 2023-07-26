@@ -6,9 +6,12 @@ import * as colors from "../../styles/colors";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Loading from "@/components/Loading";
+import { useAuth } from "@/utils/context/auth/AuthProvider";
 
 const Login = () => {
   const router = useRouter();
+  const user = useAuth();
+  console.log(user);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrMsg] = useState(null);
