@@ -15,7 +15,6 @@ import MoreListPopup from "./Modal/MoreList";
 // context
 import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 import Date from "./Contents/Date";
-import Toast from "./Modal/Toast";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
@@ -220,7 +219,6 @@ export default function Calendar() {
 // 컨테이너
 const Container = styled.div`
   width: 100%;
-  /* height: 100%; */
   max-height: 99vh;
 `;
 
