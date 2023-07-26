@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import * as colors from "../../styles/colors";
+import { v4 as uuidv4 } from "uuid";
 
 // svg
 import A from "../../assets/a.svg";
@@ -155,7 +156,7 @@ export default function Team() {
         </Fleid>
       </TableHeaderContainer>
       {testTeamData.map((item, index) => (
-        <Col>
+        <Col key={uuidv4()}>
           {/* 팀이름 */}
           <Fleid styledwidth={"250px"}>
             <div style={{ width: "46px" }}>{index + 1}</div>
