@@ -36,7 +36,7 @@ export const getServerSideProps = async (ctx) => {
   }
 };
 
-export default function TeamFind({}) {
+export default function TeamFind() {
   const user = useAuth();
   return (
     <>

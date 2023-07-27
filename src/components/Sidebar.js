@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Image from "next/image";
 import * as colors from "../styles/colors";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 // svg
 import Search from "../assets/search.svg";
@@ -14,33 +14,47 @@ import Lock from "../assets/lock.svg";
 import PlusLogo from "../assets/plus-small.svg";
 import { logout } from "@/utils/firebase/auth";
 import { useRouter } from "next/router";
+import UserModal from "./UserModal";
 
 const Sidebar = ({ userData }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const modalRef = useRef(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        isModalOpen &&
+        modalRef.current &&
+        !modalRef.current.contains(event.target)
+      ) {
+        setIsModalOpen(false);
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [isModalOpen]);
 
   return (
     <Container>
       <Wrapper>
         {/* 프로필 */}
         <ProfileContainer>
-          <ProfileWrapper>
+          <ProfileWrapper
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          >
             <ProfileImage>나</ProfileImage>
             <ProfileName>
               {userData ? userData.user.displayName : "익명"}
             </ProfileName>
           </ProfileWrapper>
-          <LogOutBtn
-            onClick={() => {
-              const confirm = window.confirm("로그아웃 하시겠어요?");
-
-              if (confirm) {
-                logout();
-                router.replace("/auth/login");
-              }
-            }}
-          >
-            <Lock width={17} height={17} style={{ marginTop: "2px" }} />
-          </LogOutBtn>
         </ProfileContainer>
         {/* 검색 */}
         <InputContainer>
@@ -49,27 +63,19 @@ const Sidebar = ({ userData }) => {
         </InputContainer>
         {/* 메뉴 */}
         <MenuContainer>
-          <Menu
-            whileTap={{ scale: 0.98 }}
-            initial={{ scale: 1 }}
-            onClick={() => router.push("/")}
-          >
+          <Menu onClick={() => router.push("/")}>
             <Home width={14} height={14} />
             <MenuText>홈</MenuText>
           </Menu>
-          <Menu
-            whileTap={{ scale: 0.98 }}
-            initial={{ scale: 1 }}
-            onClick={() => router.push("/team")}
-          >
+          <Menu onClick={() => router.push("/team")}>
             <Search width={14} height={14} />
             <MenuText>탐색</MenuText>
           </Menu>
-          <Menu whileTap={{ scale: 0.98 }}>
+          <Menu>
             <Check width={14} height={14} />
             <MenuText>오늘 할 일</MenuText>
           </Menu>
-          <Menu whileTap={{ scale: 0.98 }}>
+          <Menu>
             <List width={14} height={14} />
             <MenuText>전체 일정</MenuText>
           </Menu>
@@ -78,7 +84,7 @@ const Sidebar = ({ userData }) => {
         <TeamContainer>
           <MenuHeader>나의 팀</MenuHeader>
           <Team>
-            <Menu whileTap={{ scale: 0.96 }}>
+            <Menu>
               <AngleRight
                 width={14}
                 height={14}
@@ -90,13 +96,13 @@ const Sidebar = ({ userData }) => {
             <ProjectContainer>
               <VerticalLine></VerticalLine>
               <Project>
-                <Menu whileTap={{ scale: 0.96 }}>
+                <Menu>
                   <MenuText>프로젝트</MenuText>
                 </Menu>
-                <Menu whileTap={{ scale: 0.96 }}>
+                <Menu>
                   <MenuText>프로젝트</MenuText>
                 </Menu>
-                <Menu whileTap={{ scale: 0.96 }} style={{ marginBottom: 0 }}>
+                <Menu style={{ marginBottom: 0 }}>
                   <MenuText>프로젝트</MenuText>
                 </Menu>
               </Project>
@@ -106,10 +112,16 @@ const Sidebar = ({ userData }) => {
         {/* 새로운 팀 가입 */}
         <TeamContainer>
           <Menu whileTap={{ scale: 0.96 }}>
-            <PlusLogo width={15} height={15} />
+            <PlusLogo width={17} height={17} fill={"#7D7E87"} />
             <MenuText>새로운 팀 가입하기</MenuText>
           </Menu>
         </TeamContainer>
+        {/* 모달 */}
+        {isModalOpen && (
+          <div ref={modalRef}>
+            <UserModal />
+          </div>
+        )}
       </Wrapper>
     </Container>
   );
@@ -132,18 +144,26 @@ const Wrapper = styled.div`
   padding: 0px 0px;
 `;
 
-const ProfileWrapper = styled.div`
+const ProfileWrapper = styled(motion.div)`
   display: flex;
   align-items: center;
+  width: 100%;
+  padding: 5px;
+  border-radius: 7px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #ededed;
+    opacity: 0.95;
+  }
 `;
 
 // 컨테이너
 const ProfileContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
   border-bottom: 1px solid ${colors.border.gray};
-  padding: 15px 15px;
+  padding: 0px 10px;
   height: 61px;
 `;
 const MenuContainer = styled.div`
@@ -217,6 +237,13 @@ const Menu = styled(motion.div)`
   }
 `;
 
+const MenuText = styled.p`
+  margin-left: 8px;
+  font-size: 17px;
+  font-weight: 500;
+  color: ${colors.font.darkgray};
+`;
+
 const MenuInput = styled.input`
   width: 100%;
   height: 35px;
@@ -228,13 +255,6 @@ const MenuInput = styled.input`
   font-weight: 500;
   padding-left: 30px;
   padding-right: 10px;
-`;
-
-const MenuText = styled.p`
-  margin-left: 8px;
-  font-size: 17px;
-  font-weight: 500;
-  color: ${colors.font.darkgray};
 `;
 
 const MenuHeader = styled.p`

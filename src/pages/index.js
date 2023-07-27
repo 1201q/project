@@ -12,6 +12,7 @@ import Loading from "@/components/Loading";
 // context
 import { useCalendar } from "@/utils/context/CalendarContext";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
+import { useRouter } from "next/router";
 
 dayjs.extend(isSameOrBefore);
 
@@ -47,6 +48,7 @@ export const getServerSideProps = async (ctx) => {
 
 export default function Home({ uid }) {
   const user = useAuth();
+  const router = useRouter();
   const { setScheduleList } = useCalendar();
 
   useEffect(() => {
@@ -54,6 +56,12 @@ export default function Home({ uid }) {
       setScheduleList(data.data);
     };
     observeDocumentChanges("schedule", uid, getSchedule);
+
+    if (user.user) {
+      router.push("/");
+    } else {
+      console.log("유저 정보가 없어요");
+    }
   }, []);
 
   return (

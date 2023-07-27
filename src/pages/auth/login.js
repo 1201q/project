@@ -80,6 +80,9 @@ const Login = () => {
               </Link>
             </ButtonContainer>
             <ErrorContainer>{errorMsg && errorMsg}</ErrorContainer>
+            {user.user && (
+              <button onClick={() => router.push("/")}>로그인</button>
+            )}
           </Wrapper>
         </Container>
       )}
