@@ -4,13 +4,18 @@ import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import styled from "styled-components";
 import { admin } from "@/utils/firebase/firebaseAdmin";
-import { observeDocumentChanges } from "@/utils/firebase/db";
+import {
+  observeDocumentChanges,
+  observeCollectionChanges,
+  observeJoinedTeamChanges,
+} from "@/utils/firebase/db";
 // 컴포넌트
 import Sidebar from "@/components/Sidebar";
 import Calendar from "@/components/Calendar/Calendar";
 import Loading from "@/components/Loading";
 // context
 import { useCalendar } from "@/utils/context/CalendarContext";
+import { useTeam } from "@/utils/context/TeamContext";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useRouter } from "next/router";
 
@@ -50,19 +55,28 @@ export default function Home({ uid }) {
   const user = useAuth();
   const router = useRouter();
   const { setScheduleList } = useCalendar();
+  const { setJoinedTeamList } = useTeam();
 
   useEffect(() => {
     const getSchedule = (data) => {
       setScheduleList(data.data);
     };
-    observeDocumentChanges("schedule", uid, getSchedule);
+
+    const getTeamList = (data) => {
+      const myteam = data.filter((item) => item.teamMembers.includes(uid));
+      setJoinedTeamList(myteam);
+      console.log(data);
+    };
 
     if (user.user) {
       router.push("/");
+
+      observeDocumentChanges("schedule", uid, getSchedule); // 스케줄
+      observeJoinedTeamChanges("team", getTeamList);
     } else {
-      console.log("유저 정보가 없어요");
+      router.push("/auth/login");
     }
-  }, []);
+  }, [user]);
 
   return (
     <>

@@ -1,6 +1,6 @@
 import { loginWithEmail } from "@/utils/firebase/auth";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import * as colors from "../../styles/colors";
 import { motion } from "framer-motion";
@@ -11,7 +11,7 @@ import { useAuth } from "@/utils/context/auth/AuthProvider";
 const Login = () => {
   const router = useRouter();
   const user = useAuth();
-  console.log(user);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrMsg] = useState(null);
@@ -39,6 +39,12 @@ const Login = () => {
       setErrMsg(loginError);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    }
+  }, [user]);
 
   return (
     <>

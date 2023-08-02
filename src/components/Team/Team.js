@@ -14,7 +14,12 @@ import List from "../../assets/list.svg";
 import AngleDown from "../../assets/angle-small-down.svg";
 import AngleUp from "../../assets/angle-small-up.svg";
 
+import { addDocument } from "@/utils/firebase/db";
+import { useAuth } from "@/utils/context/auth/AuthProvider";
+import { useEffect, useState } from "react";
+
 export default function Team() {
+  const user = useAuth();
   const testTeamData = [
     {
       teamName: "Team A",
@@ -73,6 +78,53 @@ export default function Team() {
       currentMembers: 4,
     },
   ];
+
+  const [teamName, setTeamName] = useState("");
+  const [teamCode, setTeamCode] = useState("");
+  const [teamDescription, setTeamDescription] = useState("");
+
+  useEffect(() => {
+    createRandomCode();
+  }, []);
+
+  const onChange = (e) => {
+    const { value, name } = e.target;
+
+    if (name === "teamname") {
+      setTeamName(value);
+    } else if (name === "code") {
+      setTeamCode(value);
+    } else if (name === "description") {
+      setTeamDescription(value);
+    }
+  };
+
+  const createNewTeam = () => {
+    const data = {
+      teamName: teamName,
+      teamCode: teamCode,
+      teamDescription: teamDescription,
+      teamUID: uuidv4(),
+      createdAt: dayjs().format(""),
+      teamOwner: user.user.uid,
+      teamMembers: [user.user.uid],
+      teamAdminMembers: [user.user.uid],
+    };
+    addDocument("team", data)
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error));
+  };
+
+  const createRandomCode = () => {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let code = "";
+    for (let index = 0; index < 6; index++) {
+      const idx = Math.floor(Math.random() * characters.length);
+      code += characters.charAt(idx);
+    }
+    setTeamCode(code);
+  };
+
   return (
     <Container>
       <HeaderContainer>
@@ -176,6 +228,41 @@ export default function Team() {
           </Fleid>
         </Col>
       ))}
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          createNewTeam();
+        }}
+      >
+        <input
+          type="text"
+          name="teamname"
+          onChange={onChange}
+          value={teamName}
+          placeholder="팀 이름"
+          required
+        />
+
+        <input
+          type="text"
+          name="code"
+          value={teamCode}
+          placeholder="팀 코드"
+          readOnly
+          required
+        />
+        <input
+          type="text"
+          name="description"
+          onChange={onChange}
+          value={teamDescription}
+          placeholder="팀 설명"
+          required
+        />
+        <input type="submit" value="제출" />
+      </form>
+      <button onClick={() => createRandomCode()}>생성</button>
     </Container>
   );
 }

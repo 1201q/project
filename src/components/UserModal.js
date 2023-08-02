@@ -11,9 +11,13 @@ import UserSetting from "../assets/user.svg";
 import Users from "../assets/users-alt.svg";
 import Lock from "../assets/lock.svg";
 import PlusLogo from "../assets/plus-small2.svg";
+import { useAuth } from "@/utils/context/auth/AuthProvider";
+import { useTeam } from "@/utils/context/TeamContext";
 
 export default function UserModal() {
   const router = useRouter();
+  const user = useAuth();
+  const { joinedTeamList } = useTeam();
 
   return (
     <ModalContainer
@@ -25,22 +29,16 @@ export default function UserModal() {
       <ProfileContainer>
         <User width={150} height={150} fill={"#7F7F7F"} />
 
-        <DisplayName>황준서</DisplayName>
+        <DisplayName>{user.user && user.user.displayName}</DisplayName>
       </ProfileContainer>
       {/* 팀 목록 */}
       <MainContentsContainer>
-        <Team>
-          <TeamProfileImg>팀</TeamProfileImg>
-          <TeamProfileText>더조은요양원</TeamProfileText>
-        </Team>
-        <Team>
-          <TeamProfileImg>팀</TeamProfileImg>
-          <TeamProfileText>더조은요양원</TeamProfileText>
-        </Team>
-        <Team>
-          <TeamProfileImg>팀</TeamProfileImg>
-          <TeamProfileText>더조은요양원</TeamProfileText>
-        </Team>
+        {joinedTeamList.map((item) => (
+          <Team key={item.teamUID}>
+            <TeamProfileImg>팀</TeamProfileImg>
+            <TeamProfileText>{item.teamName}</TeamProfileText>
+          </Team>
+        ))}
         <Team>
           <TeamProfileImg
             styledbg={"white"}
@@ -53,7 +51,10 @@ export default function UserModal() {
               style={{ marginLeft: "1px" }}
             />
           </TeamProfileImg>
-          <TeamProfileText style={{ color: colors.font.gray }}>
+          <TeamProfileText
+            style={{ color: colors.font.gray }}
+            onClick={() => router.push("/team")}
+          >
             새로운 팀에 참가하기
           </TeamProfileText>
         </Team>
@@ -61,7 +62,7 @@ export default function UserModal() {
       {/* 바텀 설정 */}
       <SettingContainer>
         <EmailContainer>
-          <EmailText>1201q@naver.com</EmailText>
+          <EmailText>{user.user && user.user.email}</EmailText>
         </EmailContainer>
         <Menu>
           <Users
@@ -88,7 +89,7 @@ export default function UserModal() {
 
               if (confirm) {
                 logout();
-                router.replace("/auth/login");
+                router.push("/auth/login");
               }
             }}
           >
