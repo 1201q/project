@@ -89,7 +89,10 @@ export default function UserModal() {
 
               if (confirm) {
                 logout();
-                router.push("/auth/login");
+
+                setTimeout(() => {
+                  router.replace("/auth/login");
+                }, 1000);
               }
             }}
           >

@@ -32,19 +32,16 @@ const Login = () => {
     setIsLoading(true);
     const loginError = await loginWithEmail(email, password);
     if (loginError === null) {
-      setIsLoading(false);
+      router.replace("/");
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
     } else {
       setIsLoading(false);
       console.log(loginError);
       setErrMsg(loginError);
     }
   };
-
-  useEffect(() => {
-    if (user) {
-      router.push("/");
-    }
-  }, [user]);
 
   return (
     <>
@@ -86,9 +83,6 @@ const Login = () => {
               </Link>
             </ButtonContainer>
             <ErrorContainer>{errorMsg && errorMsg}</ErrorContainer>
-            {user.user && (
-              <button onClick={() => router.push("/")}>로그인</button>
-            )}
           </Wrapper>
         </Container>
       )}
