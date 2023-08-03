@@ -18,6 +18,21 @@ export default function UserModal() {
   const router = useRouter();
   const user = useAuth();
   const { joinedTeamList } = useTeam();
+  console.log(joinedTeamList);
+
+  const renderAuthorityInfo = (item) => {
+    const isOwner = item.teamOwner === user.user.uid;
+    const isAdmin =
+      item.teamAdminMembers.filter((uid) => uid === user.user.uid).length > 0
+        ? true
+        : false;
+
+    if (isOwner) {
+      return <AdminInfo styledbg={colors.calendar.blue}>소유자</AdminInfo>;
+    } else if (isAdmin) {
+      return <AdminInfo styledbg={colors.calendar.gray}>관리자</AdminInfo>;
+    }
+  };
 
   return (
     <ModalContainer
@@ -37,6 +52,7 @@ export default function UserModal() {
           <Team key={item.teamUID}>
             <TeamProfileImg>팀</TeamProfileImg>
             <TeamProfileText>{item.teamName}</TeamProfileText>
+            {renderAuthorityInfo(item)}
           </Team>
         ))}
         <Team>
@@ -113,7 +129,7 @@ const ModalContainer = styled(motion.div)`
   position: absolute;
   top: 5px;
   left: 232px;
-  width: 260px;
+  width: 280px;
   height: 100%;
   max-height: 480px;
   background-color: white;
@@ -210,6 +226,7 @@ const EmailText = styled.p`
 
 // team
 const Team = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -224,6 +241,19 @@ const Team = styled.div`
     background-color: #ededed;
     opacity: 0.8;
   }
+`;
+
+const AdminInfo = styled.div`
+  position: absolute;
+  right: 0;
+  font-size: 12px;
+  padding: 3px 5px;
+  margin-right: 7px;
+  display: flex;
+  align-items: center;
+  background-color: ${(props) => props.styledbg};
+  color: white;
+  border-radius: 7px;
 `;
 
 const TeamProfileImg = styled.div`
