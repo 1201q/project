@@ -73,8 +73,6 @@ export default function Home({ uid }) {
 
       observeDocumentChanges("schedule", uid, getSchedule); // 스케줄
       observeJoinedTeamChanges("team", getTeamList);
-    } else {
-      router.push("/auth/login");
     }
   }, [user]);
 
