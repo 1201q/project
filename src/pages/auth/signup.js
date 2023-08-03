@@ -36,8 +36,10 @@ const Signup = () => {
         firstLogin: true,
         myTeam: [],
       });
-      router.push("/");
-      setIsLoading(false);
+      router.replace("/");
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 5000);
     } else {
       console.log(signupError);
       setIsLoading(false);
