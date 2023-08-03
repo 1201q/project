@@ -32,7 +32,6 @@ const Login = () => {
     setIsLoading(true);
     const loginError = await loginWithEmail(email, password);
     if (loginError === null) {
-      router.push("/");
       setIsLoading(false);
     } else {
       setIsLoading(false);
@@ -46,12 +45,6 @@ const Login = () => {
       router.push("/");
     }
   }, [user]);
-
-  useEffect(() => {
-    if (user) {
-      router.push("/");
-    }
-  }, []);
 
   return (
     <>
