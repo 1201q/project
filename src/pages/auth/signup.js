@@ -1,12 +1,42 @@
 import styled from "styled-components";
 import { registerWithEamil } from "@/utils/firebase/auth";
+import nookies from "nookies";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { setDocument } from "@/utils/firebase/db";
 import { authService } from "@/utils/firebase/firebaseClient";
+import { admin } from "@/utils/firebase/firebaseAdmin";
 import * as colors from "../../styles/colors";
 import { motion } from "framer-motion";
 import Loading from "@/components/Loading";
+
+export const getServerSideProps = async (ctx) => {
+  try {
+    const cookies = nookies.get(ctx);
+
+    if (cookies.token) {
+      const token = await admin.auth().verifyIdToken(cookies.token);
+      const { uid, email } = token;
+      return {
+        props: { email: email, uid: uid },
+        redirect: {
+          destination: "/",
+          permanent: false,
+        },
+      };
+    }
+
+    return { props: {} };
+  } catch (err) {
+    console.log(err);
+    return {
+      redirect: {
+        destination: "/auth/signup",
+        permanent: false,
+      },
+    };
+  }
+};
 
 const Signup = () => {
   const router = useRouter();
@@ -36,10 +66,8 @@ const Signup = () => {
         firstLogin: true,
         myTeam: [],
       });
-      router.replace("/");
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 5000);
+      router.reload();
+      setIsLoading(false);
     } else {
       console.log(signupError);
       setIsLoading(false);
@@ -49,7 +77,6 @@ const Signup = () => {
 
   return (
     <>
-      {" "}
       {isLoading ? (
         <Loading text={"회원가입 중이에요"} />
       ) : (

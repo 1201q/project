@@ -6,7 +6,6 @@ import styled from "styled-components";
 import { admin } from "@/utils/firebase/firebaseAdmin";
 import {
   observeDocumentChanges,
-  observeCollectionChanges,
   observeJoinedTeamChanges,
 } from "@/utils/firebase/db";
 // 컴포넌트
@@ -74,7 +73,6 @@ export default function Home({ uid }) {
     }
 
     router.push("/");
-
     observeDocumentChanges("schedule", uid, getSchedule); // 스케줄
     observeJoinedTeamChanges("team", getTeamList);
   }, [user]);

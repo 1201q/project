@@ -1,6 +1,6 @@
 import { loginWithEmail } from "@/utils/firebase/auth";
 import { useRouter } from "next/router";
-
+import nookies from "nookies";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import * as colors from "../../styles/colors";
@@ -8,6 +8,35 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Loading from "@/components/Loading";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
+import { admin } from "@/utils/firebase/firebaseAdmin";
+
+export const getServerSideProps = async (ctx) => {
+  try {
+    const cookies = nookies.get(ctx);
+
+    if (cookies.token) {
+      const token = await admin.auth().verifyIdToken(cookies.token);
+      const { uid, email } = token;
+      return {
+        props: { email: email, uid: uid },
+        redirect: {
+          destination: "/",
+          permanent: false,
+        },
+      };
+    }
+
+    return { props: {} };
+  } catch (err) {
+    console.log(err);
+    return {
+      redirect: {
+        destination: "/auth/login",
+        permanent: false,
+      },
+    };
+  }
+};
 
 const Login = () => {
   const router = useRouter();
@@ -32,10 +61,8 @@ const Login = () => {
     setIsLoading(true);
     const loginError = await loginWithEmail(email, password);
     if (loginError === null) {
-      router.replace("/");
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 5000);
+      setIsLoading(false);
+      router.reload();
     } else {
       setIsLoading(false);
       console.log(loginError);
