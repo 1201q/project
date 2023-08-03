@@ -68,12 +68,15 @@ export default function Home({ uid }) {
       console.log(data);
     };
 
-    if (user.user) {
-      router.push("/");
-
-      observeDocumentChanges("schedule", uid, getSchedule); // 스케줄
-      observeJoinedTeamChanges("team", getTeamList);
+    if (user === null) {
+      router.push("/auth/login");
+      return;
     }
+
+    router.push("/");
+
+    observeDocumentChanges("schedule", uid, getSchedule); // 스케줄
+    observeJoinedTeamChanges("team", getTeamList);
   }, [user]);
 
   return (

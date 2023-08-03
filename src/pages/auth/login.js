@@ -47,6 +47,12 @@ const Login = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    }
+  }, []);
+
   return (
     <>
       {isLoading ? (
