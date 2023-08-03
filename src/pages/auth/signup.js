@@ -66,8 +66,9 @@ const Signup = () => {
         firstLogin: true,
         myTeam: [],
       });
-      router.reload();
+
       setIsLoading(false);
+      router.reload();
     } else {
       console.log(signupError);
       setIsLoading(false);

@@ -91,7 +91,7 @@ export default function UserModal() {
                 logout();
 
                 setTimeout(() => {
-                  router.replace("/auth/login");
+                  router.reload();
                 }, 1000);
               }
             }}
