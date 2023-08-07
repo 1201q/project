@@ -18,7 +18,6 @@ export default function UserModal() {
   const router = useRouter();
   const user = useAuth();
   const { joinedTeamList } = useTeam();
-  console.log(joinedTeamList);
 
   const renderAuthorityInfo = (item) => {
     const isOwner = item.teamOwner === user.user.uid;
@@ -55,7 +54,7 @@ export default function UserModal() {
             {renderAuthorityInfo(item)}
           </Team>
         ))}
-        <Team>
+        <Team onClick={() => router.push("/team")}>
           <TeamProfileImg
             styledbg={"white"}
             styledborder={`2px solid ${colors.border.deepgray}`}
@@ -67,10 +66,7 @@ export default function UserModal() {
               style={{ marginLeft: "1px" }}
             />
           </TeamProfileImg>
-          <TeamProfileText
-            style={{ color: colors.font.gray }}
-            onClick={() => router.push("/team")}
-          >
+          <TeamProfileText style={{ color: colors.font.gray }}>
             새로운 팀에 참가하기
           </TeamProfileText>
         </Team>
@@ -80,7 +76,11 @@ export default function UserModal() {
         <EmailContainer>
           <EmailText>{user.user && user.user.email}</EmailText>
         </EmailContainer>
-        <Menu>
+        <Menu
+          onClick={() => {
+            router.push("/setting/team");
+          }}
+        >
           <Users
             width={13}
             height={13}
@@ -89,7 +89,11 @@ export default function UserModal() {
           />
           <MenuText>팀 관리</MenuText>
         </Menu>
-        <Menu>
+        <Menu
+          onClick={() => {
+            router.push("/setting");
+          }}
+        >
           <UserSetting
             width={13}
             height={13}

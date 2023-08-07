@@ -64,7 +64,6 @@ export default function Home({ uid }) {
     const getTeamList = (data) => {
       const myteam = data.filter((item) => item.teamMembers.includes(uid));
       setJoinedTeamList(myteam);
-      console.log(data);
     };
 
     if (user === null) {

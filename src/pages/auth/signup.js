@@ -9,6 +9,7 @@ import { admin } from "@/utils/firebase/firebaseAdmin";
 import * as colors from "../../styles/colors";
 import { motion } from "framer-motion";
 import Loading from "@/components/Loading";
+import dayjs from "dayjs";
 
 export const getServerSideProps = async (ctx) => {
   try {
@@ -62,13 +63,21 @@ const Signup = () => {
     setIsLoading(true);
     const signupError = await registerWithEamil(email, password, name);
     if (signupError === null) {
-      setDocument("users", authService.currentUser.uid, {
-        firstLogin: true,
-        myTeam: [],
+      const complete = await setDocument("users", authService.currentUser.uid, {
+        uid: authService.currentUser.uid,
+        name: authService.currentUser.displayName,
+        email: authService.currentUser.email,
+        createdAt: dayjs(authService.currentUser.metadata.creationTime).format(
+          ""
+        ),
+        lastLoginAt: dayjs(
+          authService.currentUser.metadata.lastSignInTime
+        ).format(""),
       });
-
       setIsLoading(false);
-      router.reload();
+      if (!complete) {
+        router.reload();
+      }
     } else {
       console.log(signupError);
       setIsLoading(false);

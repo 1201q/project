@@ -13,13 +13,13 @@ import Ex from "../../../assets/cross-small.svg";
 
 // 함수, context
 import { useAuth } from "@/utils/context/auth/AuthProvider";
-import { updateArrayField } from "@/utils/firebase/db";
 import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 
 // datepicker
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { enUS, ko } from "date-fns/locale";
+import { ko } from "date-fns/locale";
+import { addSchedule } from "@/utils/firebase/calendar";
 
 export default function AddScheduleModal() {
   const user = useAuth();
@@ -51,7 +51,7 @@ export default function AddScheduleModal() {
 
   const onUpdateSchedule = async () => {
     if (title !== "" && !error) {
-      const update = await updateArrayField(
+      const update = await addSchedule(
         "schedule",
         user.user.uid,
         "data",

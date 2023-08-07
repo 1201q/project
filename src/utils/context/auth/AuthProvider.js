@@ -5,9 +5,9 @@ import React, {
   createContext,
   useMemo,
 } from "react";
-import { getAuth, User } from "firebase/auth";
-
+import { getAuth } from "firebase/auth";
 import nookies from "nookies";
+import { authService } from "@/utils/firebase/firebaseClient";
 
 const AuthContext = createContext({ user: null });
 

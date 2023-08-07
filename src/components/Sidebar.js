@@ -148,7 +148,7 @@ const ProfileWrapper = styled(motion.div)`
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 5px;
+  padding: 7px;
   border-radius: 7px;
   cursor: pointer;
 
@@ -198,9 +198,9 @@ const ProfileImage = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 10px;
+  width: 27px;
+  height: 27px;
+  border-radius: 7px;
   background-color: ${colors.others.orange};
   color: white;
   font-weight: 700;
@@ -210,11 +210,6 @@ const ProfileName = styled.p`
   color: ${colors.font.black};
   font-weight: 800;
   font-size: 19px;
-`;
-
-const LogOutBtn = styled.button`
-  border: none;
-  background: none;
 `;
 
 // 메뉴

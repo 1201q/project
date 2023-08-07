@@ -5,7 +5,6 @@ import {
 } from "@/utils/context/CalendarContext";
 import "../styles/globals.css";
 import Head from "next/head";
-import { authService } from "@/utils/firebase/firebaseClient";
 import { TeamProvider } from "@/utils/context/TeamContext";
 
 export default function App({
@@ -18,15 +17,15 @@ export default function App({
         <title>테스트</title>
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <TeamProvider>
-        <CalendarModalProvider>
-          <CalendarProvider>
-            <AuthProvider>
+      <AuthProvider>
+        <TeamProvider>
+          <CalendarModalProvider>
+            <CalendarProvider>
               <Component {...pageProps} />
-            </AuthProvider>
-          </CalendarProvider>
-        </CalendarModalProvider>
-      </TeamProvider>
+            </CalendarProvider>
+          </CalendarModalProvider>
+        </TeamProvider>
+      </AuthProvider>
     </>
   );
 }

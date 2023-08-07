@@ -3,11 +3,7 @@ import { color, motion } from "framer-motion";
 import * as colors from "../../styles/colors";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import React, { useState, useRef, useEffect } from "react";
-import {
-  observeCollectionChanges,
-  updateArrayField,
-  updateTeamField,
-} from "@/utils/firebase/db";
+import { observeCollectionChanges, updateTeamField } from "@/utils/firebase/db";
 import { v4 as uuidv4 } from "uuid";
 
 //svg

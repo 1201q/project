@@ -9,9 +9,12 @@ import X from "../../../assets/x.svg";
 import Check from "../../../assets/check.svg";
 
 // 함수, context
-import { removeArrayItem, toggleArrayItem } from "@/utils/firebase/db";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
+import {
+  removeSchedule,
+  toggleScheduleComplete,
+} from "@/utils/firebase/calendar";
 
 export default function DetailInfoPopup() {
   const { selectedTodoData } = useCalendar();
@@ -25,7 +28,7 @@ export default function DetailInfoPopup() {
     const confirm = window.confirm("삭제하시겠어요?");
 
     if (confirm) {
-      const remove = await removeArrayItem(
+      const remove = await removeSchedule(
         "schedule",
         user.user.uid,
         "data",
@@ -62,13 +65,12 @@ export default function DetailInfoPopup() {
       </CloseButton>
       <CheckBoxContainer
         onClick={() => {
-          toggleArrayItem(
+          toggleScheduleComplete(
             "schedule",
             user.user.uid,
             "data",
             selectedTodoData.id
           );
-
           setChecked((prev) => !prev);
         }}
       >

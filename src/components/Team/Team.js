@@ -13,122 +13,47 @@ import Flag from "../../assets/flag.svg";
 import List from "../../assets/list.svg";
 import AngleDown from "../../assets/angle-small-down.svg";
 import AngleUp from "../../assets/angle-small-up.svg";
-
-import { addDocument } from "@/utils/firebase/db";
-import { useAuth } from "@/utils/context/auth/AuthProvider";
-import { useEffect, useState } from "react";
+import { useTeam } from "@/utils/context/TeamContext";
 
 export default function Team() {
-  const user = useAuth();
+  const { joinedTeamList } = useTeam();
+  console.log(joinedTeamList);
+
   const testTeamData = [
     {
       teamName: "Team A",
       leader: "John Doe",
       description: "This is Team A. We are a group of creative minds.",
-      teamStatus: "Active",
+
       currentMembers: 5,
     },
     {
       teamName: "Team B",
       leader: "Jane Smith",
       description: "Team B is all about collaboration and innovation.",
-      teamStatus: "Inactive",
+
       currentMembers: 3,
     },
     {
       teamName: "Team C",
       leader: "Michael Johnson",
       description: "Join Team C for exciting projects and challenges.",
-      teamStatus: "Active",
+
       currentMembers: 7,
     },
     {
       teamName: "Team D",
       leader: "Emily Lee",
       description: "We are Team D, passionate about making a difference.",
-      teamStatus: "Active",
-      currentMembers: 4,
-    },
-    {
-      teamName: "Team A",
-      leader: "John Doe",
-      description: "This is Team A. We are a group of creative minds.",
-      teamStatus: "Active",
-      currentMembers: 5,
-    },
-    {
-      teamName: "Team B",
-      leader: "Jane Smith",
-      description: "Team B is all about collaboration and innovation.",
-      teamStatus: "Inactive",
-      currentMembers: 3,
-    },
-    {
-      teamName: "Team C",
-      leader: "Michael Johnson",
-      description: "Join Team C for exciting projects and challenges.",
-      teamStatus: "Active",
-      currentMembers: 7,
-    },
-    {
-      teamName: "Team D",
-      leader: "Emily Lee",
-      description: "We are Team D, passionate about making a difference.",
-      teamStatus: "Active",
+
       currentMembers: 4,
     },
   ];
 
-  const [teamName, setTeamName] = useState("");
-  const [teamCode, setTeamCode] = useState("");
-  const [teamDescription, setTeamDescription] = useState("");
-
-  useEffect(() => {
-    createRandomCode();
-  }, []);
-
-  const onChange = (e) => {
-    const { value, name } = e.target;
-
-    if (name === "teamname") {
-      setTeamName(value);
-    } else if (name === "code") {
-      setTeamCode(value);
-    } else if (name === "description") {
-      setTeamDescription(value);
-    }
-  };
-
-  const createNewTeam = () => {
-    const data = {
-      teamName: teamName,
-      teamCode: teamCode,
-      teamDescription: teamDescription,
-      teamUID: uuidv4(),
-      createdAt: dayjs().format(""),
-      teamOwner: user.user.uid,
-      teamMembers: [user.user.uid],
-      teamAdminMembers: [user.user.uid],
-    };
-    addDocument("team", data)
-      .then((data) => console.log(data))
-      .catch((error) => console.log(error));
-  };
-
-  const createRandomCode = () => {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let code = "";
-    for (let index = 0; index < 6; index++) {
-      const idx = Math.floor(Math.random() * characters.length);
-      code += characters.charAt(idx);
-    }
-    setTeamCode(code);
-  };
-
   return (
     <Container>
       <HeaderContainer>
-        <TableHeaderText>팀 찾기</TableHeaderText>
+        <TableHeaderText>나의 팀을 관리할 수 있습니다.</TableHeaderText>
       </HeaderContainer>
       <TableHeaderContainer>
         {/* 팀이름 */}
@@ -158,7 +83,7 @@ export default function Team() {
             fill={colors.font.gray}
             style={{ marginRight: "8px" }}
           />
-          리더{" "}
+          소유자{" "}
           <SortBtn>
             <AngleDown width={16} height={16} fill={colors.font.gray} />
           </SortBtn>
@@ -172,19 +97,6 @@ export default function Team() {
             style={{ marginRight: "8px" }}
           />
           설명{" "}
-        </Fleid>
-        {/* 상태 */}
-        <Fleid styledwidth={"150px"}>
-          <Flag
-            width={13}
-            height={13}
-            fill={colors.font.gray}
-            style={{ marginRight: "8px" }}
-          />
-          상태{" "}
-          <SortBtn>
-            <AngleDown width={16} height={16} fill={colors.font.gray} />
-          </SortBtn>
         </Fleid>
         {/* 참여인원 */}
         <Fleid styledwidth={"130px"}>
@@ -207,7 +119,7 @@ export default function Team() {
           참가하기
         </Fleid>
       </TableHeaderContainer>
-      {testTeamData.map((item, index) => (
+      {joinedTeamList.map((item, index) => (
         <Col key={uuidv4()}>
           {/* 팀이름 */}
           <Fleid styledwidth={"250px"}>
@@ -215,54 +127,19 @@ export default function Team() {
             <div>{item.teamName}</div>
           </Fleid>
           {/* 리더 */}
-          <Fleid styledwidth={"150px"}>{item.leader}</Fleid>
+          <Fleid styledwidth={"150px"}>{item.teamOwnerKRname}</Fleid>
           {/* 설명 */}
-          <Fleid>{item.description}</Fleid>
-          {/* 상태 */}
-          <Fleid styledwidth={"150px"}>{item.teamStatus}</Fleid>
+          <Fleid styledwidth={"410px"}>{item.teamDescription}</Fleid>
           {/* 참여인원 */}
-          <Fleid styledwidth={"130px"}>{item.currentMembers}</Fleid>
+          <Fleid styledwidth={"130px"}>
+            {joinedTeamList[index].teamMembers.length}
+          </Fleid>
           {/* 참가하기 */}
           <Fleid styledwidth={"100px"}>
             <SubmitBtn>참여하기</SubmitBtn>
           </Fleid>
         </Col>
       ))}
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          createNewTeam();
-        }}
-      >
-        <input
-          type="text"
-          name="teamname"
-          onChange={onChange}
-          value={teamName}
-          placeholder="팀 이름"
-          required
-        />
-
-        <input
-          type="text"
-          name="code"
-          value={teamCode}
-          placeholder="팀 코드"
-          readOnly
-          required
-        />
-        <input
-          type="text"
-          name="description"
-          onChange={onChange}
-          value={teamDescription}
-          placeholder="팀 설명"
-          required
-        />
-        <input type="submit" value="제출" />
-      </form>
-      <button onClick={() => createRandomCode()}>생성</button>
     </Container>
   );
 }
@@ -270,8 +147,6 @@ export default function Team() {
 // 컨테이너
 const Container = styled.div`
   width: 100%;
-  /* height: 100%; */
-  max-height: 99vh;
 `;
 
 const HeaderContainer = styled.div`
@@ -279,14 +154,14 @@ const HeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 25px;
-  border-bottom: 1px solid ${colors.border.gray};
+  /* border-bottom: 1px solid ${colors.border.gray}; */
   height: 61px;
+  margin-bottom: 15px;
 `;
 
 const TableHeaderContainer = styled.div`
   display: flex;
-  border-bottom: 1px solid ${colors.border.deepgray};
+  /* border: 1px solid ${colors.border.deepgray}; */
   background-color: ${colors.background.gray};
   height: 40px;
   font-size: 15px;
@@ -297,7 +172,7 @@ const TableHeaderContainer = styled.div`
 // table
 const Col = styled.div`
   width: 100%;
-  height: 40px;
+  height: 45px;
   border-bottom: 1px solid ${colors.border.deepgray};
   display: flex;
 `;
@@ -310,7 +185,6 @@ const Fleid = styled.div`
   width: ${(props) => (props.styledwidth ? props.styledwidth : "100%")};
   min-width: ${(props) => (props.styledwidth ? props.styledwidth : "200px")};
   height: 100%;
-  border-right: 1px solid ${colors.border.deepgray};
 `;
 
 const SortBtn = styled.div`
@@ -327,7 +201,6 @@ const SubmitBtn = styled.button`
 `;
 
 const TableHeaderText = styled.p`
-  width: 150px;
   font-size: 25px;
   font-weight: 700;
   color: ${colors.font.black};
