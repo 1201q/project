@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import { motion } from "framer-motion";
-import dayjs from "dayjs";
 import * as colors from "../../styles/colors";
 import { v4 as uuidv4 } from "uuid";
 
@@ -9,135 +7,141 @@ import A from "../../assets/a.svg";
 import User from "../../assets/user.svg";
 import Users from "../../assets/users-alt.svg";
 import Info from "../../assets/info.svg";
-import Flag from "../../assets/flag.svg";
 import List from "../../assets/list.svg";
-import AngleDown from "../../assets/angle-small-down.svg";
-import AngleUp from "../../assets/angle-small-up.svg";
+import Setting from "../../assets/settings (3).svg";
+
 import { useTeam } from "@/utils/context/TeamContext";
+import { useAuth } from "@/utils/context/auth/AuthProvider";
 
 export default function Team() {
+  const user = useAuth();
   const { joinedTeamList } = useTeam();
-  console.log(joinedTeamList);
+  const {
+    isJoinedTeamListModal,
+    setJoinedTeamList,
+    selectedTeamData,
+    setSelectedTeamData,
+    setIsJoinedTeamListModal,
+  } = useTeam();
 
-  const testTeamData = [
-    {
-      teamName: "Team A",
-      leader: "John Doe",
-      description: "This is Team A. We are a group of creative minds.",
+  const renderAuthorityInfo = (item) => {
+    const isOwner = item.teamOwner === user.user.uid;
+    const isAdmin =
+      item.teamAdminMembers.filter((uid) => uid === user.user.uid).length > 0
+        ? true
+        : false;
 
-      currentMembers: 5,
-    },
-    {
-      teamName: "Team B",
-      leader: "Jane Smith",
-      description: "Team B is all about collaboration and innovation.",
-
-      currentMembers: 3,
-    },
-    {
-      teamName: "Team C",
-      leader: "Michael Johnson",
-      description: "Join Team C for exciting projects and challenges.",
-
-      currentMembers: 7,
-    },
-    {
-      teamName: "Team D",
-      leader: "Emily Lee",
-      description: "We are Team D, passionate about making a difference.",
-
-      currentMembers: 4,
-    },
-  ];
+    if (isOwner) {
+      return <AdminInfo styledbg={colors.calendar.blue}>소유자</AdminInfo>;
+    } else if (isAdmin) {
+      return <AdminInfo styledbg={colors.calendar.gray}>관리자</AdminInfo>;
+    }
+  };
 
   return (
     <Container>
-      <HeaderContainer>
-        <TableHeaderText>나의 팀을 관리할 수 있습니다.</TableHeaderText>
-      </HeaderContainer>
+      <PageHeaderContainer>
+        <HeaderText>나의 팀을 관리할 수 있습니다.</HeaderText>
+      </PageHeaderContainer>
       <TableHeaderContainer>
-        {/* 팀이름 */}
-        <Fleid styledwidth={"250px"}>
+        <Header maxwidth={"60px"}>
           <List
             width={13}
             height={13}
             fill={colors.font.gray}
-            style={{ marginRight: "35px" }}
+            style={{ marginLeft: "10px" }}
           />
-          <A
-            width={13}
-            height={13}
-            fill={colors.font.gray}
-            style={{ marginRight: "8px" }}
-          />
-          팀 이름
-          <SortBtn>
-            <AngleDown width={16} height={16} fill={colors.font.gray} />
-          </SortBtn>
-        </Fleid>
+        </Header>
+        {/* 팀이름 */}
+        <Header maxwidth={"240px"}>
+          <A width={13} height={13} fill={colors.font.gray} />팀 이름
+        </Header>
         {/* 리더 */}
-        <Fleid styledwidth={"150px"}>
-          <User
-            width={16}
-            height={16}
-            fill={colors.font.gray}
-            style={{ marginRight: "8px" }}
-          />
-          소유자{" "}
-          <SortBtn>
-            <AngleDown width={16} height={16} fill={colors.font.gray} />
-          </SortBtn>
-        </Fleid>
-        {/* 설명 */}
-        <Fleid>
-          <Info
-            width={16}
-            height={16}
-            fill={colors.font.gray}
-            style={{ marginRight: "8px" }}
-          />
-          설명{" "}
-        </Fleid>
-        {/* 참여인원 */}
-        <Fleid styledwidth={"130px"}>
-          <Users
-            width={13}
-            height={13}
-            fill={colors.font.gray}
-            style={{ marginRight: "8px" }}
-          />
-          참여인원{" "}
-          <SortBtn>
-            <AngleDown width={16} height={16} fill={colors.font.gray} />
-          </SortBtn>
-        </Fleid>
-        {/* 참가하기 */}
-        <Fleid
-          styledwidth={"100px"}
-          style={{ padding: 0, display: "flex", justifyContent: "center" }}
+        <Header
+          maxwidth={"80px"}
+          style={{
+            display: "flex",
+            justifyContent: "flex-start",
+
+            paddingLeft: "12px",
+          }}
         >
-          참가하기
-        </Fleid>
+          소유자
+        </Header>
+        {/* 권한 */}
+        <Header maxwidth={"80px"}>
+          <User width={16} height={16} fill={colors.font.gray} />
+          권한{" "}
+        </Header>
+        {/* 설명 */}
+        <Header>
+          <Info width={16} height={16} fill={colors.font.gray} />
+          설명{" "}
+        </Header>
+        {/* 참여인원 */}
+        <Header maxwidth={"100px"}>
+          <Users width={13} height={13} fill={colors.font.gray} />
+          참여인원{" "}
+        </Header>
+        {/* 참가하기 */}
+        <Header
+          maxwidth={"80px"}
+          style={{ display: "flex", justifyContent: "center" }}
+        >
+          설정
+        </Header>
       </TableHeaderContainer>
       {joinedTeamList.map((item, index) => (
         <Col key={uuidv4()}>
+          <Box maxwidth={"60px"}>
+            <TeamNumText>{index + 1}</TeamNumText>
+          </Box>
           {/* 팀이름 */}
-          <Fleid styledwidth={"250px"}>
-            <div style={{ width: "46px" }}>{index + 1}</div>
-            <div>{item.teamName}</div>
-          </Fleid>
+          <Box maxwidth={"240px"}>
+            <TeamNameText>{item.teamName}</TeamNameText>
+            <TeamCodeText>#{item.teamCode}</TeamCodeText>
+          </Box>
           {/* 리더 */}
-          <Fleid styledwidth={"150px"}>{item.teamOwnerKRname}</Fleid>
+          <Box maxwidth={"80px"}>
+            <TeamNumText>{item.teamOwnerKRname}</TeamNumText>
+          </Box>
+          {/* 권한 */}
+          <Box maxwidth={"80px"}>{renderAuthorityInfo(item)}</Box>
           {/* 설명 */}
-          <Fleid styledwidth={"410px"}>{item.teamDescription}</Fleid>
+          <Box>
+            <TeamDescriptionText>{item.teamDescription}</TeamDescriptionText>
+          </Box>
           {/* 참여인원 */}
-          <Fleid styledwidth={"130px"}>
-            {joinedTeamList[index].teamMembers.length}
-          </Fleid>
+          <Box maxwidth={"100px"}>
+            <TeamNumText>
+              {joinedTeamList[index].teamMembers.length}명
+            </TeamNumText>
+          </Box>
           {/* 참가하기 */}
-          <Fleid styledwidth={"100px"}>
-            <SubmitBtn>참여하기</SubmitBtn>
-          </Fleid>
+          <Box
+            maxwidth={"80px"}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+            }}
+          >
+            {(item.teamAdminMembers.filter((uid) => uid === user.user.uid)
+              .length > 0 ||
+              item.teamOwner === user.user.uid) && (
+              <Setting
+                width={14}
+                height={14}
+                fill={colors.font.gray}
+                style={{ opacity: 0.3 }}
+                onClick={() => {
+                  setIsJoinedTeamListModal(true);
+                  setSelectedTeamData(item);
+                }}
+              />
+            )}
+          </Box>
         </Col>
       ))}
     </Container>
@@ -147,61 +151,106 @@ export default function Team() {
 // 컨테이너
 const Container = styled.div`
   width: 100%;
+  color: ${colors.font.black};
 `;
 
-const HeaderContainer = styled.div`
+const PageHeaderContainer = styled.div`
   position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* border-bottom: 1px solid ${colors.border.gray}; */
   height: 61px;
   margin-bottom: 15px;
 `;
 
 const TableHeaderContainer = styled.div`
   display: flex;
-  /* border: 1px solid ${colors.border.deepgray}; */
+  justify-content: space-between;
+
   background-color: ${colors.background.gray};
-  height: 40px;
-  font-size: 15px;
-  font-weight: 600;
+  height: 50px;
+
+  padding-left: 10px;
+`;
+
+const AdminInfo = styled.div`
+  width: 51px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${(props) => props.styledbg};
+  color: white;
+  border-radius: 7px;
+`;
+
+const Header = styled.div`
+  width: 100%;
+
+  max-width: ${(props) => props.maxwidth};
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 14px;
+  font-weight: 700;
   color: ${colors.font.darkgray};
+
+  svg {
+    margin-left: 10px;
+    margin-right: 8px;
+  }
 `;
 
 // table
 const Col = styled.div`
-  width: 100%;
-  height: 45px;
-  border-bottom: 1px solid ${colors.border.deepgray};
-  display: flex;
-`;
-
-const Fleid = styled.div`
-  position: relative;
   display: flex;
   align-items: center;
-  padding-left: 15px;
-  width: ${(props) => (props.styledwidth ? props.styledwidth : "100%")};
-  min-width: ${(props) => (props.styledwidth ? props.styledwidth : "200px")};
+  height: 60px;
+  border-bottom: 1px solid ${colors.border.deepgray};
+  padding-left: 10px;
+`;
+
+const Box = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
   height: 100%;
+  max-width: ${(props) => props.maxwidth};
+  padding: 0px 10px;
 `;
 
-const SortBtn = styled.div`
-  position: absolute;
-  right: 10px;
-  margin-top: 5px;
-  cursor: pointer;
-`;
-
-const SubmitBtn = styled.button`
-  border: 1px solid ${colors.border.deepgray};
-  border-radius: 10px;
-  padding: 4px 10px;
-`;
-
-const TableHeaderText = styled.p`
+// text
+const HeaderText = styled.p`
   font-size: 25px;
   font-weight: 700;
   color: ${colors.font.black};
+`;
+
+const TeamNumText = styled.p`
+  font-size: 14px;
+  font-weight: 700;
+  margin-left: 2px;
+`;
+
+const TeamNameText = styled.p`
+  font-size: 17px;
+  font-weight: 800;
+  color: ${colors.font.black};
+`;
+
+const TeamDescriptionText = styled.p`
+  font-size: 14px;
+  font-weight: 400;
+  color: ${colors.font.black};
+`;
+
+const TeamCodeText = styled.p`
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 400;
+  color: ${colors.font.gray};
 `;

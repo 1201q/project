@@ -7,6 +7,7 @@ import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useEffect } from "react";
 import nookies from "nookies";
 import { admin } from "@/utils/firebase/firebaseAdmin";
+import { useTeam } from "@/utils/context/TeamContext";
 
 export const getServerSideProps = async (ctx) => {
   try {
@@ -37,6 +38,7 @@ export const getServerSideProps = async (ctx) => {
 export default function Setting() {
   const router = useRouter();
   const user = useAuth();
+
   return (
     <>
       {user.user && (
@@ -111,7 +113,7 @@ const Menu = styled.div`
   font-weight: 600;
   border-radius: 10px;
   border: 2px solid ${colors.border.gray};
-  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.03);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   color: ${colors.font.gray};
   display: flex;
   align-items: center;

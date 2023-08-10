@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import styled from "styled-components";
 import { admin } from "@/utils/firebase/firebaseAdmin";
+import { motion } from "framer-motion";
 import {
   observeDocumentChanges,
   observeJoinedTeamChanges,
@@ -81,7 +82,7 @@ export default function Home({ uid }) {
       {!user.user ? (
         <Loading text="로딩중..." />
       ) : (
-        <Container>
+        <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Sidebar userData={user} />
           <Calendar />
         </Container>
@@ -90,7 +91,7 @@ export default function Home({ uid }) {
   );
 }
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   display: flex;
   width: 100%;
 `;

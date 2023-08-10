@@ -30,8 +30,6 @@ const FlexDiv = styled.div`
 `;
 
 const HeaderContainer = styled.div`
-  position: fixed;
-  top: 0;
   display: flex;
   justify-content: center;
   height: 60px;
