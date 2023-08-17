@@ -120,7 +120,8 @@ export const observeJoinedTeamChanges = (collectionName, callback) => {
   const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
     const dataArr = [];
     snapshot.forEach((doc) => {
-      dataArr.push(doc.data());
+      dataArr.push({ docId: doc.id, ...doc.data() });
+      // dataArr.push(doc.id);
     });
 
     callback(dataArr);
