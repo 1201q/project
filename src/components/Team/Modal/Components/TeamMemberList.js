@@ -62,7 +62,7 @@ export const TeamMemberList = ({ teamMembersData }) => {
         </Header>
       </TableHeaderContainer>
       {selectedTeamData.teamMembers.map((item, index) => (
-        <Col>
+        <Col key={teamMembersData[index].uid}>
           <Box maxwidth={"40px"}>
             <input type="checkbox" />
           </Box>
