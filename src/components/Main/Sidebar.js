@@ -1,17 +1,17 @@
 import styled from "styled-components";
 import Image from "next/image";
-import * as colors from "../styles/colors";
+import * as colors from "../../styles/colors";
 import { motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 
 // svg
-import Search from "../assets/search.svg";
-import Home from "../assets/home.svg";
-import Check from "../assets/check-circle.svg";
-import List from "../assets/list.svg";
-import AngleRight from "../assets/angle-small-right.svg";
-import Lock from "../assets/lock.svg";
-import PlusLogo from "../assets/plus-small.svg";
+import Search from "../../assets/search.svg";
+import Home from "../../assets/home.svg";
+import Check from "../../assets/check-circle.svg";
+import List from "../../assets/list.svg";
+import AngleRight from "../../assets/angle-small-right.svg";
+import Lock from "../../assets/lock.svg";
+import PlusLogo from "../../assets/plus-small.svg";
 import { logout } from "@/utils/firebase/auth";
 import { useRouter } from "next/router";
 import UserModal from "./UserModal";

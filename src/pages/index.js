@@ -10,7 +10,7 @@ import {
   observeJoinedTeamChanges,
 } from "@/utils/firebase/db";
 // 컴포넌트
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/Main/Sidebar";
 import Calendar from "@/components/Calendar/Calendar";
 import Loading from "@/components/Loading";
 // context

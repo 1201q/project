@@ -76,6 +76,7 @@ export async function updateTeamField(collectionId, documentId, field, value) {
 }
 
 // -------------------------------------------- 실시간 업데이트 감시
+// 특정 코드를 가진 팀의 정보를 가져올때 사용하는데요...
 export const observeCollectionChanges = (
   collectionName,
   teamCode,
@@ -95,6 +96,29 @@ export const observeCollectionChanges = (
       }
     });
     callback(dataArr, docId);
+  });
+};
+
+export const observeCollectionData = (
+  collectionName,
+  myteamMembersUid,
+  callback
+) => {
+  // 전체 유저정보를 가져옵니다.
+  // callback 함수로 재활용 가능
+  const collectionRef = collection(dbService, collectionName);
+
+  const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
+    const dataArr = []; // 빈 배열 생성
+
+    snapshot.forEach((doc) => {
+      myteamMembersUid.map((uid) => {
+        if (doc.data().uid.includes(uid)) {
+          dataArr.push(doc.data());
+        }
+      });
+    });
+    callback(dataArr);
   });
 };
 

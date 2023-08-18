@@ -1,16 +1,16 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
-import * as colors from "../styles/colors";
+import * as colors from "../../styles/colors";
 import { useRouter } from "next/router";
 import { logout } from "@/utils/firebase/auth";
 import { useRef } from "react";
 
 // svg
-import User from "../assets/user-no-circle.svg";
-import UserSetting from "../assets/user.svg";
-import Users from "../assets/users-alt.svg";
-import Lock from "../assets/lock.svg";
-import PlusLogo from "../assets/plus-small2.svg";
+import User from "../../assets/user-no-circle.svg";
+import UserSetting from "../../assets/user.svg";
+import Users from "../../assets/users-alt.svg";
+import Lock from "../../assets/lock.svg";
+import PlusLogo from "../../assets/plus-small2.svg";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useTeam } from "@/utils/context/TeamContext";
 

@@ -4,22 +4,33 @@ import styled from "styled-components";
 import * as colors from "../../../styles/colors";
 import X from "../../../assets/x.svg";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { updateTeamData } from "@/utils/firebase/setting";
+import { observeCollectionData } from "@/utils/firebase/db";
+
+import { TeamName } from "./Components/TeamName";
+import { TeamDescription } from "./Components/TeamDescription";
+import { TeamDelete } from "./Components/TeamDelete";
+import { TeamHandOver } from "./Components/TeamHandOver";
+import { TeamInvite } from "./Components/TeamInvite";
+import { TeamMemberList } from "./Components/TeamMemberList";
 
 export default function TeamSettingModal() {
-  const {
-    isJoinedTeamListModal,
-    setJoinedTeamList,
-    setIsJoinedTeamListModal,
-    selectedTeamData,
-  } = useTeam();
   const user = useAuth();
+  const { setIsJoinedTeamListModal, selectedTeamData } = useTeam();
   const [menuSelect, setMenuSelect] = useState("teamName");
   const [teamName, setTeamName] = useState(selectedTeamData.teamName);
   const [teamDescription, setTeamDescription] = useState(
     selectedTeamData.teamDescription
   );
+  const [teamMembersData, setTeamMembersData] = useState([]);
+
+  useEffect(() => {
+    const callback = (data) => {
+      setTeamMembersData(data);
+    };
+    observeCollectionData("users", selectedTeamData.teamMembers, callback);
+  }, []);
 
   const renderAuthorityInfo = (item) => {
     const isOwner = item.teamOwner === user.user.uid;
@@ -32,96 +43,40 @@ export default function TeamSettingModal() {
       return <AdminInfo styledbg={colors.calendar.blue}>소유자</AdminInfo>;
     } else if (isAdmin) {
       return <AdminInfo styledbg={colors.calendar.gray}>관리자</AdminInfo>;
+    } else {
+      return (
+        <AdminInfo
+          styledbg={colors.background.gray}
+          style={{ color: colors.font.black }}
+        >
+          정회원
+        </AdminInfo>
+      );
     }
   };
 
   const renderContents = () => {
-    if (menuSelect === "teamName") {
+    const sideMenu = {
+      teamName: TeamName,
+      teamDescription: TeamDescription,
+      teamDelete: TeamDelete,
+      teamHandOver: TeamHandOver,
+      teamInvite: TeamInvite,
+      teamMemberList: TeamMemberList,
+    };
+
+    const SelectedComponent = sideMenu[menuSelect];
+    if (SelectedComponent) {
       return (
-        <>
-          <MenuHeader>팀 이름 변경</MenuHeader>
-          <MenuTopDescription>팀 이름을 변경할 수 있습니다.</MenuTopDescription>
-          <Input
-            type="text"
-            name="title"
-            placeholder={!teamName ? "팀 이름을 입력해주세요." : teamName}
-            value={teamName}
-            onChange={(e) => {
-              setTeamName(e.target.value);
-            }}
-          />
-          <SaveBtn
-            whileHover={{ opacity: 0.8 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              onUpdateTeamData("teamName", teamName);
-            }}
-          >
-            저장
-          </SaveBtn>
-        </>
+        <SelectedComponent
+          teamName={teamName}
+          setTeamName={setTeamName}
+          teamDescription={teamDescription}
+          setTeamDescription={setTeamDescription}
+          onUpdateTeamData={onUpdateTeamData}
+          teamMembersData={teamMembersData}
+        />
       );
-    } else if (menuSelect === "teamDescription") {
-      return (
-        <>
-          <MenuHeader>팀 소개 변경</MenuHeader>
-          <MenuTopDescription>
-            팀 소개 문장을 변경할 수 있습니다.
-          </MenuTopDescription>
-          <InputArea
-            placeholder={
-              !teamDescription ? "팀 이름을 입력해주세요." : teamDescription
-            }
-            value={teamDescription}
-            onChange={(e) => {
-              setTeamDescription(e.target.value);
-            }}
-          />
-          <SaveBtn
-            whileHover={{ opacity: 0.8 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              onUpdateTeamData("teamDescription", teamDescription);
-            }}
-          >
-            저장
-          </SaveBtn>
-        </>
-      );
-    } else if (menuSelect === "teamDelete") {
-      return (
-        <>
-          <p
-            style={{
-              color: "#d32f2f",
-              fontWeight: 700,
-              fontSize: "25px",
-              marginTop: "10px",
-            }}
-          >
-            팀을 삭제합니다. 팀을 삭제하게 되면 복구할 수 없습니다. 신중히
-            결정해 주세요.
-          </p>
-          <SaveBtn
-            styledbg={"#D32F2F"}
-            whileHover={{ opacity: 0.8 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            삭제
-          </SaveBtn>
-        </>
-      );
-    } else if (menuSelect === "teamHandOver") {
-    } else if (menuSelect === "memberInvite") {
-      return (
-        <>
-          <MenuInnerBigText>{selectedTeamData.teamCode}</MenuInnerBigText>
-          <MenuInnerSmallText>
-            위의 6자리 팀 코드를 팀원에게 알려주세요
-          </MenuInnerSmallText>
-        </>
-      );
-    } else if (menuSelect === "memberList") {
     }
   };
 
@@ -206,24 +161,21 @@ export default function TeamSettingModal() {
               <SideMainMenu>팀원 설정</SideMainMenu>
               <SideSubMenu
                 onClick={() => {
-                  setMenuSelect("memberInvite");
+                  setMenuSelect("teamInvite");
                 }}
               >
                 <SideMenuText>팀원 초대</SideMenuText>
               </SideSubMenu>
               <SideSubMenu
                 onClick={() => {
-                  setMenuSelect("memberList");
+                  setMenuSelect("teamMemberList");
                 }}
               >
                 <SideMenuText>팀원 관리</SideMenuText>
               </SideSubMenu>
             </SidebarMenuContainer>
           </SidebarContainer>
-          {/* 컨텐츠 select */}
-          {/* 팀 이름 변경 */}
           <ContentsContainer>{renderContents()}</ContentsContainer>
-          {/* 팀 이름 변경 */}
         </FlexDiv>
       </ModalContainer>
     </Container>
@@ -247,7 +199,7 @@ const Container = styled(motion.div)`
 
 const ModalContainer = styled(motion.div)`
   position: relative;
-  width: 900px;
+  width: 700px;
   max-width: 90vw;
   height: 600px;
   max-height: 90vh;
@@ -279,9 +231,10 @@ const ContentsContainer = styled.div`
 const SidebarContainer = styled.div`
   width: 200px;
   min-width: 200px;
-  margin-right: 25px;
+
   height: 100%;
   padding-top: 10px;
+  margin-right: 25px;
 `;
 
 const SidebarMenuContainer = styled.div`
@@ -336,78 +289,6 @@ const CloseButton = styled(motion.button)`
   &:hover {
     background-color: ${colors.background.gray};
   }
-`;
-
-// contents
-const MenuHeader = styled.div`
-  width: 100%;
-  padding-bottom: 10px;
-  margin-bottom: 15px;
-  border-bottom: 2px solid ${colors.border.deepgray};
-  font-size: 20px;
-
-  color: ${colors.font.darkgray};
-`;
-
-const MenuTopDescription = styled.p`
-  margin-bottom: 15px;
-  font-size: 17px;
-`;
-
-const MenuInnerBigText = styled.div`
-  display: flex;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 80px;
-  margin-top: 80px;
-  margin-bottom: 30px;
-  margin-right: 30px;
-`;
-
-const MenuInnerSmallText = styled.div`
-  display: flex;
-  justify-content: center;
-  font-weight: 300;
-  font-size: 20px;
-  margin-right: 30px;
-`;
-
-// input
-const Input = styled.input`
-  width: 100%;
-  padding: 10px;
-  border-radius: 7px;
-  outline: none;
-  font-size: 15px;
-  background-color: ${colors.background.gray};
-  border: 1px solid ${colors.background.gray};
-`;
-
-const InputArea = styled.textarea`
-  width: 100%;
-  height: 200px;
-  padding: 10px;
-  border-radius: 7px;
-  outline: none;
-  font-size: 15px;
-  background-color: ${colors.background.gray};
-  border: 1px solid ${colors.background.gray};
-  resize: none;
-`;
-
-const SaveBtn = styled(motion.button)`
-  position: absolute;
-  bottom: 25px;
-  right: 25px;
-  width: fit-content;
-
-  background-color: ${(props) =>
-    props.styledbg ? props.styledbg : colors.calendar.mint};
-  color: white;
-  border-radius: 7px;
-  padding: 8px 23px;
-  border: none;
-  font-size: 15px;
 `;
 
 // sidebar
