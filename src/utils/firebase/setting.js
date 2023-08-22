@@ -12,28 +12,6 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 
-export const addSchedule = async (collectionId, documentId, field, value) =>
-  // 컬렉션 / 내 uid / 추가할 필드 / 추가할 value
-  // 캘린더에 스케줄을 추가합니다.
-  // 해당 uid에 처음 스케줄이 추가된다면 [value]로 초기값을 설정합니다.
-  // 완료시 null을 return합니다.
-  {
-    try {
-      const docRef = doc(dbService, collectionId, documentId);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        await updateDoc(docRef, { [field]: arrayUnion(value) });
-      } else {
-        setDoc(docRef, { [field]: [value] });
-      }
-      return null;
-    } catch (error) {
-      console.log(error);
-      return error;
-    }
-  };
-
 export const updateTeamData = async (
   collectionId,
   documentId,
@@ -53,5 +31,55 @@ export const updateTeamData = async (
     return null;
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const grantAdminPermission = async (
+  collectionId,
+  documentId,
+  field,
+  value
+) => {
+  // 컬렉션의 특정 문서에 배열을 push 합니다.
+  // [] 빈 배열인 경우 빈 배열에 push 합니다.
+  // !!배열만 변경합니다.
+  try {
+    const docRef = doc(dbService, collectionId, documentId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      await updateDoc(docRef, { [field]: arrayUnion(value) });
+    } else {
+      setDoc(docRef, { [field]: [value] });
+    }
+    return null;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+export const revokeAdminPermission = async (
+  collectionId,
+  documentId,
+  field,
+  selectedUserUid
+) => {
+  // 컬렉션 / 내 uid / 추가할 필드 / 삭제할 useruid
+  // 캘린더 배열의 지정한 스케줄을 삭제합니다.
+  // 완료시 null을 return합니다.
+  try {
+    const docRef = doc(dbService, collectionId, documentId);
+    const docSnap = await getDoc(docRef);
+
+    const removeTarget = docSnap
+      .data()
+      .teamAdminMembers.find((item) => item === selectedUserUid);
+
+    await updateDoc(docRef, { [field]: arrayRemove(removeTarget) });
+    return null;
+  } catch (error) {
+    console.log(error);
+    return error;
   }
 };

@@ -1,4 +1,4 @@
-import Team from "@/components/Team/Team";
+import TeamMain from "@/components/Team/TeamMain";
 import Header from "@/components/setting/Header";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import * as colors from "../../styles/colors";
 import X from "../../assets/x.svg";
 
-import TeamSettingModal from "@/components/Team/Modal/TeamSetting";
+import SettingModal from "@/components/Team/Modal/SettingModal";
 
 export const getServerSideProps = async (ctx) => {
   try {
@@ -42,12 +42,7 @@ export const getServerSideProps = async (ctx) => {
 
 export default function Setting({ uid }) {
   const user = useAuth();
-  const {
-    isJoinedTeamListModal,
-    setJoinedTeamList,
-    selectedTeamData,
-    setSelectedTeamData,
-  } = useTeam();
+  const { isTeamSettingModal, setJoinedTeamList } = useTeam();
 
   useEffect(() => {
     const getTeamList = (data) => {
@@ -66,11 +61,11 @@ export default function Setting({ uid }) {
             <Header smallHeaderText={"팀"} />
             <Main>
               <Padding>
-                <Team />
+                <TeamMain />
               </Padding>
             </Main>
           </Container>
-          {isJoinedTeamListModal && <TeamSettingModal />}
+          {isTeamSettingModal && <SettingModal />}
         </>
       )}
     </>

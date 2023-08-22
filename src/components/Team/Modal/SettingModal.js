@@ -8,29 +8,42 @@ import { useEffect, useState } from "react";
 import { updateTeamData } from "@/utils/firebase/setting";
 import { observeCollectionData } from "@/utils/firebase/db";
 
-import { TeamName } from "./Components/TeamName";
-import { TeamDescription } from "./Components/TeamDescription";
-import { TeamDelete } from "./Components/TeamDelete";
-import { TeamHandOver } from "./Components/TeamHandOver";
-import { TeamInvite } from "./Components/TeamInvite";
-import { TeamMemberList } from "./Components/TeamMemberList";
+import { TeamName } from "./contents/TeamName";
+import { TeamDescription } from "./contents/TeamDescription";
+import { TeamDelete } from "./contents/TeamDelete";
+import { TeamHandOver } from "./contents/TeamHandOver";
+import { TeamInvite } from "./contents/TeamInvite";
+import { TeamMemberList } from "./contents/TeamMemberList";
+import { TeamAdminSetting } from "./contents/TeamAdminSetting";
+import Loading from "@/components/Loading";
 
 export default function TeamSettingModal() {
   const user = useAuth();
-  const { setIsJoinedTeamListModal, selectedTeamData } = useTeam();
+  const {
+    setIsTeamSettingModal,
+    isSettingModalLoading,
+    setIsSettingModalLoading,
+
+    selectedTeamData,
+    selectedTeamMembersData,
+    setSelectedTeamMembersData,
+  } = useTeam();
   const [menuSelect, setMenuSelect] = useState("teamName");
   const [teamName, setTeamName] = useState(selectedTeamData.teamName);
   const [teamDescription, setTeamDescription] = useState(
     selectedTeamData.teamDescription
   );
-  const [teamMembersData, setTeamMembersData] = useState([]);
 
   useEffect(() => {
-    const callback = (data) => {
-      setTeamMembersData(data);
-    };
-    observeCollectionData("users", selectedTeamData.teamMembers, callback);
-  }, []);
+    if (isSettingModalLoading) {
+      const callback = (data) => {
+        setSelectedTeamMembersData(data);
+        setIsSettingModalLoading(false);
+      };
+
+      observeCollectionData("users", selectedTeamData.teamMembers, callback);
+    }
+  }, [isSettingModalLoading]);
 
   const renderAuthorityInfo = (item) => {
     const isOwner = item.teamOwner === user.user.uid;
@@ -63,6 +76,7 @@ export default function TeamSettingModal() {
       teamHandOver: TeamHandOver,
       teamInvite: TeamInvite,
       teamMemberList: TeamMemberList,
+      teamAdminSetting: TeamAdminSetting,
     };
 
     const SelectedComponent = sideMenu[menuSelect];
@@ -74,7 +88,6 @@ export default function TeamSettingModal() {
           teamDescription={teamDescription}
           setTeamDescription={setTeamDescription}
           onUpdateTeamData={onUpdateTeamData}
-          teamMembersData={teamMembersData}
         />
       );
     }
@@ -101,7 +114,7 @@ export default function TeamSettingModal() {
     );
 
     if (!update) {
-      setIsJoinedTeamListModal(false);
+      setIsSettingModalLoading(true);
     } else {
       console.log(update);
     }
@@ -114,7 +127,7 @@ export default function TeamSettingModal() {
         animate={{ opacity: 1, y: 0 }}
       >
         <HeaderContainer>
-          <CloseButton onClick={() => setIsJoinedTeamListModal(false)}>
+          <CloseButton onClick={() => setIsTeamSettingModal(false)}>
             <X width={13} height={13} fill={colors.font.darkgray} />
           </CloseButton>
           <HeaderText>팀 설정</HeaderText>{" "}
@@ -173,9 +186,18 @@ export default function TeamSettingModal() {
               >
                 <SideMenuText>팀원 관리</SideMenuText>
               </SideSubMenu>
+              <SideSubMenu
+                onClick={() => {
+                  setMenuSelect("teamAdminSetting");
+                }}
+              >
+                <SideMenuText>관리자 권한 관리</SideMenuText>
+              </SideSubMenu>
             </SidebarMenuContainer>
           </SidebarContainer>
-          <ContentsContainer>{renderContents()}</ContentsContainer>
+          <ContentsContainer>
+            {!isSettingModalLoading ? renderContents() : <Loading />}
+          </ContentsContainer>
         </FlexDiv>
       </ModalContainer>
     </Container>
@@ -209,6 +231,7 @@ const ModalContainer = styled(motion.div)`
   /* padding: 25px; */
   border-radius: 20px;
   box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.15);
+  overflow-y: scroll;
 `;
 
 const HeaderContainer = styled.div`

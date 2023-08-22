@@ -105,7 +105,9 @@ button {
 
 button,
 input,
-textarea {
+textarea,
+select,
+option {
   font-family: Pretendard Variable;
 }
 

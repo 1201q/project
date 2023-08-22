@@ -12,16 +12,18 @@ import Setting from "../../assets/settings (3).svg";
 
 import { useTeam } from "@/utils/context/TeamContext";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
+import { useEffect } from "react";
+import { observeCollectionData } from "@/utils/firebase/db";
 
-export default function Team() {
+export default function TeamMain() {
   const user = useAuth();
-  const { joinedTeamList } = useTeam();
   const {
-    isJoinedTeamListModal,
-    setJoinedTeamList,
     selectedTeamData,
     setSelectedTeamData,
-    setIsJoinedTeamListModal,
+    setIsTeamSettingModal,
+    joinedTeamList,
+    setSelectedTeamMembersData,
+    setIsSettingModalLoading,
   } = useTeam();
 
   const renderAuthorityInfo = (item) => {
@@ -37,6 +39,17 @@ export default function Team() {
       return <AdminInfo styledbg={colors.calendar.gray}>관리자</AdminInfo>;
     }
   };
+
+  useEffect(() => {
+    if (selectedTeamData) {
+      const callback = (data) => {
+        setSelectedTeamMembersData(data);
+        setIsSettingModalLoading(false);
+      };
+
+      observeCollectionData("users", selectedTeamData.teamMembers, callback);
+    }
+  }, [selectedTeamData]);
 
   return (
     <Container>
@@ -136,7 +149,7 @@ export default function Team() {
                 fill={colors.font.gray}
                 style={{ opacity: 0.3 }}
                 onClick={() => {
-                  setIsJoinedTeamListModal(true);
+                  setIsTeamSettingModal(true);
                   setSelectedTeamData(item);
                 }}
               />
