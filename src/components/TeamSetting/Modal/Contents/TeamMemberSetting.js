@@ -1,14 +1,14 @@
 import styled from "styled-components";
-import * as colors from "../../../../../styles/colors";
+import * as colors from "../../../../styles/colors";
 import { motion } from "framer-motion";
 import { useTeam } from "@/utils/context/TeamContext";
 
 // svg
-import List from "../../../../../assets/list.svg";
-import A from "../../../../../assets/a.svg";
-import User from "../../../../../assets/user.svg";
+import List from "../../../../assets/list.svg";
+import A from "../../../../assets/a.svg";
+import User from "../../../../assets/user.svg";
 
-import Checkbox from "../../../../../assets/checkbox (1).svg";
+import Checkbox from "../../../../assets/checkbox (1).svg";
 import { useEffect, useState } from "react";
 import { exportTeamMember } from "@/utils/firebase/setting";
 

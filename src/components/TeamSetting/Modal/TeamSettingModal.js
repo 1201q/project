@@ -1,8 +1,8 @@
 import { useTeam } from "@/utils/context/TeamContext";
 import { motion } from "framer-motion";
 import styled from "styled-components";
-import * as colors from "../../../../styles/colors";
-import X from "../../../../assets/x.svg";
+import * as colors from "../../../styles/colors";
+import X from "../../../assets/x.svg";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { updateTeamData } from "@/utils/firebase/setting";
 

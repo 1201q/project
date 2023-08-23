@@ -1,6 +1,6 @@
 import { Ring } from "@uiball/loaders";
 import styled from "styled-components";
-import * as colors from "../../../../../styles/colors";
+import * as colors from "../../../../styles/colors";
 
 export default function TeamModalLoading({ text = "로딩중" }) {
   return (

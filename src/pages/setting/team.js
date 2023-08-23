@@ -10,9 +10,9 @@ import { motion } from "framer-motion";
 import * as colors from "../../styles/colors";
 import X from "../../assets/x.svg";
 
-import TeamSettingModal from "../../components/Setting/TeamSetting/Modal/TeamSettingModal";
-import TeamMain from "../../components/Setting/TeamSetting/TeamMain";
-import Header from "../../components/Setting/Header";
+import TeamSettingModal from "../../components/TeamSetting/Modal/TeamSettingModal";
+import TeamMain from "../../components/TeamSetting/TeamMain";
+import Header from "../../components/TeamSetting/Header";
 
 export const getServerSideProps = async (ctx) => {
   try {
