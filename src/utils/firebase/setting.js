@@ -65,7 +65,7 @@ export const revokeAdminPermission = async (
   field,
   selectedUserUid
 ) => {
-  // 컬렉션 / 내 uid / 추가할 필드 / 삭제할 useruid
+  // 컬렉션 / 내 uid / 해당 필드 / 삭제할 useruid
   // 캘린더 배열의 지정한 스케줄을 삭제합니다.
   // 완료시 null을 return합니다.
   try {
@@ -75,6 +75,31 @@ export const revokeAdminPermission = async (
     const removeTarget = docSnap
       .data()
       .teamAdminMembers.find((item) => item === selectedUserUid);
+
+    await updateDoc(docRef, { [field]: arrayRemove(removeTarget) });
+    return null;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+export const exportTeamMember = async (
+  collectionId,
+  documentId,
+  field,
+  selectedUserUid
+) => {
+  // 컬렉션 / 내 uid / 해당 필드 / 삭제할 useruid
+  // 캘린더 배열의 지정한 스케줄을 삭제합니다.
+  // 완료시 null을 return합니다.
+  try {
+    const docRef = doc(dbService, collectionId, documentId);
+    const docSnap = await getDoc(docRef);
+
+    const removeTarget = docSnap
+      .data()
+      .teamMembers.find((item) => item === selectedUserUid);
 
     await updateDoc(docRef, { [field]: arrayRemove(removeTarget) });
     return null;

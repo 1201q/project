@@ -4,7 +4,11 @@ import { motion } from "framer-motion";
 
 export const TeamName = ({ teamName, setTeamName, onUpdateTeamData }) => {
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+    >
       <Header>팀 이름 변경</Header>
       <Description>팀 이름을 변경할 수 있습니다.</Description>
       <Input
@@ -25,7 +29,7 @@ export const TeamName = ({ teamName, setTeamName, onUpdateTeamData }) => {
       >
         저장
       </SaveBtn>
-    </>
+    </motion.div>
   );
 };
 

@@ -6,10 +6,15 @@ import { useTeam } from "@/utils/context/TeamContext";
 export const TeamInvite = () => {
   const { selectedTeamData } = useTeam();
   return (
-    <div style={{ marginLeft: "-25px" }}>
+    <motion.div
+      style={{ marginLeft: "-25px" }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+    >
       <Code>{selectedTeamData.teamCode}</Code>
       <Description>위의 6자리 팀 코드를 팀원에게 알려주세요</Description>
-    </div>
+    </motion.div>
   );
 };
 

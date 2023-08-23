@@ -13,9 +13,9 @@ import { TeamDescription } from "./contents/TeamDescription";
 import { TeamDelete } from "./contents/TeamDelete";
 import { TeamHandOver } from "./contents/TeamHandOver";
 import { TeamInvite } from "./contents/TeamInvite";
-import { TeamMemberList } from "./contents/TeamMemberList";
+import { TeamMemberSetting } from "./contents/TeamMemberSetting";
 import { TeamAdminSetting } from "./contents/TeamAdminSetting";
-import Loading from "@/components/Loading";
+import Loading from "./contents/Loading";
 
 export default function TeamSettingModal() {
   const user = useAuth();
@@ -25,25 +25,12 @@ export default function TeamSettingModal() {
     setIsSettingModalLoading,
 
     selectedTeamData,
-    selectedTeamMembersData,
-    setSelectedTeamMembersData,
   } = useTeam();
   const [menuSelect, setMenuSelect] = useState("teamName");
   const [teamName, setTeamName] = useState(selectedTeamData.teamName);
   const [teamDescription, setTeamDescription] = useState(
     selectedTeamData.teamDescription
   );
-
-  useEffect(() => {
-    if (isSettingModalLoading) {
-      const callback = (data) => {
-        setSelectedTeamMembersData(data);
-        setIsSettingModalLoading(false);
-      };
-
-      observeCollectionData("users", selectedTeamData.teamMembers, callback);
-    }
-  }, [isSettingModalLoading]);
 
   const renderAuthorityInfo = (item) => {
     const isOwner = item.teamOwner === user.user.uid;
@@ -75,7 +62,7 @@ export default function TeamSettingModal() {
       teamDelete: TeamDelete,
       teamHandOver: TeamHandOver,
       teamInvite: TeamInvite,
-      teamMemberList: TeamMemberList,
+      teamMemberSetting: TeamMemberSetting,
       teamAdminSetting: TeamAdminSetting,
     };
 
@@ -94,6 +81,7 @@ export default function TeamSettingModal() {
   };
 
   const onUpdateTeamData = async (field, value) => {
+    setIsSettingModalLoading(true);
     if (field === "teamName" && selectedTeamData.teamName === value) {
       console.log("기존과 같아요");
       return;
@@ -114,9 +102,10 @@ export default function TeamSettingModal() {
     );
 
     if (!update) {
-      setIsSettingModalLoading(true);
+      setIsSettingModalLoading(false);
     } else {
       console.log(update);
+      setIsSettingModalLoading(false);
     }
   };
 
@@ -181,7 +170,7 @@ export default function TeamSettingModal() {
               </SideSubMenu>
               <SideSubMenu
                 onClick={() => {
-                  setMenuSelect("teamMemberList");
+                  setMenuSelect("teamMemberSetting");
                 }}
               >
                 <SideMenuText>팀원 관리</SideMenuText>
@@ -196,7 +185,11 @@ export default function TeamSettingModal() {
             </SidebarMenuContainer>
           </SidebarContainer>
           <ContentsContainer>
-            {!isSettingModalLoading ? renderContents() : <Loading />}
+            {!isSettingModalLoading ? (
+              renderContents()
+            ) : (
+              <Loading text={"업데이트 중.."} />
+            )}
           </ContentsContainer>
         </FlexDiv>
       </ModalContainer>
@@ -247,7 +240,7 @@ const FlexDiv = styled.div`
   padding: 20px;
 `;
 
-const ContentsContainer = styled.div`
+const ContentsContainer = styled(motion.div)`
   width: 100%;
 `;
 

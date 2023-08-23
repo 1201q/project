@@ -43,8 +43,14 @@ export default function TeamMain() {
   useEffect(() => {
     if (selectedTeamData) {
       const callback = (data) => {
-        setSelectedTeamMembersData(data);
-        setIsSettingModalLoading(false);
+        // membersData가 / db의 teamMembers와 순서가 맞게
+        let orderArr = [...selectedTeamData.teamMembers];
+
+        const sortArr = orderArr.map((uid) =>
+          data.find((item) => uid === item.uid)
+        );
+        setSelectedTeamMembersData(sortArr);
+        // membersData가 / db의 teamMembers와 순서가 맞게
       };
 
       observeCollectionData("users", selectedTeamData.teamMembers, callback);

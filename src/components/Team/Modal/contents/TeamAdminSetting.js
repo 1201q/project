@@ -14,24 +14,27 @@ import {
   grantAdminPermission,
   revokeAdminPermission,
 } from "@/utils/firebase/setting";
+import { observeCollectionData } from "@/utils/firebase/db";
 
 export const TeamAdminSetting = () => {
   const {
     selectedTeamData,
     selectedTeamMembersData,
     setIsSettingModalLoading,
+    setIsTeamSettingModal,
   } = useTeam();
-  const [isAllCheckBoxChecked, setIsAllCheckBoxChecked] = useState(false);
+
   const [selectedUserIndexArr, setSelectedUserIndexArr] = useState(
     Array(selectedTeamMembersData.length).fill(false)
   );
   const [mode, setMode] = useState("grant"); // grant, revoke
+  const [isButtonVisible, setIsButtonVisible] = useState(false);
 
   useEffect(() => {
-    if (selectedUserIndexArr.every((item) => item === true)) {
-      setIsAllCheckBoxChecked(true);
+    if (!selectedUserIndexArr.every((item) => item === false)) {
+      setIsButtonVisible(true);
     } else {
-      setIsAllCheckBoxChecked(false);
+      setIsButtonVisible(false);
     }
   }, [selectedUserIndexArr]);
 
@@ -114,6 +117,7 @@ export const TeamAdminSetting = () => {
   };
 
   const grantAdmin = async (userUid) => {
+    setIsSettingModalLoading(true);
     const update = await grantAdminPermission(
       "team",
       selectedTeamData.docId,
@@ -122,14 +126,15 @@ export const TeamAdminSetting = () => {
     );
 
     if (!update) {
-      console.log("완료");
-      setIsSettingModalLoading(true);
+      setIsSettingModalLoading(false);
+      setIsTeamSettingModal(false);
     } else {
       console.log(update);
     }
   };
 
   const revokeAdmin = async (userUid) => {
+    setIsSettingModalLoading(true);
     const update = await revokeAdminPermission(
       "team",
       selectedTeamData.docId,
@@ -137,18 +142,24 @@ export const TeamAdminSetting = () => {
       userUid
     );
     if (!update) {
-      console.log("완료");
-      setIsSettingModalLoading(true);
+      setIsSettingModalLoading(false);
+      setIsTeamSettingModal(false);
     } else {
       console.log(update);
     }
   };
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+    >
       <Header>관리자 권한 관리</Header>
       <ControlContainer>
-        <Description>관리자 권한을 관리해보세요.</Description>
+        <Description>
+          선택한 팀원을 관리자로 임명하거나 권한을 회수할 수 있습니다.
+        </Description>
         <FlexDiv>
           <Select
             onChange={(e) => {
@@ -194,7 +205,7 @@ export const TeamAdminSetting = () => {
           권한
         </TableHeader>
       </TableHeaderContainer>
-      {selectedTeamData.teamMembers.map((item, index) => (
+      {selectedTeamData.teamMembers.map((member, index) => (
         <Col key={selectedTeamMembersData[index].uid}>
           <Box maxwidth={"40px"}>
             {mode === "grant" ? (
@@ -228,11 +239,21 @@ export const TeamAdminSetting = () => {
             {selectedTeamMembersData[index].name}
             <EmailText>{selectedTeamMembersData[index].email}</EmailText>
           </Box>
-          <Box maxwidth={"150px"}>{renderAuthorityInfoAtTable(item)}</Box>
+          <Box maxwidth={"150px"}>{renderAuthorityInfoAtTable(member)}</Box>
         </Col>
       ))}
-      <button onClick={onExecute}>실행</button>
-    </>
+      {isButtonVisible && (
+        <SaveBtn
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          whileHover={{ opacity: 0.8 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onExecute}
+        >
+          업데이트
+        </SaveBtn>
+      )}
+    </motion.div>
   );
 };
 
@@ -346,4 +367,17 @@ const AdminInfo = styled.div`
 const EmailText = styled.div`
   font-size: 13px;
   color: ${colors.font.darkgray};
+`;
+
+const SaveBtn = styled(motion.button)`
+  position: absolute;
+  bottom: 25px;
+  right: 25px;
+  width: fit-content;
+  background-color: ${colors.calendar.mint};
+  color: white;
+  border-radius: 7px;
+  padding: 8px 23px;
+  border: none;
+  font-size: 15px;
 `;

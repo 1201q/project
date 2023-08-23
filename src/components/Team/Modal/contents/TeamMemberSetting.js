@@ -7,21 +7,29 @@ import { useTeam } from "@/utils/context/TeamContext";
 import List from "../../../../assets/list.svg";
 import A from "../../../../assets/a.svg";
 import User from "../../../../assets/user.svg";
-import Setting from "../../../../assets/settings (3).svg";
-import { useEffect, useState } from "react";
 
-export const TeamMemberList = () => {
-  const { selectedTeamData, selectedTeamMembersData } = useTeam();
-  const [isAllCheckBoxChecked, setIsAllCheckBoxChecked] = useState(false);
+import Checkbox from "../../../../assets/checkbox (1).svg";
+import { useEffect, useState } from "react";
+import { exportTeamMember } from "@/utils/firebase/setting";
+
+export const TeamMemberSetting = () => {
+  const {
+    selectedTeamData,
+    selectedTeamMembersData,
+    setIsSettingModalLoading,
+    setIsTeamSettingModal,
+  } = useTeam();
+
   const [selectedUserIndexArr, setSelectedUserIndexArr] = useState(
     Array(selectedTeamMembersData.length).fill(false)
   );
+  const [isButtonVisible, setIsButtonVisible] = useState(false);
 
   useEffect(() => {
-    if (selectedUserIndexArr.every((item) => item === true)) {
-      setIsAllCheckBoxChecked(true);
+    if (!selectedUserIndexArr.every((item) => item === false)) {
+      setIsButtonVisible(true);
     } else {
-      setIsAllCheckBoxChecked(false);
+      setIsButtonVisible(false);
     }
   }, [selectedUserIndexArr]);
 
@@ -49,6 +57,28 @@ export const TeamMemberList = () => {
     }
   };
 
+  const isAdmin = (uid, isContainOwner) => {
+    // isContainOwner가 true일 경우 owner도 true로 return 하고
+    // isContainOwner가 false일 경우 owner는 false로 return 합니다.
+    // return true or false
+    const owner = selectedTeamData.teamOwner === uid;
+    const admin =
+      selectedTeamData.teamAdminMembers.filter((fuid) => uid === fuid).length >
+      0
+        ? true
+        : false;
+
+    if (isContainOwner && owner) {
+      return true;
+    } else if (!isContainOwner && owner) {
+      return false;
+    } else if (admin) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const handleCheckbox = (index) => {
     setSelectedUserIndexArr((prevArr) => {
       const newArr = [...prevArr];
@@ -57,40 +87,61 @@ export const TeamMemberList = () => {
     });
   };
 
-  const handleHeaderCheckbox = () => {
-    if (isAllCheckBoxChecked) {
-      setSelectedUserIndexArr(
-        Array(selectedTeamMembersData.length).fill(false)
-      );
+  const onExecute = () => {
+    let correctUserArr = [];
+
+    selectedTeamMembersData
+      .filter((user, index) => {
+        if (selectedUserIndexArr[index]) {
+          return user;
+        }
+      })
+      .map((filteredUser) => {
+        correctUserArr.push(filteredUser);
+      });
+
+    correctUserArr.map((user) => {
+      exportMember(user.uid);
+    });
+  };
+
+  const exportMember = async (userUid) => {
+    setIsSettingModalLoading(true);
+    const update = await exportTeamMember(
+      "team",
+      selectedTeamData.docId,
+      "teamMembers",
+      userUid
+    );
+
+    if (!update) {
+      setIsSettingModalLoading(false);
+      setIsTeamSettingModal(false);
     } else {
-      setSelectedUserIndexArr(Array(selectedTeamMembersData.length).fill(true));
+      console.log(update);
     }
   };
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+    >
       <Header>팀원 관리</Header>
       <ControlContainer>
-        <Description>팀원을 관리해보세요.</Description>
-        <FlexDiv>
-          <Button whileHover={{ opacity: 0.8 }} whileTap={{ scale: 0.98 }}>
-            <Setting
-              width={13}
-              height={13}
-              fill={"white"}
-              style={{ marginRight: "5px" }}
-            />
-            팀원 내보내기
-          </Button>
-        </FlexDiv>
+        <Description>
+          선택한 팀원을 내보낼 수 있습니다. 관리자는 권한 회수 후 내보내기 할 수
+          있습니다.
+        </Description>
       </ControlContainer>
       <TableHeaderContainer>
         <TableHeader maxwidth={"40px"}>
-          <input
-            type="checkbox"
+          <Checkbox
+            width={12}
+            height={12}
+            fill={colors.font.gray}
             style={{ marginLeft: "10px" }}
-            onChange={handleHeaderCheckbox}
-            checked={isAllCheckBoxChecked}
           />
         </TableHeader>
         <TableHeader maxwidth={"60px"}>
@@ -111,20 +162,22 @@ export const TeamMemberList = () => {
             height={14}
             fill={colors.font.gray}
             style={{ marginLeft: "0px", marginTop: "1px" }}
-          />
+          />{" "}
           권한
         </TableHeader>
       </TableHeaderContainer>
       {selectedTeamData.teamMembers.map((item, index) => (
         <Col key={selectedTeamMembersData[index].uid}>
           <Box maxwidth={"40px"}>
-            <input
-              type="checkbox"
-              onChange={() => {
-                handleCheckbox(index);
-              }}
-              checked={selectedUserIndexArr[index]}
-            />
+            {!isAdmin(selectedTeamMembersData[index].uid, true) && (
+              <input
+                type="checkbox"
+                onChange={() => {
+                  handleCheckbox(index);
+                }}
+                checked={selectedUserIndexArr[index]}
+              />
+            )}
           </Box>
           <Box maxwidth={"60px"}>{index + 1}</Box>
           <Box>
@@ -134,13 +187,20 @@ export const TeamMemberList = () => {
           <Box maxwidth={"150px"}>{renderAuthorityInfoAtTable(item)}</Box>
         </Col>
       ))}
-    </>
+      {isButtonVisible && (
+        <SaveBtn
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          whileHover={{ opacity: 0.8 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onExecute}
+        >
+          내보내기
+        </SaveBtn>
+      )}
+    </motion.div>
   );
 };
-
-const FlexDiv = styled.div`
-  display: flex;
-`;
 
 const Header = styled.div`
   width: 100%;
@@ -153,20 +213,6 @@ const Header = styled.div`
 
 const Description = styled.p`
   font-size: 17px;
-`;
-
-const Button = styled(motion.button)`
-  width: max-content;
-  background-color: ${colors.calendar.mint};
-  color: white;
-  border-radius: 7px;
-  padding: 5px 10px;
-  border: none;
-  font-size: 12px;
-  font-weight: 600;
-  margin-left: 5px;
-  display: flex;
-  align-items: center;
 `;
 
 const ControlContainer = styled.div`
@@ -241,4 +287,17 @@ const AdminInfo = styled.div`
 const EmailText = styled.div`
   font-size: 13px;
   color: ${colors.font.darkgray};
+`;
+
+const SaveBtn = styled(motion.button)`
+  position: absolute;
+  bottom: 25px;
+  right: 25px;
+  width: fit-content;
+  background-color: ${colors.calendar.mint};
+  color: white;
+  border-radius: 7px;
+  padding: 8px 23px;
+  border: none;
+  font-size: 15px;
 `;

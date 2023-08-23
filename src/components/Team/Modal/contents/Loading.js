@@ -15,7 +15,7 @@ export default function Loading({ text = "로딩중" }) {
 
 const Container = styled.div`
   width: 100%;
-  height: 90vh;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;

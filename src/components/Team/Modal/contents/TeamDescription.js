@@ -8,7 +8,11 @@ export const TeamDescription = ({
   onUpdateTeamData,
 }) => {
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+    >
       <Header>팀 소개 변경</Header>
       <Description>팀 소개 문장을 변경할 수 있습니다.</Description>
       <InputArea
@@ -29,7 +33,7 @@ export const TeamDescription = ({
       >
         저장
       </SaveBtn>
-    </>
+    </motion.div>
   );
 };
 
