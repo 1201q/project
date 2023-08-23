@@ -1,4 +1,4 @@
-import Header from "@/components/setting/Header";
+import Header from "@/components/Setting/Header";
 import styled from "styled-components";
 import * as colors from "../../styles/colors";
 import AngleRight from "../../assets/angle-small-right.svg";

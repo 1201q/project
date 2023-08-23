@@ -1,5 +1,5 @@
-import TeamMain from "@/components/Team/TeamMain";
-import Header from "@/components/setting/Header";
+import TeamMain from "@/components/Setting/TeamSetting/TeamMain";
+import Header from "@/components/Setting/Header";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import styled from "styled-components";
@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import * as colors from "../../styles/colors";
 import X from "../../assets/x.svg";
 
-import SettingModal from "@/components/Team/Modal/SettingModal";
+import TeamSettingModal from "@/components/Setting/TeamSetting/Modal/TeamSettingModal";
 
 export const getServerSideProps = async (ctx) => {
   try {
@@ -65,7 +65,7 @@ export default function Setting({ uid }) {
               </Padding>
             </Main>
           </Container>
-          {isTeamSettingModal && <SettingModal />}
+          {isTeamSettingModal && <TeamSettingModal />}
         </>
       )}
     </>

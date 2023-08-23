@@ -1,14 +1,14 @@
 import styled from "styled-components";
-import * as colors from "../../styles/colors";
+import * as colors from "../../../styles/colors";
 import { v4 as uuidv4 } from "uuid";
 
 // svg
-import A from "../../assets/a.svg";
-import User from "../../assets/user.svg";
-import Users from "../../assets/users-alt.svg";
-import Info from "../../assets/info.svg";
-import List from "../../assets/list.svg";
-import Setting from "../../assets/settings (3).svg";
+import A from "../../../assets/a.svg";
+import User from "../../../assets/user.svg";
+import Users from "../../../assets/users-alt.svg";
+import Info from "../../../assets/info.svg";
+import List from "../../../assets/list.svg";
+import Setting from "../../../assets/settings (3).svg";
 
 import { useTeam } from "@/utils/context/TeamContext";
 import { useAuth } from "@/utils/context/auth/AuthProvider";

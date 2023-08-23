@@ -1,21 +1,20 @@
 import { useTeam } from "@/utils/context/TeamContext";
 import { motion } from "framer-motion";
 import styled from "styled-components";
-import * as colors from "../../../styles/colors";
-import X from "../../../assets/x.svg";
+import * as colors from "../../../../styles/colors";
+import X from "../../../../assets/x.svg";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
-import { useEffect, useState } from "react";
 import { updateTeamData } from "@/utils/firebase/setting";
-import { observeCollectionData } from "@/utils/firebase/db";
 
-import { TeamName } from "./contents/TeamName";
-import { TeamDescription } from "./contents/TeamDescription";
-import { TeamDelete } from "./contents/TeamDelete";
-import { TeamHandOver } from "./contents/TeamHandOver";
-import { TeamInvite } from "./contents/TeamInvite";
-import { TeamMemberSetting } from "./contents/TeamMemberSetting";
-import { TeamAdminSetting } from "./contents/TeamAdminSetting";
-import Loading from "./contents/Loading";
+import { TeamName } from "./Contents/TeamName";
+import { TeamDescription } from "./Contents/TeamDescription";
+import { TeamDelete } from "./Contents/TeamDelete";
+import { TeamHandOver } from "./Contents/TeamHandOver";
+import { TeamInvite } from "./Contents/TeamInvite";
+import { TeamMemberSetting } from "./Contents/TeamMemberSetting";
+import { TeamAdminSetting } from "./Contents/TeamAdminSetting";
+import TeamModalLoading from "./Contents/TeamModalLoading";
+import { useState } from "react";
 
 export default function TeamSettingModal() {
   const user = useAuth();
@@ -23,7 +22,6 @@ export default function TeamSettingModal() {
     setIsTeamSettingModal,
     isSettingModalLoading,
     setIsSettingModalLoading,
-
     selectedTeamData,
   } = useTeam();
   const [menuSelect, setMenuSelect] = useState("teamName");
@@ -188,7 +186,7 @@ export default function TeamSettingModal() {
             {!isSettingModalLoading ? (
               renderContents()
             ) : (
-              <Loading text={"업데이트 중.."} />
+              <TeamModalLoading text={"업데이트 중.."} />
             )}
           </ContentsContainer>
         </FlexDiv>
