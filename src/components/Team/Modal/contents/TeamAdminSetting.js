@@ -158,7 +158,7 @@ export const TeamAdminSetting = () => {
       <Header>관리자 권한 관리</Header>
       <ControlContainer>
         <Description>
-          선택한 팀원을 관리자로 임명하거나 권한을 회수할 수 있습니다.
+          선택한 팀원을 관리자로 임명하거나 관리자 권한을 회수할 수 있습니다.
         </Description>
         <FlexDiv>
           <Select
@@ -284,6 +284,7 @@ const Select = styled.select`
   border: none;
   font-size: 12px;
   font-weight: 700;
+  margin-left: 15px;
   display: flex;
   align-items: center;
   justify-content: center;

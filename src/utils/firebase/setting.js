@@ -108,3 +108,19 @@ export const exportTeamMember = async (
     return error;
   }
 };
+
+export const handoverOwner = async (collectionId, documentId, field, uid) => {
+  // 컬렉션의 특정 문서에 배열을 push 합니다.
+  // [] 빈 배열인 경우 빈 배열에 push 합니다.
+  try {
+    const docRef = doc(dbService, collectionId, documentId);
+    const docSnap = await getDoc(docRef);
+
+    setDoc(docRef, { [field]: uid });
+
+    return docSnap.id;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};

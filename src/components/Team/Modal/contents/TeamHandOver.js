@@ -10,7 +10,7 @@ import User from "../../../../assets/user.svg";
 
 import Checkbox from "../../../../assets/checkbox (1).svg";
 import { useEffect, useState } from "react";
-import { exportTeamMember } from "@/utils/firebase/setting";
+import { updateTeamData } from "@/utils/firebase/setting";
 
 export const TeamHandOver = () => {
   const {
@@ -57,34 +57,17 @@ export const TeamHandOver = () => {
     }
   };
 
-  const isAdmin = (uid, isContainOwner) => {
-    // isContainOwner가 true일 경우 owner도 true로 return 하고
-    // isContainOwner가 false일 경우 owner는 false로 return 합니다.
+  const isOwner = (uid) => {
     // return true or false
-    const owner = selectedTeamData.teamOwner === uid;
-    const admin =
-      selectedTeamData.teamAdminMembers.filter((fuid) => uid === fuid).length >
-      0
-        ? true
-        : false;
-
-    if (isContainOwner && owner) {
-      return true;
-    } else if (!isContainOwner && owner) {
-      return false;
-    } else if (admin) {
-      return true;
-    } else {
-      return false;
-    }
+    return selectedTeamData.teamOwner === uid;
   };
 
   const handleCheckbox = (index) => {
     setSelectedUserIndexArr((prevArr) => {
-      const newArr = [...prevArr];
-      newArr[index] = !newArr[index];
+      const newArr = prevArr.map((value, i) => (i === index ? true : false));
       return newArr;
     });
+    console.log(selectedTeamMembersData[index]);
   };
 
   const onExecute = () => {
@@ -101,24 +84,31 @@ export const TeamHandOver = () => {
       });
 
     correctUserArr.map((user) => {
-      exportMember(user.uid);
+      handover(user);
     });
   };
 
-  const exportMember = async (userUid) => {
+  const handover = async (user) => {
     setIsSettingModalLoading(true);
-    const update = await exportTeamMember(
+    const uidUpdate = await updateTeamData(
       "team",
       selectedTeamData.docId,
-      "teamMembers",
-      userUid
+      "teamOwner",
+      user.uid
     );
 
-    if (!update) {
+    const krNameUpdate = await updateTeamData(
+      "team",
+      selectedTeamData.docId,
+      "teamOwnerKRname",
+      user.name
+    );
+
+    if (!uidUpdate && !krNameUpdate) {
       setIsSettingModalLoading(false);
       setIsTeamSettingModal(false);
     } else {
-      console.log(update);
+      console.log(uidUpdate);
     }
   };
 
@@ -132,7 +122,7 @@ export const TeamHandOver = () => {
       <ControlContainer>
         <Description>
           소유자 권한을 양도합니다. 권한 양도는 누구에게나 가능하며, 소유자
-          권한이 양도되면 기존 소유자는 관리자 권한을 얻습니다.
+          권한이 양도되면 기존 소유자는 소유자 권한을 잃습니다.
         </Description>
       </ControlContainer>
       <TableHeaderContainer>
@@ -169,7 +159,7 @@ export const TeamHandOver = () => {
       {selectedTeamData.teamMembers.map((item, index) => (
         <Col key={selectedTeamMembersData[index].uid}>
           <Box maxwidth={"40px"}>
-            {!isAdmin(selectedTeamMembersData[index].uid, true) && (
+            {!isOwner(selectedTeamMembersData[index].uid) && (
               <input
                 type="checkbox"
                 onChange={() => {
@@ -195,7 +185,7 @@ export const TeamHandOver = () => {
           whileTap={{ scale: 0.95 }}
           onClick={onExecute}
         >
-          내보내기
+          양도
         </SaveBtn>
       )}
     </motion.div>
