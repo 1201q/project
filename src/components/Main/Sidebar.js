@@ -21,13 +21,7 @@ const Sidebar = ({ userData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
   const router = useRouter();
-  const { selectedTeamMembersData } = useTeam();
-
-  useEffect(() => {
-    if (selectedTeamMembersData.length > 0) {
-      console.log(selectedTeamMembersData);
-    }
-  }, [selectedTeamMembersData]);
+  const { selectedTeamMembersData, isTeamDataLoading } = useTeam();
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -88,7 +82,20 @@ const Sidebar = ({ userData }) => {
             <MenuText>탐색</MenuText>
           </Menu>
         </MenuContainer>
-
+        {!isTeamDataLoading && (
+          <MenuContainer>
+            {selectedTeamMembersData.map((user) => (
+              <Menu
+                key={user.uid}
+                onClick={() => {
+                  console.log(user);
+                }}
+              >
+                <MenuText>{user.name}</MenuText>
+              </Menu>
+            ))}
+          </MenuContainer>
+        )}
         {/* 모달 */}
         {isModalOpen && (
           <div ref={modalRef}>

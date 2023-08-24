@@ -53,11 +53,12 @@ export const getServerSideProps = async (ctx) => {
 };
 
 export default function Home({ uid }) {
-  const [isLoading, setIsLoading] = useState(true);
   const user = useAuth();
   const router = useRouter();
   const { setScheduleList } = useCalendar();
   const {
+    isTeamDataLoading,
+    setIsTeamDataLoading,
     joinedTeamList,
     setJoinedTeamList,
     setSelectedTeamData,
@@ -103,7 +104,7 @@ export default function Home({ uid }) {
     if (joinedTeamList.length > 0 && selectedTeamUid) {
       const callback = (data) => {
         setSelectedTeamMembersData(data);
-        setIsLoading(false);
+        setIsTeamDataLoading(false);
       };
       const selectedTeamData = joinedTeamList.filter(
         (team) => team.teamUID === selectedTeamUid
@@ -119,7 +120,7 @@ export default function Home({ uid }) {
 
   return (
     <>
-      {!user.user && isLoading ? (
+      {!user.user && isTeamDataLoading ? (
         <Loading text="로딩중..." />
       ) : (
         <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>

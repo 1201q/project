@@ -19,7 +19,13 @@ import { updateTeamData } from "@/utils/firebase/team";
 export default function UserModal() {
   const router = useRouter();
   const user = useAuth();
-  const { joinedTeamList, selectedTeamUid, setSelectedTeamUid } = useTeam();
+  const {
+    joinedTeamList,
+    selectedTeamUid,
+    setSelectedTeamUid,
+    isTeamDataLoading,
+    setIsTeamDataLoading,
+  } = useTeam();
 
   const onSelectTeam = async (selectData) => {
     const update = await updateTeamData(
@@ -31,7 +37,7 @@ export default function UserModal() {
 
     if (!update) {
       setSelectedTeamUid(selectData.teamUID);
-      router.reload();
+      // router.reload();
     } else {
       console.log(update);
     }

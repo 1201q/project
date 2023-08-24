@@ -3,6 +3,7 @@ import React, { useState, createContext, useContext } from "react";
 const TeamContext = createContext();
 
 export const TeamProvider = ({ children }) => {
+  const [isTeamDataLoading, setIsTeamDataLoading] = useState(true);
   const [joinedTeamList, setJoinedTeamList] = useState([]); // 내가 소속중인 팀 리스트
   const [selectedTeamUid, setSelectedTeamUid] = useState(null);
   const [selectedTeamData, setSelectedTeamData] = useState(null); // 선택한 팀 데이터
@@ -13,6 +14,8 @@ export const TeamProvider = ({ children }) => {
   return (
     <TeamContext.Provider
       value={{
+        isTeamDataLoading,
+        setIsTeamDataLoading,
         selectedTeamUid,
         setSelectedTeamUid,
         joinedTeamList,
