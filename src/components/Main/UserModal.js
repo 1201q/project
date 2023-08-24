@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import * as colors from "../../styles/colors";
 import { useRouter } from "next/router";
 import { logout } from "@/utils/firebase/auth";
-import { useRef } from "react";
+import { useEffect } from "react";
 
 // svg
 import User from "../../assets/user-no-circle.svg";
@@ -11,25 +11,29 @@ import UserSetting from "../../assets/user.svg";
 import Users from "../../assets/users-alt.svg";
 import Lock from "../../assets/lock.svg";
 import PlusLogo from "../../assets/plus-small2.svg";
+import Check from "../../assets/check.svg";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useTeam } from "@/utils/context/TeamContext";
+import { updateTeamData } from "@/utils/firebase/team";
 
 export default function UserModal() {
   const router = useRouter();
   const user = useAuth();
-  const { joinedTeamList } = useTeam();
+  const { joinedTeamList, selectedTeamUid, setSelectedTeamUid } = useTeam();
 
-  const renderAuthorityInfo = (item) => {
-    const isOwner = item.teamOwner === user.user.uid;
-    const isAdmin =
-      item.teamAdminMembers.filter((uid) => uid === user.user.uid).length > 0
-        ? true
-        : false;
+  const onSelectTeam = async (selectData) => {
+    const update = await updateTeamData(
+      "users",
+      user.user.uid,
+      "selectedTeamUid",
+      selectData.teamUID
+    );
 
-    if (isOwner) {
-      return <AdminInfo styledbg={colors.calendar.blue}>소유자</AdminInfo>;
-    } else if (isAdmin) {
-      return <AdminInfo styledbg={colors.calendar.gray}>관리자</AdminInfo>;
+    if (!update) {
+      setSelectedTeamUid(selectData.teamUID);
+      router.reload();
+    } else {
+      console.log(update);
     }
   };
 
@@ -42,16 +46,24 @@ export default function UserModal() {
       {/* 프로필 */}
       <ProfileContainer>
         <User width={150} height={150} fill={"#7F7F7F"} />
-
         <DisplayName>{user.user && user.user.displayName}</DisplayName>
       </ProfileContainer>
       {/* 팀 목록 */}
       <MainContentsContainer>
         {joinedTeamList.map((item) => (
-          <Team key={item.teamUID}>
+          <Team
+            key={item.teamUID}
+            onClick={() => {
+              onSelectTeam(item);
+            }}
+          >
             <TeamProfileImg>팀</TeamProfileImg>
             <TeamProfileText>{item.teamName}</TeamProfileText>
-            {renderAuthorityInfo(item)}
+            {item.teamUID === selectedTeamUid && (
+              <CheckboxContainer>
+                <Check width={14} height={14} />
+              </CheckboxContainer>
+            )}
           </Team>
         ))}
         <Team onClick={() => router.push("/team")}>
@@ -247,7 +259,7 @@ const Team = styled.div`
   }
 `;
 
-const AdminInfo = styled.div`
+const CheckboxContainer = styled.div`
   position: absolute;
   right: 0;
   font-size: 12px;

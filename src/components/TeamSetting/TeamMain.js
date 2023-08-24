@@ -23,7 +23,6 @@ export default function TeamMain() {
     setIsTeamSettingModal,
     joinedTeamList,
     setSelectedTeamMembersData,
-    setIsSettingModalLoading,
   } = useTeam();
 
   const renderAuthorityInfo = (item) => {
@@ -50,6 +49,7 @@ export default function TeamMain() {
           data.find((item) => uid === item.uid)
         );
         setSelectedTeamMembersData(sortArr);
+
         // membersData가 / db의 teamMembers와 순서가 맞게
       };
 

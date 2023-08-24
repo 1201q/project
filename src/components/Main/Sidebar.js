@@ -15,11 +15,19 @@ import PlusLogo from "../../assets/plus-small.svg";
 import { logout } from "@/utils/firebase/auth";
 import { useRouter } from "next/router";
 import UserModal from "./UserModal";
+import { useTeam } from "@/utils/context/TeamContext";
 
 const Sidebar = ({ userData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
   const router = useRouter();
+  const { selectedTeamMembersData } = useTeam();
+
+  useEffect(() => {
+    if (selectedTeamMembersData.length > 0) {
+      console.log(selectedTeamMembersData);
+    }
+  }, [selectedTeamMembersData]);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -67,55 +75,20 @@ const Sidebar = ({ userData }) => {
             <Home width={14} height={14} />
             <MenuText>홈</MenuText>
           </Menu>
-          <Menu onClick={() => router.push("/team")}>
-            <Search width={14} height={14} />
-            <MenuText>탐색</MenuText>
+          <Menu>
+            <List width={14} height={14} />
+            <MenuText>전체 일정</MenuText>
           </Menu>
           <Menu>
             <Check width={14} height={14} />
             <MenuText>오늘 할 일</MenuText>
           </Menu>
           <Menu>
-            <List width={14} height={14} />
-            <MenuText>전체 일정</MenuText>
+            <Search width={14} height={14} />
+            <MenuText>탐색</MenuText>
           </Menu>
         </MenuContainer>
-        {/* 팀 목록 */}
-        <TeamContainer>
-          <MenuHeader>나의 팀</MenuHeader>
-          <Team>
-            <Menu>
-              <AngleRight
-                width={14}
-                height={14}
-                style={{ marginLeft: "7px" }}
-                fill={"#7D7E87"}
-              />
-              <MenuText>홈</MenuText>
-            </Menu>
-            <ProjectContainer>
-              <VerticalLine></VerticalLine>
-              <Project>
-                <Menu>
-                  <MenuText>프로젝트</MenuText>
-                </Menu>
-                <Menu>
-                  <MenuText>프로젝트</MenuText>
-                </Menu>
-                <Menu style={{ marginBottom: 0 }}>
-                  <MenuText>프로젝트</MenuText>
-                </Menu>
-              </Project>
-            </ProjectContainer>
-          </Team>
-        </TeamContainer>
-        {/* 새로운 팀 가입 */}
-        <TeamContainer>
-          <Menu whileTap={{ scale: 0.96 }}>
-            <PlusLogo width={17} height={17} fill={"#7D7E87"} />
-            <MenuText>새로운 팀 가입하기</MenuText>
-          </Menu>
-        </TeamContainer>
+
         {/* 모달 */}
         {isModalOpen && (
           <div ref={modalRef}>

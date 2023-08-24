@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import {
   grantAdminPermission,
   revokeAdminPermission,
-} from "@/utils/firebase/setting";
+} from "@/utils/firebase/team";
 import { observeCollectionData } from "@/utils/firebase/db";
 
 export const TeamAdminSetting = () => {
@@ -150,7 +150,7 @@ export const TeamAdminSetting = () => {
   };
 
   return (
-    <motion.div
+    <Container
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2 }}
@@ -170,7 +170,7 @@ export const TeamAdminSetting = () => {
             }}
           >
             <option value="grant">관리자 권한 부여</option>
-            <option value="revoke">관리자 권한 뺏기</option>
+            <option value="revoke">관리자 권한 회수</option>
           </Select>
         </FlexDiv>
       </ControlContainer>
@@ -253,9 +253,13 @@ export const TeamAdminSetting = () => {
           업데이트
         </SaveBtn>
       )}
-    </motion.div>
+    </Container>
   );
 };
+
+const Container = styled(motion.div)`
+  overflow-y: hidden;
+`;
 
 const FlexDiv = styled.div`
   display: flex;

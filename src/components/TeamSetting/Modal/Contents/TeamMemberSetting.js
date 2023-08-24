@@ -10,7 +10,7 @@ import User from "../../../../assets/user.svg";
 
 import Checkbox from "../../../../assets/checkbox (1).svg";
 import { useEffect, useState } from "react";
-import { exportTeamMember } from "@/utils/firebase/setting";
+import { exportTeamMember } from "@/utils/firebase/team";
 
 export const TeamMemberSetting = () => {
   const {

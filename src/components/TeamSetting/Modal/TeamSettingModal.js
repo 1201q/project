@@ -4,7 +4,7 @@ import styled from "styled-components";
 import * as colors from "../../../styles/colors";
 import X from "../../../assets/x.svg";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
-import { updateTeamData } from "@/utils/firebase/setting";
+import { updateTeamData } from "@/utils/firebase/team";
 
 import { TeamName } from "./Contents/TeamName";
 import { TeamDescription } from "./Contents/TeamDescription";
@@ -14,7 +14,7 @@ import { TeamInvite } from "./Contents/TeamInvite";
 import { TeamMemberSetting } from "./Contents/TeamMemberSetting";
 import { TeamAdminSetting } from "./Contents/TeamAdminSetting";
 import TeamModalLoading from "./Contents/TeamModalLoading";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function TeamSettingModal() {
   const user = useAuth();
@@ -222,7 +222,6 @@ const ModalContainer = styled(motion.div)`
   /* padding: 25px; */
   border-radius: 20px;
   box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.15);
-  overflow-y: scroll;
 `;
 
 const HeaderContainer = styled.div`
@@ -235,11 +234,14 @@ const HeaderContainer = styled.div`
 
 const FlexDiv = styled.div`
   display: flex;
+  height: 100%;
+  max-height: 470px;
   padding: 20px;
 `;
 
 const ContentsContainer = styled(motion.div)`
   width: 100%;
+  overflow-y: auto;
 `;
 
 const SidebarContainer = styled.div`
