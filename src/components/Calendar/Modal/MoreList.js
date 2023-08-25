@@ -131,4 +131,5 @@ const Schedule = styled.div`
   color: white;
   background-color: ${(props) => props.styledbgcolor};
   cursor: pointer;
+  overflow-x: hidden;
 `;

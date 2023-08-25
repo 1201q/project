@@ -26,6 +26,8 @@ const Sidebar = ({ userData }) => {
     setIsUserModalOpen,
     isSidebarChattingOpen,
     setIsSidebarChattingOpen,
+    isSidebarProjectOpen,
+    setIsSidebarProjectOpen,
   } = useMain();
 
   const modalRef = useRef(null);
@@ -54,76 +56,111 @@ const Sidebar = ({ userData }) => {
   return (
     <Container>
       <Wrapper>
-        {/* 프로필 */}
-        <ProfileContainer>
-          <ProfileWrapper
-            onClick={() => {
-              setIsUserModalOpen(true);
-            }}
-          >
-            <ProfileImage>나</ProfileImage>
-            <ProfileName>
-              {userData.user ? userData.user.displayName : ""}
-            </ProfileName>
-          </ProfileWrapper>
-        </ProfileContainer>
-        {/* 검색 */}
-        <InputContainer>
-          <Search width={13} height={13} />
-          <MenuInput placeholder="Search"></MenuInput>
-        </InputContainer>
-        {/* 메뉴 */}
-        <TopMenuContainer>
-          <Menu onClick={() => router.push("/")}>
-            <Home width={18} height={18} />
-            <MenuText>홈</MenuText>
-          </Menu>
-          <Menu>
-            <List width={18} height={18} />
-            <MenuText>전체 일정</MenuText>
-          </Menu>
-          <Menu>
-            <Check width={18} height={18} />
-            <MenuText>오늘 할 일</MenuText>
-          </Menu>
-          <Menu>
-            <Search width={18} height={18} />
-            <MenuText>탐색</MenuText>
-          </Menu>
-        </TopMenuContainer>
-
-        <MenuContainer>
-          <MenuController
-            onClick={() => {
-              setIsSidebarChattingOpen((prev) => !prev);
-            }}
-          >
-            <p>채팅</p>
-            <PlusLogo width={17} height={17} fill={colors.font.gray} />
-          </MenuController>
-          {isSidebarChattingOpen && !isTeamDataLoading && (
-            <UserContainer>
-              {selectedTeamMembersData.map((user) => (
-                <User
-                  key={user.uid}
-                  onClick={() => {
-                    console.log(user);
-                  }}
-                >
-                  <UserProfileImage>
-                    <UserThumnail
-                      width={17}
-                      height={17}
-                      fill={"white"}
-                      style={{ marginTop: "7px" }}
-                    />
-                  </UserProfileImage>
-                  <UserNameText>{user.name}</UserNameText>
-                </User>
-              ))}
-            </UserContainer>
-          )}
-        </MenuContainer>
+        <Top>
+          {/* 프로필 */}
+          <ProfileContainer>
+            <ProfileWrapper
+              onClick={() => {
+                setIsUserModalOpen(true);
+              }}
+            >
+              <ProfileImage>나</ProfileImage>
+              <ProfileName>
+                {userData.user ? userData.user.displayName : ""}
+              </ProfileName>
+            </ProfileWrapper>
+          </ProfileContainer>
+          {/* 검색 */}
+          <InputContainer>
+            <Search width={13} height={13} />
+            <MenuInput placeholder="Search"></MenuInput>
+          </InputContainer>
+          {/* 메뉴 */}
+          <TopMenuContainer>
+            <Menu onClick={() => router.push("/")}>
+              <Home width={18} height={18} />
+              <MenuText>홈</MenuText>
+            </Menu>
+            <Menu>
+              <List width={18} height={18} />
+              <MenuText>전체 일정</MenuText>
+            </Menu>
+            <Menu>
+              <Check width={18} height={18} />
+              <MenuText>오늘 할 일</MenuText>
+            </Menu>
+            <Menu>
+              <Search width={18} height={18} />
+              <MenuText>탐색</MenuText>
+            </Menu>
+          </TopMenuContainer>
+        </Top>
+        <Bottom>
+          <MenuContainer>
+            <MenuController
+              onClick={() => {
+                setIsSidebarChattingOpen((prev) => !prev);
+              }}
+            >
+              <p>멤버</p>
+              <PlusLogo width={17} height={17} fill={colors.font.gray} />
+            </MenuController>
+            {isSidebarChattingOpen && !isTeamDataLoading && (
+              <UserContainer>
+                {selectedTeamMembersData.map((user) => (
+                  <User
+                    key={user.uid}
+                    onClick={() => {
+                      console.log(user);
+                    }}
+                  >
+                    <UserProfileImage>
+                      <UserThumnail
+                        width={17}
+                        height={17}
+                        fill={"white"}
+                        style={{ marginTop: "7px" }}
+                      />
+                    </UserProfileImage>
+                    <UserNameText>{user.name}</UserNameText>
+                  </User>
+                ))}
+              </UserContainer>
+            )}
+          </MenuContainer>
+          <MenuContainer>
+            <MenuController
+              onClick={() => {
+                setIsSidebarProjectOpen((prev) => !prev);
+              }}
+            >
+              <p>프로젝트</p>
+              <PlusLogo width={17} height={17} fill={colors.font.gray} />
+            </MenuController>
+            {isSidebarProjectOpen && !isTeamDataLoading && (
+              <UserContainer>
+                {selectedTeamMembersData.map((user) => (
+                  <User
+                    key={user.uid}
+                    onClick={() => {
+                      console.log(user);
+                    }}
+                  >
+                    <UserProfileImage>
+                      <UserThumnail
+                        width={17}
+                        height={17}
+                        fill={"white"}
+                        style={{ marginTop: "7px" }}
+                      />
+                    </UserProfileImage>
+                    <UserNameText>{user.name}</UserNameText>
+                  </User>
+                ))}
+              </UserContainer>
+            )}
+          </MenuContainer>
+        </Bottom>
         {/* 모달 */}
         {isUserModalOpen && (
           <div ref={modalRef}>
@@ -136,12 +173,28 @@ const Sidebar = ({ userData }) => {
 };
 
 const Container = styled.div`
-  background-color: white;
   width: 240px;
   min-width: 240px;
-  min-height: 100vh;
   height: 100%;
+  min-height: 100vh;
+  max-height: 100vh;
+  background-color: white;
+  overflow-y: scroll;
   border-right: 0.5px solid ${colors.border.deepgray};
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Optional: Style the scrollbar track and thumb */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+  }
 `;
 
 const Wrapper = styled.div`
@@ -166,6 +219,15 @@ const ProfileWrapper = styled(motion.div)`
   }
 `;
 
+const Top = styled.div`
+  /* border: 2px solid black; */
+`;
+
+const Bottom = styled.div`
+  /* border: 2px solid black; */
+  /* background-color: red; */
+`;
+
 // 컨테이너
 const ProfileContainer = styled.div`
   display: flex;
@@ -176,7 +238,7 @@ const ProfileContainer = styled.div`
 `;
 const TopMenuContainer = styled.div`
   padding: 8px;
-  border-bottom: 2px solid ${colors.border.deepgray};
+  border-bottom: 1.5px solid ${colors.border.deepgray};
 `;
 
 const UserContainer = styled.div`
@@ -184,8 +246,11 @@ const UserContainer = styled.div`
   background-color: ${colors.background.gray};
 `;
 
-const MenuContainer = styled.div``;
+const MenuContainer = styled.div`
+  border-bottom: 1.5px solid ${colors.border.deepgray};
+`;
 const InputContainer = styled.div`
+  position: relative;
   padding: 8px;
 
   svg {
@@ -245,7 +310,8 @@ const MenuController = styled.div`
   padding: 10px 10px 10px 17px;
   color: ${colors.font.darkgray};
   background-color: white;
-  border-bottom: 2px solid ${colors.border.deepgray};
+  /* border-top: 2px solid ${colors.border.deepgray}; */
+  /* border-bottom: 2px solid ${colors.border.deepgray}; */
   cursor: pointer;
 `;
 const MenuText = styled.p`

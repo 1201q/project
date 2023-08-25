@@ -5,6 +5,7 @@ const MainContext = createContext();
 export const MainProvider = ({ children }) => {
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isSidebarChattingOpen, setIsSidebarChattingOpen] = useState(false);
+  const [isSidebarProjectOpen, setIsSidebarProjectOpen] = useState(false);
 
   return (
     <MainContext.Provider
@@ -13,6 +14,8 @@ export const MainProvider = ({ children }) => {
         setIsUserModalOpen,
         isSidebarChattingOpen,
         setIsSidebarChattingOpen,
+        isSidebarProjectOpen,
+        setIsSidebarProjectOpen,
       }}
     >
       {children}
