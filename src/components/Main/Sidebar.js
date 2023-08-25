@@ -18,10 +18,16 @@ import { logout } from "@/utils/firebase/auth";
 import { useRouter } from "next/router";
 import UserModal from "./UserModal";
 import { useTeam } from "@/utils/context/TeamContext";
+import { useMain } from "@/utils/context/MainContext";
 
 const Sidebar = ({ userData }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isChattingOpen, setIsChattingOpen] = useState(false);
+  const {
+    isUserModalOpen,
+    setIsUserModalOpen,
+    isSidebarChattingOpen,
+    setIsSidebarChattingOpen,
+  } = useMain();
+
   const modalRef = useRef(null);
   const router = useRouter();
   const { selectedTeamMembersData, isTeamDataLoading } = useTeam();
@@ -29,21 +35,21 @@ const Sidebar = ({ userData }) => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (
-        isModalOpen &&
+        isUserModalOpen &&
         modalRef.current &&
         !modalRef.current.contains(event.target)
       ) {
-        setIsModalOpen(false);
+        setIsUserModalOpen(false);
       }
     };
 
-    if (isModalOpen) {
+    if (isUserModalOpen) {
       document.addEventListener("mousedown", handleOutsideClick);
     }
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
-  }, [isModalOpen]);
+  }, [isUserModalOpen]);
 
   return (
     <Container>
@@ -52,12 +58,12 @@ const Sidebar = ({ userData }) => {
         <ProfileContainer>
           <ProfileWrapper
             onClick={() => {
-              setIsModalOpen(true);
+              setIsUserModalOpen(true);
             }}
           >
             <ProfileImage>나</ProfileImage>
             <ProfileName>
-              {userData ? userData.user.displayName : "익명"}
+              {userData.user ? userData.user.displayName : ""}
             </ProfileName>
           </ProfileWrapper>
         </ProfileContainer>
@@ -89,13 +95,13 @@ const Sidebar = ({ userData }) => {
         <MenuContainer>
           <MenuController
             onClick={() => {
-              setIsChattingOpen((prev) => !prev);
+              setIsSidebarChattingOpen((prev) => !prev);
             }}
           >
             <p>채팅</p>
             <PlusLogo width={17} height={17} fill={colors.font.gray} />
           </MenuController>
-          {isChattingOpen && !isTeamDataLoading && (
+          {isSidebarChattingOpen && !isTeamDataLoading && (
             <UserContainer>
               {selectedTeamMembersData.map((user) => (
                 <User
@@ -119,7 +125,7 @@ const Sidebar = ({ userData }) => {
           )}
         </MenuContainer>
         {/* 모달 */}
-        {isModalOpen && (
+        {isUserModalOpen && (
           <div ref={modalRef}>
             <UserModal />
           </div>

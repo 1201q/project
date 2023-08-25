@@ -6,6 +6,7 @@ import {
 import "../styles/globals.css";
 import Head from "next/head";
 import { TeamProvider } from "@/utils/context/TeamContext";
+import { MainProvider } from "@/utils/context/MainContext";
 
 export default function App({
   Component,
@@ -21,7 +22,9 @@ export default function App({
         <TeamProvider>
           <CalendarModalProvider>
             <CalendarProvider>
-              <Component {...pageProps} />
+              <MainProvider>
+                <Component {...pageProps} />
+              </MainProvider>
             </CalendarProvider>
           </CalendarModalProvider>
         </TeamProvider>

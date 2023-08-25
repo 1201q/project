@@ -70,6 +70,12 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    if (user.user) {
+      router.push("/");
+    }
+  }, [user]);
+
   return (
     <>
       {isLoading ? (
