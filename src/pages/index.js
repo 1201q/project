@@ -102,13 +102,19 @@ export default function Home({ uid }) {
     let members = [];
 
     if (joinedTeamList.length > 0 && selectedTeamUid) {
-      const callback = (data) => {
-        setSelectedTeamMembersData(data);
-        setIsTeamDataLoading(false);
-      };
       const selectedTeamData = joinedTeamList.filter(
         (team) => team.teamUID === selectedTeamUid
       );
+
+      const callback = (data) => {
+        let orderArr = [...selectedTeamData[0].teamMembers];
+        const sortArr = orderArr.map((uid) =>
+          data.find((item) => item.uid === uid)
+        );
+
+        setSelectedTeamMembersData(sortArr);
+        setIsTeamDataLoading(false);
+      };
 
       if (selectedTeamData[0]) {
         members = selectedTeamData[0].teamMembers;
@@ -116,7 +122,7 @@ export default function Home({ uid }) {
         observeCollectionData("users", members, callback);
       }
     }
-  }, [joinedTeamList, selectedTeamUid]);
+  }, [selectedTeamUid]);
 
   return (
     <>

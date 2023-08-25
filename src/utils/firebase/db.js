@@ -119,6 +119,7 @@ export const observeCollectionData = (
       });
     });
     callback(dataArr);
+    unsubscribe();
   });
 };
 

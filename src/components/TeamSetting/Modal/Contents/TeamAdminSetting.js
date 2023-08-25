@@ -14,7 +14,6 @@ import {
   grantAdminPermission,
   revokeAdminPermission,
 } from "@/utils/firebase/team";
-import { observeCollectionData } from "@/utils/firebase/db";
 
 export const TeamAdminSetting = () => {
   const {

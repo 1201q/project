@@ -12,6 +12,8 @@ import List from "../../assets/list.svg";
 import AngleRight from "../../assets/angle-small-right.svg";
 import Lock from "../../assets/lock.svg";
 import PlusLogo from "../../assets/plus-small.svg";
+import UserThumnail from "../../assets/user-no-circle.svg";
+
 import { logout } from "@/utils/firebase/auth";
 import { useRouter } from "next/router";
 import UserModal from "./UserModal";
@@ -19,6 +21,7 @@ import { useTeam } from "@/utils/context/TeamContext";
 
 const Sidebar = ({ userData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isChattingOpen, setIsChattingOpen] = useState(false);
   const modalRef = useRef(null);
   const router = useRouter();
   const { selectedTeamMembersData, isTeamDataLoading } = useTeam();
@@ -64,38 +67,57 @@ const Sidebar = ({ userData }) => {
           <MenuInput placeholder="Search"></MenuInput>
         </InputContainer>
         {/* 메뉴 */}
-        <MenuContainer>
+        <TopMenuContainer>
           <Menu onClick={() => router.push("/")}>
-            <Home width={14} height={14} />
+            <Home width={18} height={18} />
             <MenuText>홈</MenuText>
           </Menu>
           <Menu>
-            <List width={14} height={14} />
+            <List width={18} height={18} />
             <MenuText>전체 일정</MenuText>
           </Menu>
           <Menu>
-            <Check width={14} height={14} />
+            <Check width={18} height={18} />
             <MenuText>오늘 할 일</MenuText>
           </Menu>
           <Menu>
-            <Search width={14} height={14} />
+            <Search width={18} height={18} />
             <MenuText>탐색</MenuText>
           </Menu>
+        </TopMenuContainer>
+
+        <MenuContainer>
+          <MenuController
+            onClick={() => {
+              setIsChattingOpen((prev) => !prev);
+            }}
+          >
+            <p>채팅</p>
+            <PlusLogo width={17} height={17} fill={colors.font.gray} />
+          </MenuController>
+          {isChattingOpen && !isTeamDataLoading && (
+            <UserContainer>
+              {selectedTeamMembersData.map((user) => (
+                <User
+                  key={user.uid}
+                  onClick={() => {
+                    console.log(user);
+                  }}
+                >
+                  <UserProfileImage>
+                    <UserThumnail
+                      width={17}
+                      height={17}
+                      fill={"white"}
+                      style={{ marginTop: "7px" }}
+                    />
+                  </UserProfileImage>
+                  <UserNameText>{user.name}</UserNameText>
+                </User>
+              ))}
+            </UserContainer>
+          )}
         </MenuContainer>
-        {!isTeamDataLoading && (
-          <MenuContainer>
-            {selectedTeamMembersData.map((user) => (
-              <Menu
-                key={user.uid}
-                onClick={() => {
-                  console.log(user);
-                }}
-              >
-                <MenuText>{user.name}</MenuText>
-              </Menu>
-            ))}
-          </MenuContainer>
-        )}
         {/* 모달 */}
         {isModalOpen && (
           <div ref={modalRef}>
@@ -108,7 +130,7 @@ const Sidebar = ({ userData }) => {
 };
 
 const Container = styled.div`
-  background-color: ${colors.background.gray};
+  background-color: white;
   width: 240px;
   min-width: 240px;
   min-height: 100vh;
@@ -146,11 +168,17 @@ const ProfileContainer = styled.div`
   padding: 0px 10px;
   height: 61px;
 `;
-const MenuContainer = styled.div`
+const TopMenuContainer = styled.div`
   padding: 8px;
-  margin-top: 10px;
+  border-bottom: 2px solid ${colors.border.deepgray};
 `;
 
+const UserContainer = styled.div`
+  padding: 8px;
+  background-color: ${colors.background.gray};
+`;
+
+const MenuContainer = styled.div``;
 const InputContainer = styled.div`
   padding: 8px;
 
@@ -159,17 +187,6 @@ const InputContainer = styled.div`
     margin-top: 11px;
     margin-left: 11px;
   }
-`;
-
-const TeamContainer = styled.div`
-  border-top: 1px solid ${colors.border.gray};
-  padding: 8px;
-  margin-bottom: 20px;
-`;
-
-const ProjectContainer = styled.div`
-  display: flex;
-  height: 100%;
 `;
 
 // 프로필
@@ -193,6 +210,7 @@ const ProfileName = styled.p`
 `;
 
 // 메뉴
+
 const Menu = styled(motion.div)`
   display: flex;
   align-items: center;
@@ -212,18 +230,29 @@ const Menu = styled(motion.div)`
   }
 `;
 
+const MenuController = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 10px 10px 10px 17px;
+  color: ${colors.font.darkgray};
+  background-color: white;
+  border-bottom: 2px solid ${colors.border.deepgray};
+  cursor: pointer;
+`;
 const MenuText = styled.p`
-  margin-left: 8px;
-  font-size: 17px;
+  margin-left: 17px;
+  font-size: 15px;
   font-weight: 500;
   color: ${colors.font.darkgray};
 `;
-
 const MenuInput = styled.input`
   width: 100%;
   height: 35px;
-  background-color: white;
-  border: 2px solid ${colors.border.deepgray};
+  background-color: ${colors.background.gray};
+  border: 1px solid ${colors.border.gray};
   border-radius: 7px;
   outline: none;
   color: ${colors.font.black};
@@ -232,37 +261,36 @@ const MenuInput = styled.input`
   padding-right: 10px;
 `;
 
-const MenuHeader = styled.p`
-  color: ${colors.font.darkgray};
-  margin-bottom: 5px;
-  padding: 10px;
-`;
-
-// 프로젝트
-const Team = styled.div`
+// 팀
+const User = styled(motion.div)`
   display: flex;
-  flex-direction: column;
+  align-items: center;
   cursor: pointer;
-  margin-bottom: 10px;
-`;
+  padding: 8px 10px;
+  border-radius: 7px;
 
-const Project = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-`;
-
-const VerticalLine = styled.div`
-  &::before {
-    content: "";
-    width: 1px;
-    background-color: ${colors.border.deepgray};
-    height: 90%;
-    display: block;
-    margin-left: 12px;
-    margin-right: 12px;
+  &:hover {
+    background-color: #ededed;
+    opacity: 0.8;
   }
+`;
+
+const UserProfileImage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 21px;
+  height: 21px;
+  background-color: ${colors.calendar.mint};
+  border-radius: 50%;
+  overflow: hidden;
+`;
+
+const UserNameText = styled.p`
+  margin-left: 15px;
+  font-size: 15px;
+  font-weight: 400;
+  color: ${colors.font.darkgray};
 `;
 
 export default Sidebar;

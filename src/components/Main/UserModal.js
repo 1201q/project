@@ -37,7 +37,6 @@ export default function UserModal() {
 
     if (!update) {
       setSelectedTeamUid(selectData.teamUID);
-      // router.reload();
     } else {
       console.log(update);
     }
@@ -67,7 +66,7 @@ export default function UserModal() {
             <TeamProfileText>{item.teamName}</TeamProfileText>
             {item.teamUID === selectedTeamUid && (
               <CheckboxContainer>
-                <Check width={14} height={14} />
+                <Check width={14} height={14} fill={colors.calendar.mint} />
               </CheckboxContainer>
             )}
           </Team>
@@ -127,7 +126,6 @@ export default function UserModal() {
 
               if (confirm) {
                 logout();
-
                 setTimeout(() => {
                   router.reload();
                 }, 1000);
