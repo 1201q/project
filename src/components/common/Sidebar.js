@@ -34,13 +34,13 @@ const Sidebar = ({ userData }) => {
   const topRef = useRef(null);
   const router = useRouter();
   const { selectedTeamMembersData, isTeamDataLoading } = useTeam();
+  const { currentTab, setCurrentTab } = useMain();
   const [topMenuHeight, setTopMenuHeight] = useState(0);
 
   useEffect(() => {
     if (topRef.current) {
       const height = topRef.current.getBoundingClientRect().height;
       setTopMenuHeight(height);
-      console.log(height);
     }
   }, []);
 
@@ -89,11 +89,19 @@ const Sidebar = ({ userData }) => {
           </InputContainer>
           {/* 메뉴 */}
           <TopMenuContainer>
-            <Menu onClick={() => router.push("/")}>
+            <Menu
+              onClick={() => {
+                setCurrentTab("main");
+              }}
+            >
               <Home width={18} height={18} />
               <MenuText>홈</MenuText>
             </Menu>
-            <Menu>
+            <Menu
+              onClick={() => {
+                setCurrentTab("calendar");
+              }}
+            >
               <List width={18} height={18} />
               <MenuText>전체 일정</MenuText>
             </Menu>

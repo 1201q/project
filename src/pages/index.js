@@ -11,14 +11,16 @@ import {
   observeCollectionData,
 } from "@/utils/firebase/db";
 // 컴포넌트
-import Sidebar from "@/components/Main/Sidebar";
+import Sidebar from "@/components/common/Sidebar";
 import Calendar from "@/components/Calendar/Calendar";
 import Loading from "@/components/Loading";
+import Main from "@/components/main/Main";
 // context
 import { useCalendar } from "@/utils/context/CalendarContext";
 import { useTeam } from "@/utils/context/TeamContext";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useRouter } from "next/router";
+import { useMain } from "@/utils/context/MainContext";
 
 dayjs.extend(isSameOrBefore);
 
@@ -66,6 +68,7 @@ export default function Home({ uid }) {
     setSelectedTeamUid,
     setSelectedTeamMembersData,
   } = useTeam();
+  const { currentTab, setCurrentTab } = useMain();
 
   useEffect(() => {
     const getScheduleData = (data) => {
@@ -124,6 +127,18 @@ export default function Home({ uid }) {
     }
   }, [selectedTeamUid]);
 
+  const renderContents = () => {
+    const menu = {
+      main: Main,
+      calendar: Calendar,
+    };
+
+    const SelectedComponent = menu[currentTab];
+    if (SelectedComponent) {
+      return <SelectedComponent />;
+    }
+  };
+
   return (
     <>
       {!user.user && isTeamDataLoading ? (
@@ -131,7 +146,7 @@ export default function Home({ uid }) {
       ) : (
         <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Sidebar userData={user} />
-          <Calendar />
+          {renderContents()}
         </Container>
       )}
     </>
