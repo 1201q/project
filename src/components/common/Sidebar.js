@@ -126,7 +126,7 @@ const Sidebar = ({ userData }) => {
             </MenuController>
             {isSidebarChattingOpen && !isTeamDataLoading && (
               <UserContainer
-                initial={{ y: -10, opacity: 0 }}
+                initial={{ y: 0, opacity: 0 }}
                 animate={{
                   y: 0,
                   opacity: 1,
@@ -165,7 +165,7 @@ const Sidebar = ({ userData }) => {
             </MenuController>
             {isSidebarProjectOpen && !isTeamDataLoading && (
               <UserContainer
-                initial={{ y: -10, opacity: 0 }}
+                initial={{ y: 0, opacity: 0 }}
                 animate={{
                   y: 0,
                   opacity: 1,

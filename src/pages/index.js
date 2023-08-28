@@ -12,7 +12,7 @@ import {
 } from "@/utils/firebase/db";
 // 컴포넌트
 import Sidebar from "@/components/common/Sidebar";
-import Calendar from "@/components/Calendar/Calendar";
+import Calendar from "@/components/calendar/Calendar";
 import Loading from "@/components/Loading";
 import Main from "@/components/main/Main";
 // context

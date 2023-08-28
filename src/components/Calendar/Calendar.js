@@ -9,12 +9,12 @@ import * as colors from "../../styles/colors";
 import AngleLeft from "../../assets/angle-small-left.svg";
 import AngleRight from "../../assets/angle-small-right.svg";
 // 컴포넌트
-import AddScheduleModal from "./Modal/AddSchedule";
-import DetailInfoPopup from "./Modal/DetailInfo";
-import MoreListPopup from "./Modal/MoreList";
+import AddScheduleModal from "./modal/AddSchedule";
+import DetailInfoPopup from "./modal/DetailInfo";
+import MoreListPopup from "./modal/MoreList";
 // context
 import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
-import Date from "./Contents/Date";
+import Date from "./contents/Date";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
