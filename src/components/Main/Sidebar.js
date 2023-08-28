@@ -31,8 +31,18 @@ const Sidebar = ({ userData }) => {
   } = useMain();
 
   const modalRef = useRef(null);
+  const topRef = useRef(null);
   const router = useRouter();
   const { selectedTeamMembersData, isTeamDataLoading } = useTeam();
+  const [topMenuHeight, setTopMenuHeight] = useState(0);
+
+  useEffect(() => {
+    if (topRef.current) {
+      const height = topRef.current.getBoundingClientRect().height;
+      setTopMenuHeight(height);
+      console.log(height);
+    }
+  }, []);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -56,7 +66,7 @@ const Sidebar = ({ userData }) => {
   return (
     <Container>
       <Wrapper>
-        <Top>
+        <Top ref={topRef}>
           {/* 프로필 */}
           <ProfileContainer>
             <ProfileWrapper
@@ -70,6 +80,8 @@ const Sidebar = ({ userData }) => {
               </ProfileName>
             </ProfileWrapper>
           </ProfileContainer>
+        </Top>
+        <Bottom styledMarginTop={`${topMenuHeight}px`}>
           {/* 검색 */}
           <InputContainer>
             <Search width={13} height={13} />
@@ -94,8 +106,7 @@ const Sidebar = ({ userData }) => {
               <MenuText>탐색</MenuText>
             </Menu>
           </TopMenuContainer>
-        </Top>
-        <Bottom>
+
           <MenuContainer>
             <MenuController
               onClick={() => {
@@ -106,7 +117,14 @@ const Sidebar = ({ userData }) => {
               <PlusLogo width={17} height={17} fill={colors.font.gray} />
             </MenuController>
             {isSidebarChattingOpen && !isTeamDataLoading && (
-              <UserContainer>
+              <UserContainer
+                initial={{ y: -10, opacity: 0 }}
+                animate={{
+                  y: 0,
+                  opacity: 1,
+                }}
+                transition={{ duration: 0.2 }}
+              >
                 {selectedTeamMembersData.map((user) => (
                   <User
                     key={user.uid}
@@ -138,7 +156,14 @@ const Sidebar = ({ userData }) => {
               <PlusLogo width={17} height={17} fill={colors.font.gray} />
             </MenuController>
             {isSidebarProjectOpen && !isTeamDataLoading && (
-              <UserContainer>
+              <UserContainer
+                initial={{ y: -10, opacity: 0 }}
+                animate={{
+                  y: 0,
+                  opacity: 1,
+                }}
+                transition={{ duration: 0.2 }}
+              >
                 {selectedTeamMembersData.map((user) => (
                   <User
                     key={user.uid}
@@ -220,12 +245,18 @@ const ProfileWrapper = styled(motion.div)`
 `;
 
 const Top = styled.div`
-  /* border: 2px solid black; */
+  width: 240px;
+  min-width: 240px;
+  max-width: 240px;
+  position: fixed;
+  background-color: white;
+  border-right: 0.5px solid ${colors.border.deepgray};
+  z-index: 100;
 `;
 
 const Bottom = styled.div`
-  /* border: 2px solid black; */
-  /* background-color: red; */
+  margin-top: ${(props) =>
+    props.styledMarginTop ? props.styledMarginTop : "61px"};
 `;
 
 // 컨테이너
@@ -241,9 +272,10 @@ const TopMenuContainer = styled.div`
   border-bottom: 1.5px solid ${colors.border.deepgray};
 `;
 
-const UserContainer = styled.div`
+const UserContainer = styled(motion.div)`
   padding: 8px;
   background-color: ${colors.background.gray};
+  z-index: 99;
 `;
 
 const MenuContainer = styled.div`
@@ -313,6 +345,7 @@ const MenuController = styled.div`
   /* border-top: 2px solid ${colors.border.deepgray}; */
   /* border-bottom: 2px solid ${colors.border.deepgray}; */
   cursor: pointer;
+  z-index: 100;
 `;
 const MenuText = styled.p`
   margin-left: 17px;
