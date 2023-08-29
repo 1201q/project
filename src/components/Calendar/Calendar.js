@@ -170,7 +170,7 @@ export default function Calendar() {
   };
 
   return (
-    <Container>
+    <Container initial={{ y: -10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
       <HeaderContainer>
         <ControlContainer>
           <CurrentDateText>
@@ -217,7 +217,7 @@ export default function Calendar() {
 }
 
 // 컨테이너
-const Container = styled.div`
+const Container = styled(motion.div)`
   width: 100%;
   max-height: 99vh;
 `;

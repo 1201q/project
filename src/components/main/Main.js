@@ -6,44 +6,81 @@ import weekOfYear from "dayjs/plugin/weekOfYear";
 import isBetween from "dayjs/plugin/isBetween";
 import * as colors from "../../styles/colors";
 
-import User from "../../assets/users-alt.svg";
+import ProjectCard from "./project/ProjectCard";
+import Welcome from "./welcome/Welcome";
+import Schedule from "./todo/Schedule";
+import { useState, useEffect } from "react";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
 dayjs.extend(weekOfYear);
 
 export default function Main() {
+  const [isHeaderScrolled, setIsHeaderScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      console.log("TEst");
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <Container>
-      <Header>프로젝트</Header>
+    <Container initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+      {/* 상단 welcome */}
+      <TopInfoContainer>
+        <Welcome />
+      </TopInfoContainer>
+      <MenuHeaderText>프로젝트</MenuHeaderText>
+      {/* 프로젝트 */}
       <ProjectContainer>
-        <Card>
-          <CardColor styledcolor={colors.calendar.green}></CardColor>
-          <div style={{ maxWidth: "100%" }}>
-            <CardTitle>나의 프로젝트!</CardTitle>
-            <MemberSum>
-              <User
-                width={13}
-                height={13}
-                fill={colors.font.gray}
-                style={{ marginRight: "10px", marginTop: "1px" }}
-              />
-              <p>10</p>
-            </MemberSum>
-          </div>
-        </Card>
+        <ProjectCard />
+        <ProjectCard />
       </ProjectContainer>
-      <Header>오늘 할 일</Header>
-      <ContentsContainer>1</ContentsContainer>
+      <Div>
+        <div style={{ width: "60%", minWidth: "814px" }}>
+          <Schedule />
+        </div>
+        <div style={{ width: "40%", minWidth: "407px" }}>
+          <ContentsContainer>
+            <ContainerHeader>메모장</ContainerHeader>
+          </ContentsContainer>
+        </div>
+      </Div>
     </Container>
   );
 }
 
-const Container = styled.div`
+const FlexDiv = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const Div = styled.div`
+  display: flex;
+  gap: 25px;
+`;
+
+const Container = styled(motion.div)`
   width: 100%;
   max-height: 100vh;
   padding: 15px 25px;
   overflow-y: scroll;
+  background-color: ${colors.background.gray2};
+`;
+
+const TopInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  /* padding: 15px 15px; */
+  border-radius: 10px;
+  /* background-color: rgba(255, 255, 255, 1); */
 `;
 
 const ProjectContainer = styled.div`
@@ -55,62 +92,30 @@ const ProjectContainer = styled.div`
 `;
 
 const ContentsContainer = styled.div`
-  width: 100%;
-  height: 300px;
-  margin-bottom: 35px;
-`;
-
-const Header = styled.p`
-  width: 150px;
-  font-size: 25px;
-  font-weight: 700;
-  color: ${colors.font.black};
-  margin-bottom: 20px;
-`;
-
-const Card = styled.div`
   position: relative;
   width: 100%;
-  max-width: 296.5px;
-  height: 140px;
-  border-radius: 7px;
-  border: 1px solid ${colors.border.gray};
-  background-color: ${colors.background.gray};
-  display: flex;
-  cursor: pointer;
+  height: 250px;
+  padding: 0px;
+
+  background-color: white;
+  border-radius: 10px;
 `;
 
-const CardColor = styled.div`
-  width: 10px;
-  min-width: 10px;
-  height: 100%;
-  background-color: ${(props) => props.styledcolor};
-  border-top-left-radius: 7px;
-  border-bottom-left-radius: 7px;
-  border: 1px solid ${colors.border.gray};
+const MenuHeaderText = styled.p`
+  width: 150px;
+  font-size: 22px;
+  font-weight: 700;
+  color: ${colors.font.black};
+  margin-bottom: 10px;
 `;
 
-const CardTitle = styled.div`
+// e
+const ContainerHeader = styled.div`
+  width: 100%;
+  padding: 20px 20px 15px 20px;
+  position: sticky;
   font-size: 20px;
   font-weight: 600;
-  padding: 20px;
-  max-width: 100%;
-  color: ${colors.font.black};
-  word-wrap: break-word;
-  margin-right: 10px;
-  margin-top: 10px;
-`;
-
-const MemberSum = styled.div`
-  width: 100%;
-  position: absolute;
-  display: flex;
-  align-items: center;
-  left: 30px;
-  bottom: 20px;
-
-  p {
-    font-size: 17px;
-    color: ${colors.font.gray};
-  }
+  top: 0px;
+  left: 0px;
 `;

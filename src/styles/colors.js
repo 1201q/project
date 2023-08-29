@@ -1,6 +1,8 @@
 export const background = {
+  midnight: "#202123",
   gray: "#f7f7f7", // sidebar
   green: "#f5fff7",
+  gray2: "#f2f4f6",
 };
 
 export const font = {
@@ -10,11 +12,13 @@ export const font = {
   green: "#57AE75",
   aqua: "#4CA2AD",
   brown: "#855344",
+  white: "#f7f7f7",
 };
 
 export const border = {
   deepgray: "#e2e3e2",
   gray: "#E7E8E8",
+  darkgray: "#48484a",
 };
 
 export const others = {
