@@ -32,7 +32,9 @@ export default function AddScheduleModal() {
   const [title, setTitle] = useState("");
   const [selectedColor, setSelectedColor] = useState("red");
   const [startDate, setStartDate] = useState(new Date(selectedDate));
-  const [endDate, setEndDate] = useState(new Date(selectedDate));
+  const [endDate, setEndDate] = useState(
+    new Date(dayjs(selectedDate).endOf("day"))
+  );
   const [error, setError] = useState(false);
 
   const modalRef = useRef();

@@ -24,8 +24,6 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   padding-bottom: 10px;
-  /* margin-bottom: 0px; */
-  /* border-bottom: 1px solid ${colors.border.gray}; */
 `;
 
 const TodoStatus = styled.div`
@@ -47,6 +45,7 @@ const StatusText = styled.p`
   margin-left: 10px;
   font-size: 15px;
   font-weight: 700;
+  cursor: pointer;
 `;
 
 const TodoTitle = styled.div`
@@ -55,6 +54,7 @@ const TodoTitle = styled.div`
   white-space: nowrap;
   overflow-x: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
   &:hover {
     text-decoration: underline;
   }

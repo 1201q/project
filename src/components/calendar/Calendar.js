@@ -211,7 +211,6 @@ export default function Calendar() {
       {isDetailInfoPopupOpen && <DetailInfoPopup />}
       {isAddScheduleModalOpen && <AddScheduleModal />}
       {isMoreListPopupOpen && <MoreListPopup />}
-      {/* <Toast /> */}
     </Container>
   );
 }
