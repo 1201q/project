@@ -4,9 +4,9 @@
     "display": "standalone",
     "scope": "/",
     "start_url": "/",
-    "name": "the medi",
-    "short_name": "the medi",
-    "description": "the medi입니다.",
+    "name": "Ideas | 아이디어스 ",
+    "short_name": "Ideas",
+    "description": "Ideas. 나의 아이디어를 모두와 함께.",
     "icons": [
         {
             "src": "/icon-192x192.png",

@@ -15,7 +15,7 @@ export default function App({
   return (
     <>
       <Head>
-        <title>테스트</title>
+        <title>Ideas | 아이디어스</title>
         <link rel="manifest" href="/manifest.json" />
       </Head>
       <AuthProvider>
