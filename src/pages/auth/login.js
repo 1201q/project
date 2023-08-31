@@ -9,6 +9,7 @@ import Link from "next/link";
 import Loading from "@/components/Loading";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { admin } from "@/utils/firebase/firebaseAdmin";
+import Image from "next/image";
 
 export const getServerSideProps = async (ctx) => {
   try {
@@ -82,7 +83,14 @@ const Login = () => {
         <Loading text={"로그인중..."} />
       ) : (
         <Container>
-          <Wrapper>
+          <BgContainer>
+            <Bg></Bg>
+            <Image
+              src={require(`../../assets/background/login2.jpg`)}
+              alt="loginBg"
+            />
+          </BgContainer>
+          <LoginContainer>
             <FormContainer onSubmit={onLogin}>
               <Input
                 type="email"
@@ -116,30 +124,55 @@ const Login = () => {
               </Link>
             </ButtonContainer>
             <ErrorContainer>{errorMsg && errorMsg}</ErrorContainer>
-          </Wrapper>
+          </LoginContainer>
         </Container>
       )}
     </>
   );
 };
 
-// wrapper
-const Wrapper = styled.div`
+const BgContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+
+  img {
+    width: 100%;
+
+    height: 100%;
+    position: relative !important;
+    object-fit: cover;
+    z-index: 10;
+  }
+`;
+
+const Bg = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 11;
+  background-color: rgba(0, 0, 0, 0.3);
+`;
+
+const LoginContainer = styled.div`
+  position: relative;
+
   width: 100%;
   max-width: 500px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  height: 100vh;
+  z-index: 18;
+  background-color: rgba(0, 0, 0, 0.6);
 `;
 
 // 컨테이너
 const Container = styled.div`
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100vh;
+  overflow-y: hidden;
 `;
 
 const FormContainer = styled.form`
@@ -159,6 +192,7 @@ const ButtonContainer = styled.div`
   flex-direction: column;
   align-items: flex-end;
   padding: 0px 20px;
+  color: red;
 `;
 
 const ErrorContainer = styled.div`
