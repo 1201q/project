@@ -91,38 +91,35 @@ const Login = () => {
             />
           </BgContainer>
           <LoginContainer>
+            <LoginText>로그인</LoginText>
             <FormContainer onSubmit={onLogin}>
+              <SmallHeaderText>이메일</SmallHeaderText>
               <Input
                 type="email"
                 onChange={onChange}
                 id="email"
                 value={email}
-                placeholder="이메일"
+                placeholder="Email"
                 required
               />
-
+              <SmallHeaderText>비밀번호</SmallHeaderText>
               <Input
                 type="password"
                 onChange={onChange}
                 id="password"
                 value={password}
-                placeholder="비밀번호"
+                placeholder="Password"
                 required
               />
-              <LoginButton
-                whileHover={{
-                  backgroundColor: "#1A73E8",
-                  transitionDuration: "0.3s",
-                }}
-                type="submit"
-                value="로그인"
-              />
+
+              <LoginButton type="submit" value="로그인" />
             </FormContainer>
-            <ButtonContainer>
-              <Link href={"/auth/signup"}>
-                <SubmitLink>회원가입</SubmitLink>
-              </Link>
-            </ButtonContainer>
+            <SignUpContainer>
+              <p>혹시 회원이 아니신가요?</p>
+              <StyledLink href={"/auth/signup"}>
+                <p>회원가입</p>
+              </StyledLink>
+            </SignUpContainer>
             <ErrorContainer>{errorMsg && errorMsg}</ErrorContainer>
           </LoginContainer>
         </Container>
@@ -131,14 +128,24 @@ const Login = () => {
   );
 };
 
+// 컨테이너
+const Container = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+`;
+
 const BgContainer = styled.div`
   width: 100%;
   height: 100%;
   position: absolute;
+  overflow-y: hidden;
 
   img {
     width: 100%;
-
     height: 100%;
     position: relative !important;
     object-fit: cover;
@@ -151,86 +158,84 @@ const Bg = styled.div`
   height: 100%;
   position: absolute;
   z-index: 11;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.5);
 `;
 
 const LoginContainer = styled.div`
   position: relative;
-
   width: 100%;
-  max-width: 500px;
-  height: 100vh;
+  max-width: 450px;
+  height: 100%;
   z-index: 18;
-  background-color: rgba(0, 0, 0, 0.6);
-`;
-
-// 컨테이너
-const Container = styled.div`
-  display: flex;
-  /* flex-direction: column; */
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100vh;
-  overflow-y: hidden;
+  background-color: white;
+  padding: 50px;
 `;
 
 const FormContainer = styled.form`
   width: 100%;
-  height: 100%;
+
   display: flex;
   flex-direction: column;
-
-  padding: 20px;
 `;
 
-const ButtonContainer = styled.div`
-  width: 100%;
-  height: 100%;
+const SignUpContainer = styled.div`
   display: flex;
-
-  flex-direction: column;
-  align-items: flex-end;
-  padding: 0px 20px;
-  color: red;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
 `;
 
-const ErrorContainer = styled.div`
-  height: 30px;
-`;
+const ErrorContainer = styled.div``;
 
 // 그 외 스타일링
+const LoginText = styled.p`
+  font-size: 40px;
+  margin-bottom: 80px;
+`;
+
 const Input = styled.input`
   width: 100%;
   height: 50px;
   max-width: 700px;
-  padding: 10px 15px;
+  padding: 15px 25px;
   border: none;
-  background-color: white;
+  background-color: ${colors.background.gray2};
   color: ${colors.font.black};
-  border: 2px solid ${colors.border.deepgray};
-  border-radius: 7px;
+  border-radius: 30px;
   outline: none;
-  font-size: 20px;
+  font-size: 17px;
   margin-bottom: 10px;
 `;
 
 const LoginButton = styled(motion.input)`
   width: 100%;
-  padding: 10px;
+  height: 50px;
+  padding: 15px 25px;
   border: none;
-  background-color: #17191d;
+  background-color: #1a73e8;
   color: white;
-  border-radius: 7px;
-  font-size: 20px;
-  font-weight: 800;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: 400;
   cursor: pointer;
-  margin-top: 30px;
+  margin-top: 40px;
 `;
 
-const SubmitLink = styled.p`
-  color: ${colors.font.darkgray};
-  font-size: 14px;
+const StyledLink = styled(Link)`
+  margin-left: 10px;
+  color: ${colors.calendar.mint};
+  font-weight: 600;
+  :hover {
+    text-decoration: underline;
+  }
+`;
+
+const SmallHeaderText = styled.p`
+  font-size: 16px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  font-weight: 700;
+  color: ${colors.font.black};
 `;
 
 export default Login;
