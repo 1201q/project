@@ -15,11 +15,17 @@ import Check from "../../assets/check.svg";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useTeam } from "@/utils/context/TeamContext";
 import { updateTeamData } from "@/utils/firebase/team";
+import { useMain } from "@/utils/context/MainContext";
 
 export default function UserModal() {
   const router = useRouter();
   const user = useAuth();
   const { joinedTeamList, selectedTeamUid, setSelectedTeamUid } = useTeam();
+  const {
+    setIsSidebarChattingOpen,
+
+    setIsSidebarProjectOpen,
+  } = useMain();
 
   const onSelectTeam = async (selectData) => {
     const update = await updateTeamData(
@@ -30,6 +36,8 @@ export default function UserModal() {
     );
 
     if (!update) {
+      setIsSidebarChattingOpen(false);
+      setIsSidebarProjectOpen(false);
       setSelectedTeamUid(selectData.teamUID);
     } else {
       console.log(update);
