@@ -1,16 +1,17 @@
 import styled from "styled-components";
 import { registerWithEamil } from "@/utils/firebase/auth";
 import nookies from "nookies";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { setDocument } from "@/utils/firebase/db";
 import { authService } from "@/utils/firebase/firebaseClient";
 import { admin } from "@/utils/firebase/firebaseAdmin";
 import * as colors from "../../styles/colors";
-import { motion } from "framer-motion";
-import Loading from "@/components/Loading";
+import { motion, AnimatePresence } from "framer-motion";
 import dayjs from "dayjs";
 import Image from "next/image";
+import { Ring } from "@uiball/loaders";
+import Exclamation from "../../assets/exclamation (3).svg";
 
 export const getServerSideProps = async (ctx) => {
   try {
@@ -45,8 +46,10 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorCode, setErrorCode] = useState(null);
   const [errorMsg, setErrMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSignUpSuccess, setIsSignUpSuccess] = useState(false);
 
   const onChange = (e) => {
     const { id, value } = e.target;
@@ -76,73 +79,137 @@ const Signup = () => {
         ).format(""),
       });
       setIsLoading(false);
+      setIsSignUpSuccess(true);
+      setErrorCode(null);
       if (!complete) {
         router.reload();
       }
     } else {
       console.log(signupError);
       setIsLoading(false);
-      setErrMsg(signupError);
+      setErrorCode(signupError);
+      console.log(signupError);
+      getErrorMsg(signupError);
     }
   };
 
+  const getErrorMsg = (code) => {
+    if (code === "auth/weak-password") {
+      setErrMsg("비밀번호를 6자리 이상으로 설정해주세요.");
+    } else if (code === "auth/email-already-in-use") {
+      setErrMsg("이미 사용 중인 이메일이에요.");
+    } else if (code === "auth/too-many-requests") {
+      setErrMsg("잠시 후 다시 시도해주세요.");
+    } else {
+      setErrMsg("회원가입할 수 없어요.");
+    }
+  };
+
+  useEffect(() => {
+    if (errorCode) {
+      setTimeout(() => {
+        setErrorCode(null);
+      }, 3000);
+    }
+  }, [errorCode]);
+
   return (
-    <>
-      {isLoading ? (
-        <Loading text={"회원가입 중이에요"} />
-      ) : (
-        <Container>
-          <BgContainer>
-            <Bg></Bg>
-            <Image
-              src={require(`../../assets/background/login2.jpg`)}
-              alt="loginBg"
+    <Container>
+      <BgContainer>
+        <Bg></Bg>
+        <Image
+          src={require(`../../assets/background/login3.jpg`)}
+          alt="loginBg"
+        />
+      </BgContainer>
+      <SignUpContainer>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <LoginText>회원가입</LoginText>
+          <FormContainer
+            onSubmit={(e) => {
+              if (!errorCode) {
+                onSignup(e);
+              } else {
+                e.preventDefault();
+              }
+            }}
+          >
+            <SmallHeaderText>이름</SmallHeaderText>
+            <Input
+              type="text"
+              onChange={onChange}
+              id="name"
+              value={name}
+              placeholder="이름"
+              required
             />
-          </BgContainer>
-          <LoginContainer>
-            <LoginText>회원가입</LoginText>
-            <FormContainer onSubmit={onSignup}>
-              <SmallHeaderText>이름</SmallHeaderText>
-              <Input
-                type="text"
-                onChange={onChange}
-                id="name"
-                value={name}
-                placeholder="이름"
-                required
-              />
-              <SmallHeaderText>이메일 (아이디)</SmallHeaderText>
-              <Input
-                type="email"
-                onChange={onChange}
-                id="email"
-                value={email}
-                placeholder="이메일 (아이디)"
-                required
-              />
-              <SmallHeaderText>비밀번호</SmallHeaderText>
-              <Input
-                type="password"
-                onChange={onChange}
-                id="password"
-                value={password}
-                placeholder="비밀번호"
-                required
-              />
-              <LoginButton
-                whileHover={{
-                  backgroundColor: "#1A73E8",
-                  transitionDuration: "0.3s",
-                }}
-                type="submit"
-                value="회원가입"
-              />
-            </FormContainer>
-            {/* <ErrorContainer>{errorMsg && errorMsg}</ErrorContainer> */}
-          </LoginContainer>
-        </Container>
-      )}
-    </>
+            <SmallHeaderText>이메일 (아이디)</SmallHeaderText>
+            <Input
+              type="email"
+              onChange={onChange}
+              id="email"
+              value={email}
+              placeholder="이메일 (아이디)"
+              required
+            />
+            <SmallHeaderText>비밀번호</SmallHeaderText>
+            <Input
+              type="password"
+              onChange={onChange}
+              id="password"
+              value={password}
+              placeholder="비밀번호"
+              required
+            />
+            <LoginButton
+              whileHover={{
+                backgroundColor: "#1A73E8",
+                transitionDuration: "0.3s",
+              }}
+              type="submit"
+              value="회원가입"
+            />
+          </FormContainer>
+        </motion.div>
+        <LoadingContainer>{isLoading && <Ring />}</LoadingContainer>
+      </SignUpContainer>
+      <AnimatePresence>
+        {errorCode && (
+          <StatusModal
+            initial={{ opacity: 0, scale: 0, x: "-50%", y: 90 }} // 초기 상태 설정
+            animate={{ opacity: 1, scale: 1, x: "-50%", y: 0 }} // 애니메이션 진행 중 상태
+            exit={{ opacity: 0, x: "-50%", y: 50 }} // 나가는 애니메이션 설정
+            styledbgColor={colors.calendar.red}
+          >
+            <Exclamation
+              width={20}
+              height={20}
+              fill={"white"}
+              style={{ marginRight: "10px" }}
+            />
+            {errorMsg}
+          </StatusModal>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {isSignUpSuccess && (
+          <StatusModal
+            initial={{ opacity: 0, scale: 0.8, x: "-50%", y: 150 }} // 초기 상태 설정
+            animate={{ opacity: 1, scale: 1, x: "-50%", y: 0 }} // 애니메이션 진행 중 상태
+            exit={{ opacity: 0, x: "-50%" }} // 나가는 애니메이션 설정
+            styledbgColor={colors.calendar.mint}
+          >
+            <Exclamation
+              width={20}
+              height={20}
+              fill={"white"}
+              style={{ marginRight: "10px" }}
+            />
+            회원가입에 성공했어요. 잠시 후 자동으로 로그인될 거예요.
+          </StatusModal>
+        )}
+      </AnimatePresence>
+    </Container>
   );
 };
 
@@ -178,7 +245,7 @@ const Bg = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
 `;
 
-const LoginContainer = styled.div`
+const SignUpContainer = styled.div`
   position: relative;
   width: 100%;
   max-width: 450px;
@@ -195,14 +262,29 @@ const FormContainer = styled.form`
   flex-direction: column;
 `;
 
-const SignUpContainer = styled.div`
+const LoadingContainer = styled.div`
   display: flex;
-  align-items: center;
   justify-content: center;
   margin-top: 50px;
 `;
 
-const ErrorContainer = styled.div``;
+const StatusModal = styled(motion.div)`
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  z-index: 800;
+  top: 40px;
+  left: 50%;
+  background-color: ${(props) => props.styledbgColor};
+  color: white;
+  border-radius: 30px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  font-size: 18px;
+  font-weight: 300;
+  padding: 10px 15px;
+`;
 
 // 그 외 스타일링
 const LoginText = styled.p`

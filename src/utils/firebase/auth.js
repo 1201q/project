@@ -24,7 +24,7 @@ export async function registerWithEamil(email, password, displayName) {
     await updateProfile(user, { displayName: displayName });
     return null;
   } catch (error) {
-    return error.message.replace("Firebase: Error ", "");
+    return error.code;
   }
 }
 
@@ -34,7 +34,7 @@ export async function loginWithEmail(email, password) {
     await signInWithEmailAndPassword(authService, email, password);
     return null;
   } catch (error) {
-    return error.message.replace("Firebase: Error ", "");
+    return error.code;
   }
 }
 
