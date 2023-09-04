@@ -143,13 +143,20 @@ export default function Schedule() {
               return true;
             }
           })
+          .sort(
+            (a, b) =>
+              dayjs(a.end).diff(dayjs(), "minutes") -
+              dayjs(b.end).diff(dayjs(), "minutes")
+          )
           .map((item) => (
             <Todo
               key={item.id}
+              scheduleData={item}
               color={colors.calendar[item.color]}
               title={item.title}
               isCompleted={item.isCompleted}
-              remainTime={item.end}
+              start={item.start}
+              end={item.end}
             />
           ))}
       </Contents>
