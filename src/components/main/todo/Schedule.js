@@ -148,6 +148,17 @@ export default function Schedule() {
               dayjs(a.end).diff(dayjs(), "minutes") -
               dayjs(b.end).diff(dayjs(), "minutes")
           )
+          .sort((a, b) => {
+            const aa = dayjs(a.end).diff(dayjs(), "minutes");
+            const bb = dayjs(b.end).diff(dayjs(), "minutes");
+
+            if (aa > 0 && bb > 0) {
+              return 0;
+            } else {
+              return -1;
+            }
+          })
+          .sort((a, b) => a.isCompleted - b.isCompleted)
           .map((item) => (
             <Todo
               key={item.id}

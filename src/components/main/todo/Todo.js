@@ -34,19 +34,19 @@ export default function Todo({
   const renderStatus = () => {
     if (isExpired) {
       return (
-        <Status styledbg={colors.calendar.gray} styledfontcolor={"white"}>
+        <Status styledbg={"#F7F7F7"} styledfontcolor={colors.font.gray}>
           만료됨
         </Status>
       );
     } else if (isCompleted) {
       return (
-        <Status styledbg={colors.calendar.red} styledfontcolor={"white"}>
+        <Status styledbg={"#FFF3F0"} styledfontcolor={"#FF6C45"}>
           완료
         </Status>
       );
     } else if (!isCompleted) {
       return (
-        <Status styledbg={colors.calendar.green} styledfontcolor={"white"}>
+        <Status styledbg={"#E6FAED"} styledfontcolor={"#0BD34D"}>
           진행중
         </Status>
       );
@@ -58,21 +58,26 @@ export default function Todo({
       onClick={() => {
         console.log(getRemainingTime());
       }}
+      isdone={isExpired || isCompleted}
     >
       <TodoHeader>{renderStatus()}</TodoHeader>
       <Color color={color}></Color>
-      <TodoTitle>
+      <TodoTitle isdone={isExpired || isCompleted}>
         {title} ({dayjs(end).format("M월 DD일 HH:mm")})
       </TodoTitle>
-      <TodoTime>
-        {getRemainingTime().days > 0 && (
-          <Time>{getRemainingTime().days}일</Time>
-        )}
-        {getRemainingTime().hours > 0 && (
-          <Time>{getRemainingTime().hours}시간</Time>
-        )}
-        {getRemainingTime().min > 0 && <Time>{getRemainingTime().min}분 </Time>}
-      </TodoTime>
+      {!isCompleted && (
+        <TodoTime>
+          {getRemainingTime().days > 0 && (
+            <Time>{getRemainingTime().days}일</Time>
+          )}
+          {getRemainingTime().hours > 0 && (
+            <Time>{getRemainingTime().hours}시간</Time>
+          )}
+          {getRemainingTime().min > 0 && (
+            <Time>{getRemainingTime().min}분 </Time>
+          )}
+        </TodoTime>
+      )}
     </Container>
   );
 }
@@ -85,7 +90,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   padding-bottom: 10px;
-  /* background-color: blue; */
+  opacity: ${(props) => (props.isdone ? "0.4" : "1")};
 `;
 
 const TodoHeader = styled.div`
@@ -109,7 +114,7 @@ const Color = styled.div`
 const Status = styled.div`
   min-width: 60px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 700;
   cursor: pointer;
   text-align: center;
   padding: 3px 10px;
@@ -129,6 +134,7 @@ const TodoTitle = styled.div`
   &:hover {
     text-decoration: underline;
   }
+  text-decoration: ${(props) => (props.isdone ? "line-through" : "none")};
 `;
 
 const TodoTime = styled.div`
