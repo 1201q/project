@@ -14,14 +14,14 @@ import {
 import Sidebar from "@/components/common/Sidebar";
 import Calendar from "@/components/calendar/Calendar";
 import Loading from "@/components/Loading";
-import Main from "@/components/main/Main";
 // context
 import { useCalendar } from "@/utils/context/CalendarContext";
 import { useTeam } from "@/utils/context/TeamContext";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useRouter } from "next/router";
 import { useMain } from "@/utils/context/MainContext";
-
+import Dashboard from "@/components/main/Dashboard";
+import TodoPage from "@/components/main/TodoPage";
 dayjs.extend(isSameOrBefore);
 
 export const getServerSideProps = async (ctx) => {
@@ -129,8 +129,9 @@ export default function Home({ uid }) {
 
   const renderContents = () => {
     const menu = {
-      main: Main,
+      dashboard: Dashboard,
       calendar: Calendar,
+      todo: TodoPage,
     };
 
     const SelectedComponent = menu[currentTab];
@@ -144,7 +145,7 @@ export default function Home({ uid }) {
       {!user.user && isTeamDataLoading ? (
         <Loading text="로딩중..." />
       ) : (
-        <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <Container>
           <Sidebar userData={user} />
           {renderContents()}
         </Container>

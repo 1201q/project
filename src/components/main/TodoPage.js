@@ -1,36 +1,24 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
-import * as colors from "../../../styles/colors";
-import Todo from "./Todo";
+import * as colors from "../../styles/colors";
+import TodoDetail from "./todo/TodoDetail";
 import { useEffect, useState, useRef } from "react";
-import CaretDown from "../../../assets/caret-down.svg";
+import CaretDown from "../../assets/caret-down.svg";
 import { useCalendar } from "@/utils/context/CalendarContext";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useMain } from "@/utils/context/MainContext";
-import { useRouter } from "next/router";
-
-import Plus from "../../../assets/plus-small.svg";
 
 dayjs.extend(customParseFormat);
 
-export default function Schedule() {
-  const router = useRouter();
+export default function TodoPage() {
   const { scheduleList } = useCalendar();
-  const [isHovered, setIsHovered] = useState(false);
   const [isDropDownVisible, setIsDropDownVisible] = useState(false);
   const [selectMenu, setSelectMenu] = useState("today");
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [startDate, setStartDate] = useState(dayjs());
   const [endDate, setEndDate] = useState(dayjs());
   const { currentTab, setCurrentTab } = useMain();
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
 
   const renderMenuText = () => {
     if (selectMenu === "today") {
@@ -73,13 +61,9 @@ export default function Schedule() {
   }, [selectMenu]);
 
   return (
-    <Container
-      isHovered={isHovered}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <Header isHovered={isHovered}>
-        <div>할 일</div>
+    <Container>
+      <HeaderContainer>
+        <HeaderText>할 일</HeaderText>
         <ControlBtn
           onClick={() => {
             setIsDropDownVisible((prev) => !prev);
@@ -126,16 +110,9 @@ export default function Schedule() {
           )}
         </ControlBtn>
         {selectMenu !== "all" && (
-          <HeaderText>{endDate.format(`YYYY년 M월 D일`)}까지</HeaderText>
+          <DateText>{endDate.format(`YYYY년 MM월 DD일`)}까지</DateText>
         )}
-        <TodoDetailBtn
-          onClick={() => {
-            setCurrentTab("todo");
-          }}
-        >
-          <Plus width={23} height={23} fill={colors.font.gray} />
-        </TodoDetailBtn>
-      </Header>
+      </HeaderContainer>
       <Contents>
         {scheduleList
           .filter((item) => {
@@ -172,7 +149,7 @@ export default function Schedule() {
           })
           .sort((a, b) => a.isCompleted - b.isCompleted)
           .map((item) => (
-            <Todo
+            <TodoDetail
               key={item.id}
               scheduleData={item}
               color={colors.calendar[item.color]}
@@ -187,36 +164,29 @@ export default function Schedule() {
   );
 }
 
-const Container = styled.div`
-  position: relative;
+// 컨테이너
+const Container = styled(motion.div)`
   width: 100%;
-  height: 250px;
-  border-radius: 10px;
-  background-color: white;
-  overflow-y: auto;
-  transition-duration: 0.3s;
+  max-height: 99vh;
 `;
-
-const Header = styled.div`
-  width: 100%;
-  padding: 15px 20px 15px 20px;
-  background-color: white;
-  position: sticky;
-  font-size: 20px;
-  font-weight: 600;
-  top: 0px;
-  left: 0px;
-  box-shadow: ${(props) =>
-    props.isHovered ? "5px 5px 10px 5px rgba(0, 0, 0, 0.03)" : "none"};
-
-  transition-duration: 0.3s;
-  z-index: 1;
+const HeaderContainer = styled.div`
+  position: relative;
   display: flex;
+  justify-content: flex-start;
   align-items: center;
-  cursor: pointer;
+  padding: 15px 25px;
+  border-bottom: 1px solid ${colors.border.gray};
+  height: 61px;
 `;
 
 const HeaderText = styled.p`
+  font-size: 25px;
+  font-weight: 700;
+  color: ${colors.font.black};
+  cursor: pointer;
+`;
+
+const DateText = styled.p`
   font-size: 14px;
   font-weight: 600;
   color: ${colors.font.gray};
@@ -236,13 +206,6 @@ const ControlBtn = styled.div`
   &:hover {
     text-decoration: underline;
   }
-`;
-
-const TodoDetailBtn = styled.button`
-  position: absolute;
-  right: 20px;
-  border: none;
-  background: none;
 `;
 
 const DropDown = styled.div`
@@ -268,6 +231,8 @@ const DropDownMenu = styled.div`
 const Contents = styled.div`
   margin-top: 5px;
   width: 100%;
+  max-height: 90vh;
+  overflow-y: scroll;
   padding: 5px 10px 30px 10px;
   background-color: white;
 `;

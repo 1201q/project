@@ -3,7 +3,8 @@ import React, { useState, createContext, useContext } from "react";
 const MainContext = createContext();
 
 export const MainProvider = ({ children }) => {
-  const [currentTab, setCurrentTab] = useState("main"); // main, calendar
+  const [currentTab, setCurrentTab] = useState("dashboard"); // main, calendar, dashboard, schedulePage, MemoPage, ProjectPage
+  const [currentHomeContents, setCurrentHomeContents] = useState("dashboard");
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isSidebarChattingOpen, setIsSidebarChattingOpen] = useState(false);
   const [isSidebarProjectOpen, setIsSidebarProjectOpen] = useState(false);
@@ -19,6 +20,8 @@ export const MainProvider = ({ children }) => {
         setIsSidebarProjectOpen,
         currentTab,
         setCurrentTab,
+        currentHomeContents,
+        setCurrentHomeContents,
       }}
     >
       {children}

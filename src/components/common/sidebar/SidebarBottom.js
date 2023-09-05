@@ -38,7 +38,7 @@ export default function SidebarBottom() {
       <TopMenuContainer>
         <Menu
           onClick={() => {
-            setCurrentTab("main");
+            setCurrentTab("dashboard");
           }}
         >
           <Home width={18} height={18} />

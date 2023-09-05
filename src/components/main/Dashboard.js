@@ -12,23 +12,11 @@ import Schedule from "./todo/Schedule";
 import { useState, useEffect } from "react";
 
 dayjs.extend(isSameOrBefore);
+
 dayjs.extend(isBetween);
 dayjs.extend(weekOfYear);
 
-export default function Main() {
-  const [isHeaderScrolled, setIsHeaderScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      console.log("TEst");
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
+export default function Dashboard() {
   return (
     <Container initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
       {/* 상단 welcome */}
@@ -55,16 +43,6 @@ export default function Main() {
   );
 }
 
-const FlexDiv = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const Div = styled.div`
-  display: flex;
-  gap: 25px;
-`;
-
 const Container = styled(motion.div)`
   width: 100%;
   max-height: 100vh;
@@ -73,14 +51,17 @@ const Container = styled(motion.div)`
   background-color: ${colors.background.gray2};
 `;
 
+const Div = styled.div`
+  display: flex;
+  gap: 25px;
+`;
+
 const TopInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 20px;
   margin-bottom: 40px;
-  /* padding: 15px 15px; */
   border-radius: 10px;
-  /* background-color: rgba(255, 255, 255, 1); */
 `;
 
 const ProjectContainer = styled.div`
@@ -109,7 +90,6 @@ const MenuHeaderText = styled.p`
   margin-bottom: 10px;
 `;
 
-// e
 const ContainerHeader = styled.div`
   width: 100%;
   padding: 20px 20px 15px 20px;

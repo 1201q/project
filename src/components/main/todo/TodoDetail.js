@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import * as colors from "../../../styles/colors";
 
-export default function Todo({
+export default function TodoDetail({
   scheduleData,
   color,
   title,
@@ -63,9 +63,14 @@ export default function Todo({
       }}
       isdone={isExpired || isCompleted}
     >
-      <TodoHeader>{renderStatus()}</TodoHeader>
-
-      <TodoTitle isdone={isExpired || isCompleted}>{title}</TodoTitle>
+      <Color color={color}></Color>
+      <FlexDiv>
+        <Title>
+          <TodoTitle isdone={isExpired || isCompleted}>{title}</TodoTitle>{" "}
+          <TodoHeader>{renderStatus()}</TodoHeader>
+        </Title>
+        <Date>{dayjs(end).format("M월 D일 HH:mm")} 까지</Date>
+      </FlexDiv>
       {!isCompleted && (
         <TodoTime>
           {getRemainingTime().days > 0 && (
@@ -94,31 +99,26 @@ const Container = styled.div`
   margin-bottom: 10px;
   opacity: ${(props) => (props.isdone ? "0.4" : "1")};
   border-radius: 7px;
-  padding: 3px 10px;
+  padding: 0px 15px;
 
-  :hover {
-    background-color: ${colors.background.gray};
-  }
+  /* border-bottom: 1px solid ${colors.border.gray}; */
 `;
 
 const TodoHeader = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  margin-right: 12px;
+  margin-right: 20px;
   min-width: 60px;
 `;
 
-const Color = styled.div`
-  width: 11px;
-  height: 11px;
-  min-width: 11px;
-  min-height: 11px;
-  border-radius: 50%;
-  background-color: ${(props) =>
-    props.color ? props.color : colors.calendar.green};
-  margin-right: 3px;
+const Title = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  /* background-color: red; */
 `;
+
 const Status = styled.div`
   display: flex;
   align-items: center;
@@ -147,16 +147,25 @@ const StatusColor = styled.div`
 `;
 
 const TodoTitle = styled.div`
-  padding: 7px;
-  width: 100%;
+  /* background-color: red; */
+  /* width: 100%; */
+  margin-right: 15px;
+  font-size: 25px;
+  font-weight: 700;
   white-space: nowrap;
   overflow-x: hidden;
   text-overflow: ellipsis;
+  margin-bottom: 2px;
   cursor: pointer;
   &:hover {
     text-decoration: underline;
   }
   text-decoration: ${(props) => (props.isdone ? "line-through" : "none")};
+`;
+
+const Date = styled.div`
+  font-size: 13px;
+  color: ${colors.font.gray};
 `;
 
 const TodoTime = styled.div`
@@ -174,4 +183,22 @@ const Time = styled.p`
   font-weight: 400;
   color: ${colors.font.gray};
   margin-left: 3px;
+`;
+
+const FlexDiv = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 7px;
+`;
+
+const Color = styled.div`
+  width: 7px;
+  height: 43px;
+  max-height: 100%;
+  margin-right: 10px;
+  margin-top: 2px;
+  background-color: ${(props) =>
+    props.color ? props.color : colors.calendar.green};
+  border-radius: 2px;
 `;
