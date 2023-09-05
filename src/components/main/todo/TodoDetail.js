@@ -100,8 +100,6 @@ const Container = styled.div`
   opacity: ${(props) => (props.isdone ? "0.4" : "1")};
   border-radius: 7px;
   padding: 0px 15px;
-
-  /* border-bottom: 1px solid ${colors.border.gray}; */
 `;
 
 const TodoHeader = styled.div`
@@ -147,9 +145,7 @@ const StatusColor = styled.div`
 `;
 
 const TodoTitle = styled.div`
-  /* background-color: red; */
-  /* width: 100%; */
-  margin-right: 15px;
+  margin-right: 20px;
   font-size: 25px;
   font-weight: 700;
   white-space: nowrap;

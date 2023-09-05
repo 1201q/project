@@ -8,6 +8,7 @@ import CaretDown from "../../assets/caret-down.svg";
 import { useCalendar } from "@/utils/context/CalendarContext";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useMain } from "@/utils/context/MainContext";
+import { useRouter } from "next/router";
 
 dayjs.extend(customParseFormat);
 
@@ -18,7 +19,7 @@ export default function TodoPage() {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [startDate, setStartDate] = useState(dayjs());
   const [endDate, setEndDate] = useState(dayjs());
-  const { currentTab, setCurrentTab } = useMain();
+  const router = useRouter();
 
   const renderMenuText = () => {
     if (selectMenu === "today") {
@@ -113,7 +114,7 @@ export default function TodoPage() {
           <DateText>{endDate.format(`YYYY년 MM월 DD일`)}까지</DateText>
         )}
       </HeaderContainer>
-      <Contents>
+      <Contents initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
         {scheduleList
           .filter((item) => {
             if (selectMenu === "today") {
@@ -228,7 +229,7 @@ const DropDownMenu = styled.div`
   }
 `;
 
-const Contents = styled.div`
+const Contents = styled(motion.div)`
   margin-top: 5px;
   width: 100%;
   max-height: 90vh;

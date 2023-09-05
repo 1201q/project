@@ -127,6 +127,16 @@ export default function Home({ uid }) {
     }
   }, [selectedTeamUid]);
 
+  useEffect(() => {
+    if (!router.query?.page) {
+      setCurrentTab("dashboard");
+    } else if (router.query?.page === "todo") {
+      setCurrentTab("todo");
+    } else if (router.query?.page === "calendar") {
+      setCurrentTab("calendar");
+    }
+  }, [router.query]);
+
   const renderContents = () => {
     const menu = {
       dashboard: Dashboard,

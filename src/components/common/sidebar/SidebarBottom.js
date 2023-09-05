@@ -26,6 +26,7 @@ export default function SidebarBottom() {
 
   const { selectedTeamMembersData, isTeamDataLoading } = useTeam();
   const { setCurrentTab } = useMain();
+  const router = useRouter();
 
   return (
     <Container>
@@ -39,6 +40,7 @@ export default function SidebarBottom() {
         <Menu
           onClick={() => {
             setCurrentTab("dashboard");
+            router.replace("/");
           }}
         >
           <Home width={18} height={18} />
@@ -47,6 +49,7 @@ export default function SidebarBottom() {
         <Menu
           onClick={() => {
             setCurrentTab("calendar");
+            router.push({ query: { page: "calendar" } });
           }}
         >
           <List width={18} height={18} />
