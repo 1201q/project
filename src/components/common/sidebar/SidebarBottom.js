@@ -44,7 +44,7 @@ export default function SidebarBottom() {
           }}
         >
           <Home width={18} height={18} />
-          <MenuText>홈</MenuText>
+          <MenuText>대시보드</MenuText>
         </Menu>
         <Menu
           onClick={() => {
@@ -55,9 +55,14 @@ export default function SidebarBottom() {
           <List width={18} height={18} />
           <MenuText>전체 일정</MenuText>
         </Menu>
-        <Menu>
+        <Menu
+          onClick={() => {
+            setCurrentTab("todo");
+            router.push({ query: { page: "todo" } });
+          }}
+        >
           <Check width={18} height={18} />
-          <MenuText>오늘 할 일</MenuText>
+          <MenuText>할 일</MenuText>
         </Menu>
         <Menu>
           <Search width={18} height={18} fill="#f7f7f7" />

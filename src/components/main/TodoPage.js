@@ -62,7 +62,7 @@ export default function TodoPage() {
   }, [selectMenu]);
 
   return (
-    <Container>
+    <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <HeaderContainer>
         <HeaderText>할 일</HeaderText>
         <ControlBtn
@@ -114,7 +114,7 @@ export default function TodoPage() {
           <DateText>{endDate.format(`YYYY년 MM월 DD일`)}까지</DateText>
         )}
       </HeaderContainer>
-      <Contents initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+      <Contents>
         {scheduleList
           .filter((item) => {
             if (selectMenu === "today") {

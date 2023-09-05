@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import * as colors from "../../../styles/colors";
+import { toggleScheduleComplete } from "@/utils/firebase/calendar";
+import { useAuth } from "@/utils/context/auth/AuthProvider";
 
 export default function TodoDetail({
   scheduleData,
@@ -12,7 +14,7 @@ export default function TodoDetail({
   end,
 }) {
   const isExpired = !isCompleted && dayjs(end).diff(dayjs(), "minutes") <= 0;
-
+  const user = useAuth();
   const getRemainingTime = () => {
     const diffDays = dayjs(end).diff(dayjs(), "days");
     const diffHours = dayjs(end).diff(dayjs(), "hours");
@@ -60,6 +62,12 @@ export default function TodoDetail({
     <Container
       onClick={() => {
         console.log(getRemainingTime());
+        toggleScheduleComplete(
+          "schedule",
+          user.user.uid,
+          "data",
+          scheduleData.id
+        );
       }}
       isdone={isExpired || isCompleted}
     >
