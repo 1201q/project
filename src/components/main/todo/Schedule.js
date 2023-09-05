@@ -141,7 +141,7 @@ export default function Schedule() {
         {scheduleList
           .filter((item) => {
             if (selectMenu === "today") {
-              return currentDate.isBetween(dayjs(item.start), dayjs(item.end));
+              return currentDate.isSame(dayjs(item.end), "day");
             } else if (selectMenu === "week") {
               return (
                 dayjs(item.start).isBetween(dayjs(startDate), dayjs(endDate)) ||

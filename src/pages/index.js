@@ -21,7 +21,7 @@ import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useRouter } from "next/router";
 import { useMain } from "@/utils/context/MainContext";
 import Dashboard from "@/components/main/Dashboard";
-import TodoPage from "@/components/main/TodoPage";
+import TodoPage from "@/components/main/todo/TodoPage";
 dayjs.extend(isSameOrBefore);
 
 export const getServerSideProps = async (ctx) => {

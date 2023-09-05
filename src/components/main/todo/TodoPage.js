@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
-import * as colors from "../../styles/colors";
-import TodoDetail from "./todo/TodoDetail";
+import * as colors from "../../../styles/colors";
+import TodoDetail from "./TodoDetail";
 import { useEffect, useState, useRef } from "react";
-import CaretDown from "../../assets/caret-down.svg";
+import CaretDown from "../../../assets/caret-down.svg";
 import { useCalendar } from "@/utils/context/CalendarContext";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useMain } from "@/utils/context/MainContext";
@@ -118,7 +118,7 @@ export default function TodoPage() {
         {scheduleList
           .filter((item) => {
             if (selectMenu === "today") {
-              return currentDate.isBetween(dayjs(item.start), dayjs(item.end));
+              return currentDate.isSame(dayjs(item.end), "day");
             } else if (selectMenu === "week") {
               return (
                 dayjs(item.start).isBetween(dayjs(startDate), dayjs(endDate)) ||
