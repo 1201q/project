@@ -131,7 +131,7 @@ export default function Schedule() {
         <TodoDetailBtn
           onClick={() => {
             setCurrentTab("todo");
-            router.push({ query: { page: "todo" } }, "/");
+            router.push({ query: { page: "todo" } });
           }}
         >
           <Plus width={23} height={23} fill={colors.font.gray} />
