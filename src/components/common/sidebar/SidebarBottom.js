@@ -49,7 +49,7 @@ export default function SidebarBottom() {
         <Menu
           onClick={() => {
             setCurrentTab("calendar");
-            router.push({ query: { page: "calendar" } });
+            router.push({ query: { page: "calendar" } }, "/");
           }}
         >
           <List width={18} height={18} />
