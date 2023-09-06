@@ -3,10 +3,6 @@ import {
   getDoc,
   doc,
   setDoc,
-  deleteDoc,
-  addDoc,
-  collection,
-  onSnapshot,
   updateDoc,
   arrayUnion,
   arrayRemove,
@@ -66,7 +62,7 @@ export const revokeAdminPermission = async (
   selectedUserUid
 ) => {
   // 컬렉션 / 내 uid / 해당 필드 / 삭제할 useruid
-  // 캘린더 배열의 지정한 스케줄을 삭제합니다.
+  // 특정 선택한 유저의 관리자 권한을 뺏습니다
   // 완료시 null을 return합니다.
   try {
     const docRef = doc(dbService, collectionId, documentId);
@@ -91,7 +87,7 @@ export const exportTeamMember = async (
   selectedUserUid
 ) => {
   // 컬렉션 / 내 uid / 해당 필드 / 삭제할 useruid
-  // 캘린더 배열의 지정한 스케줄을 삭제합니다.
+  // 선택한 유저를 팀에서 내보냅니다.
   // 완료시 null을 return합니다.
   try {
     const docRef = doc(dbService, collectionId, documentId);

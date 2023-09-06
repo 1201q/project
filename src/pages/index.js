@@ -13,7 +13,7 @@ import {
 // 컴포넌트
 import Sidebar from "@/components/common/Sidebar";
 import Calendar from "@/components/calendar/Calendar";
-import Loading from "@/components/Loading";
+import Loading from "@/components/common/Loading";
 // context
 import { useCalendar } from "@/utils/context/CalendarContext";
 import { useTeam } from "@/utils/context/TeamContext";
@@ -21,7 +21,8 @@ import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useRouter } from "next/router";
 import { useMain } from "@/utils/context/MainContext";
 import Dashboard from "@/components/main/Dashboard";
-import TodoPage from "@/components/main/todo/TodoPage";
+import TodoPage from "@/components/todo/TodoPage";
+import ProjectExplorePage from "@/components/project/ProjectExplorePage";
 dayjs.extend(isSameOrBefore);
 
 export const getServerSideProps = async (ctx) => {
@@ -134,6 +135,8 @@ export default function Home({ uid }) {
       setCurrentTab("todo");
     } else if (router.query?.page === "calendar") {
       setCurrentTab("calendar");
+    } else if (router.query?.page === "project_explore") {
+      setCurrentTab("projectExplore");
     }
   }, [router.query]);
 
@@ -142,6 +145,7 @@ export default function Home({ uid }) {
       dashboard: Dashboard,
       calendar: Calendar,
       todo: TodoPage,
+      projectExplore: ProjectExplorePage,
     };
 
     const SelectedComponent = menu[currentTab];

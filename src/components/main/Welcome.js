@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
-import * as colors from "../../../styles/colors";
-import Exclamation from "../../../assets/exclamation (3).svg";
+import * as colors from "../../styles/colors";
+import Exclamation from "../../assets/exclamation (3).svg";
 import Image from "next/image";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useState, useEffect } from "react";
@@ -50,7 +50,7 @@ export default function Welcome() {
         <FlexDiv>
           <Hi>안녕하세요. {user.user ? user.user.displayName : ""}님!</Hi>
           <Image
-            src={require("../../../assets/smile.png")}
+            src={require("../../assets/smile.png")}
             width={22}
             height={22}
             alt="smile"

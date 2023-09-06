@@ -227,7 +227,7 @@ const ModalContainer = styled(motion.div)`
 const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
-  border-bottom: 1px solid ${colors.border.deepgray};
+  /* border-bottom: 1px solid ${colors.border.deepgray}; */
   width: 100%;
   padding: 20px 25px;
 `;

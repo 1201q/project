@@ -64,7 +64,12 @@ export default function SidebarBottom() {
           <Check width={18} height={18} />
           <MenuText>할 일</MenuText>
         </Menu>
-        <Menu>
+        <Menu
+          onClick={() => {
+            setCurrentTab("prjectExplore");
+            router.push({ query: { page: "project_explore" } });
+          }}
+        >
           <Search width={18} height={18} fill="#f7f7f7" />
           <MenuText>탐색</MenuText>
         </Menu>

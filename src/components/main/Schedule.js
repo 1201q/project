@@ -1,16 +1,16 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
-import * as colors from "../../../styles/colors";
+import * as colors from "../../styles/colors";
 import Todo from "./Todo";
 import { useEffect, useState, useRef } from "react";
-import CaretDown from "../../../assets/caret-down.svg";
+import CaretDown from "../../assets/caret-down.svg";
 import { useCalendar } from "@/utils/context/CalendarContext";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useMain } from "@/utils/context/MainContext";
 import { useRouter } from "next/router";
 
-import Plus from "../../../assets/plus-small.svg";
+import Plus from "../../assets/plus-small.svg";
 
 dayjs.extend(customParseFormat);
 

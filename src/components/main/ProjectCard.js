@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
-import * as colors from "../../../styles/colors";
+import * as colors from "../../styles/colors";
 
-import User from "../../../assets/users-alt.svg";
+import User from "../../assets/users-alt.svg";
 
 export default function ProjectCard() {
   return (

@@ -8,7 +8,6 @@ import { useTeam } from "@/utils/context/TeamContext";
 import { observeJoinedTeamChanges } from "@/utils/firebase/db";
 import { motion } from "framer-motion";
 import * as colors from "../../styles/colors";
-import X from "../../assets/x.svg";
 
 import TeamSettingModal from "../../components/TeamSetting/Modal/TeamSettingModal";
 import TeamMain from "../../components/TeamSetting/TeamMain";

@@ -170,7 +170,7 @@ export default function Calendar() {
   };
 
   return (
-    <Container initial={{ y: -10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+    <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <HeaderContainer>
         <ControlContainer>
           <CurrentDateText>

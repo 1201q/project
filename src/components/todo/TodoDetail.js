@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
-import * as colors from "../../../styles/colors";
+import * as colors from "../../styles/colors";
 import { toggleScheduleComplete } from "@/utils/firebase/calendar";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 

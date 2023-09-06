@@ -6,9 +6,9 @@ import weekOfYear from "dayjs/plugin/weekOfYear";
 import isBetween from "dayjs/plugin/isBetween";
 import * as colors from "../../styles/colors";
 
-import ProjectCard from "./project/ProjectCard";
-import Welcome from "./welcome/Welcome";
-import Schedule from "./todo/Schedule";
+import ProjectCard from "./ProjectCard";
+import Welcome from "./Welcome";
+import Schedule from "./Schedule";
 import { useState, useEffect } from "react";
 
 dayjs.extend(isSameOrBefore);
@@ -18,7 +18,7 @@ dayjs.extend(weekOfYear);
 
 export default function Dashboard() {
   return (
-    <Container initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+    <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       {/* 상단 welcome */}
       <TopInfoContainer>
         <Welcome />
