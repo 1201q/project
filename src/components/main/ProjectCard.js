@@ -32,8 +32,8 @@ const Contents = styled.div`
 const Card = styled.div`
   position: relative;
   width: 100%;
-  min-width: 296.5px;
-  max-width: 296.5px;
+  min-width: 280px;
+  max-width: 280px;
   height: 140px;
   border-radius: 7px;
   background-color: white;

@@ -134,23 +134,24 @@ export default function SidebarBottom() {
             }}
             transition={{ duration: 0.2 }}
           >
-            {projectListData.map((project) => (
-              <Project
-                key={project.projectUID}
-                onClick={() => {
-                  console.log(project);
-                }}
-              >
-                <ProjectColor styledbg={colors.calendar[project.color]}>
-                  <Tags
-                    width={14}
-                    height={14}
-                    fill={colors.background.midnight}
-                  />
-                </ProjectColor>
-                <UserNameText>{project.projectName}</UserNameText>
-              </Project>
-            ))}
+            {projectListData &&
+              projectListData.map((project) => (
+                <Project
+                  key={project.projectUID}
+                  onClick={() => {
+                    console.log(project);
+                  }}
+                >
+                  <ProjectColor styledbg={colors.calendar[project.color]}>
+                    <Tags
+                      width={14}
+                      height={14}
+                      fill={colors.background.midnight}
+                    />
+                  </ProjectColor>
+                  <UserNameText>{project.projectName}</UserNameText>
+                </Project>
+              ))}
           </UserContainer>
         )}
       </MenuContainer>

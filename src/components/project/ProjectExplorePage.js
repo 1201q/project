@@ -24,16 +24,17 @@ export default function ProjectExplore() {
         </ControlBtn>
       </HeaderContainer>
       <Contents>
-        {projectListData.map((item) => (
-          <div
-            onClick={() => {
-              console.log(item);
-            }}
-            key={item.projectUID}
-          >
-            {item.projectName}
-          </div>
-        ))}
+        {projectListData &&
+          projectListData.map((item) => (
+            <div
+              onClick={() => {
+                console.log(item);
+              }}
+              key={item.projectUID}
+            >
+              {item.projectName}
+            </div>
+          ))}
       </Contents>
       {isNewProjectModalOpen && <NewProjectModal />}
     </Container>

@@ -9,7 +9,7 @@ import * as colors from "../../styles/colors";
 import ProjectCard from "./ProjectCard";
 import Welcome from "./Welcome";
 import Schedule from "./Schedule";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useProject } from "@/utils/context/ProjectContext";
 
 dayjs.extend(isSameOrBefore);
@@ -19,6 +19,23 @@ dayjs.extend(weekOfYear);
 
 export default function Dashboard() {
   const { projectListData } = useProject();
+  const projectContainerRef = useRef();
+  const [isScrollbarVisible, setIsScrollbarVisible] = useState(false);
+
+  const onWheel = (e) => {
+    if (projectContainerRef.current) {
+      projectContainerRef.current.scrollLeft += e.deltaY;
+    }
+  };
+
+  const onMouseMove = (e) => {
+    setIsScrollbarVisible(true);
+  };
+
+  const onMouseLeave = (e) => {
+    setIsScrollbarVisible(false);
+  };
+
   return (
     <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       {/* 상단 welcome */}
@@ -27,15 +44,22 @@ export default function Dashboard() {
       </TopInfoContainer>
       <MenuHeaderText>프로젝트</MenuHeaderText>
       {/* 프로젝트 */}
-      <ProjectContainer>
-        {projectListData.map((item) => (
-          <ProjectCard
-            key={item.projectUID}
-            title={item.projectName}
-            color={item.color}
-            members={item.projectMembers}
-          />
-        ))}
+      <ProjectContainer
+        ref={projectContainerRef}
+        onWheel={onWheel}
+        onMouseEnter={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        scrollbarVisible={isScrollbarVisible}
+      >
+        {projectListData &&
+          projectListData.map((item) => (
+            <ProjectCard
+              key={item.projectUID}
+              title={item.projectName}
+              color={item.color}
+              members={item.projectMembers}
+            />
+          ))}
       </ProjectContainer>
       <Div>
         <div style={{ width: "60%", minWidth: "814px" }}>
@@ -74,11 +98,19 @@ const TopInfoContainer = styled.div`
 
 const ProjectContainer = styled.div`
   width: 100%;
-  min-height: 140px;
-  margin-bottom: 35px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  min-height: 160px;
+  margin-bottom: 25px;
+  display: flex;
+
   grid-gap: 20px;
+  overflow-x: scroll;
+  padding-bottom: 10px;
+  transition: all 0.5s;
+  scroll-behavior: smooth;
+
+  ::-webkit-scrollbar {
+    display: ${(props) => (props.scrollbarVisible ? "" : "none")};
+  }
 `;
 
 const ContentsContainer = styled.div`
