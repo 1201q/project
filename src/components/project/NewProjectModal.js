@@ -17,18 +17,22 @@ import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 
 // datepicker
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { ko } from "date-fns/locale";
+
 import { addSchedule } from "@/utils/firebase/calendar";
 import { useTeam } from "@/utils/context/TeamContext";
+import { addProject } from "@/utils/firebase/project";
 
 export default function NewProjectModal({ setIsNewProjectModalOpen }) {
   const { selectedTeamData, selectedTeamMembersData } = useTeam();
+  const user = useAuth();
 
   const [selectedUserIndexArr, setSelectedUserIndexArr] = useState(
     Array(selectedTeamMembersData.length).fill(false)
   );
+  const [projectTitle, setProjectTitle] = useState("");
+  const [projectDescription, setProjectDescription] = useState("");
+  const [error, setError] = useState(false);
+  const controls = useAnimationControls();
 
   const handleCheckbox = (index) => {
     setSelectedUserIndexArr((prevArr) => {
@@ -39,28 +43,79 @@ export default function NewProjectModal({ setIsNewProjectModalOpen }) {
   };
 
   const onExecute = () => {
-    let correctUserArr = [];
+    if (projectTitle !== "" && projectDescription !== "") {
+      setError(false);
 
-    selectedTeamMembersData
-      .filter((user, index) => {
-        if (selectedUserIndexArr[index]) {
-          return user;
-        }
-      })
-      .map((filteredUser) => {
-        correctUserArr.push(filteredUser);
-      });
+      let correctUserArr = [];
 
-    console.log(correctUserArr);
+      selectedTeamMembersData
+        .filter((user, index) => {
+          if (selectedUserIndexArr[index]) {
+            return user;
+          }
+        })
+        .map((filteredUser) => {
+          correctUserArr.push(filteredUser.uid);
+        });
+
+      addNewProject(correctUserArr);
+    } else {
+      setError(true);
+      shakeModal();
+
+      setTimeout(() => {
+        setError(false);
+      }, 1500);
+    }
   };
 
-  useEffect(() => {
-    onExecute();
-  }, [selectedUserIndexArr]);
+  const addNewProject = async (userArr) => {
+    const data = {
+      teamUID: selectedTeamData.teamUID,
+      teamDocId: selectedTeamData.docId,
+      projectName: projectTitle,
+      projectDescription: projectDescription,
+      projectUID: uuidv4(),
+      createdAt: dayjs().format(""),
+      projectOwner: user.user.uid,
+      projectOwnerKRname: user.user.displayName,
+      projectMembers: [user.user.uid, ...userArr],
+    };
+    const update = await addProject(
+      "project",
+      selectedTeamData.teamUID,
+      "data",
+      data
+    );
+
+    if (!update) {
+      setIsNewProjectModalOpen(false);
+    } else {
+      console.log(update);
+    }
+  };
+
+  const onChange = (e) => {
+    const { value, name } = e.target;
+
+    if (name === "title") {
+      setProjectTitle(value);
+    } else if (name === "description") {
+      setProjectDescription(value);
+    }
+  };
+  const shakeModal = () => {
+    controls.start({
+      x: [-10, 10, -10, 10, 0],
+      transition: {
+        duration: 0.3,
+      },
+    });
+  };
 
   return (
     <Container>
-      <ModalContainer transition={{ duration: 0.1 }}>
+      <ModalContainer transition={{ duration: 0.1 }} animate={controls}>
         <HeaderText>새로운 프로젝트 생성</HeaderText>
         <ContentsContainer>
           {/* 사이드바 */}
@@ -70,13 +125,31 @@ export default function NewProjectModal({ setIsNewProjectModalOpen }) {
               type="text"
               name="title"
               placeholder="제목을 입력하세요"
+              onChange={onChange}
+              value={projectTitle}
             />
             <SmallHeaderText>프로젝트 소개</SmallHeaderText>
             <TitleInput
               type="text"
-              name="title"
+              name="description"
               placeholder="소개 내용을 입력하세요"
+              onChange={onChange}
+              value={projectDescription}
             />
+
+            <Center>
+              {error && (
+                <ErrorPopup
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <IconContainer>
+                    <Ex width={17} height={17} fill={colors.calendar.red} />
+                  </IconContainer>
+                  제목과 소개를 입력해주세요.
+                </ErrorPopup>
+              )}
+            </Center>
           </SidebarContainer>
           {/* 멤버 테이블 */}
           <MemberContainer>
@@ -109,13 +182,15 @@ export default function NewProjectModal({ setIsNewProjectModalOpen }) {
                 {selectedTeamMembersData.map((item, index) => (
                   <Col key={item.uid}>
                     <Box maxwidth={"50px"}>
-                      <input
-                        type="checkbox"
-                        onChange={() => {
-                          handleCheckbox(index);
-                        }}
-                        checked={selectedUserIndexArr[index]}
-                      />
+                      {user.user.uid !== selectedTeamMembersData[index].uid && (
+                        <input
+                          type="checkbox"
+                          onChange={() => {
+                            handleCheckbox(index);
+                          }}
+                          checked={selectedUserIndexArr[index]}
+                        />
+                      )}
                     </Box>
                     <Box>{item.name}</Box>
                   </Col>
@@ -142,8 +217,15 @@ export default function NewProjectModal({ setIsNewProjectModalOpen }) {
             styledfont={"white"}
             whileHover={{ opacity: 0.8 }}
             whileTap={{ scale: 0.95 }}
+            style={error && { cursor: "not-allowed" }}
+            styledbg={error ? "#D32F2F" : "#1A73E8"}
+            onClick={() => {
+              if (!error) {
+                onExecute();
+              }
+            }}
           >
-            저장
+            생성
           </SaveButton>
         </ButtonContainer>
         <CloseButton
@@ -214,12 +296,29 @@ const MemberContainer = styled.div`
   height: 370px;
 `;
 
+const IconContainer = styled.div`
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+`;
+
 const MemberListContainer = styled.div`
   width: 100%;
   height: 90%;
   border-radius: 7px;
 
   /* padding: 10px; */
+`;
+
+const Center = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 // header
@@ -320,4 +419,21 @@ const Col = styled.div`
   height: 50px;
   border-bottom: 1px solid ${colors.border.deepgray};
   padding-left: 20px;
+`;
+
+// popup
+const ErrorPopup = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${colors.calendar.red};
+  color: white;
+  border-radius: 10px;
+  border: 2px solid ${colors.border.deepgray};
+  width: fit-content;
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.05);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 7px 12px;
+  margin-top: 5px;
 `;
