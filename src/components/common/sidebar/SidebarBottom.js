@@ -136,7 +136,7 @@ export default function SidebarBottom() {
           >
             {projectListData.map((project) => (
               <Project
-                key={project.uid}
+                key={project.projectUID}
                 onClick={() => {
                   console.log(project);
                 }}

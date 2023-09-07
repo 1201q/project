@@ -29,6 +29,7 @@ export default function ProjectExplore() {
             onClick={() => {
               console.log(item);
             }}
+            key={item.projectUID}
           >
             {item.projectName}
           </div>
