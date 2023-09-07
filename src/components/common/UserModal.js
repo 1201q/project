@@ -27,7 +27,7 @@ export default function UserModal() {
 
     setIsSidebarProjectOpen,
   } = useMain();
-  const { setProjectListData } = useProject();
+  const { setProjectListData, setJoinedProjectList } = useProject();
 
   const onSelectTeam = async (selectData) => {
     const update = await updateTeamData(
@@ -42,6 +42,7 @@ export default function UserModal() {
       setIsSidebarProjectOpen(false);
       setSelectedTeamUid(selectData.teamUID);
       setProjectListData([]);
+      setJoinedProjectList([]);
     } else {
       console.log(update);
     }

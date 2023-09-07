@@ -6,14 +6,19 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import NewProjectModal from "./NewProjectModal";
 import { useProject } from "@/utils/context/ProjectContext";
+import Project from "./Project";
 
 export default function ProjectExplore() {
-  const { isNewProjectModalOpen, setIsNewProjectModalOpen, projectListData } =
-    useProject();
+  const {
+    isNewProjectModalOpen,
+    setIsNewProjectModalOpen,
+    projectListData,
+    joinedProjectList,
+  } = useProject();
   return (
     <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <HeaderContainer>
-        <HeaderText>탐색</HeaderText>
+        <HeaderText>프로젝트</HeaderText>
         <ControlBtn
           whileTap={{ scale: 0.95 }}
           onClick={() => {
@@ -24,17 +29,28 @@ export default function ProjectExplore() {
         </ControlBtn>
       </HeaderContainer>
       <Contents>
-        {projectListData &&
-          projectListData.map((item) => (
-            <div
-              onClick={() => {
-                console.log(item);
-              }}
-              key={item.projectUID}
-            >
-              {item.projectName}
-            </div>
-          ))}
+        <MenuHeaderText>내 프로젝트</MenuHeaderText>
+        <List>
+          {joinedProjectList &&
+            joinedProjectList.map((item) => (
+              <Project
+                key={`my-${item.projectUID}`}
+                color={item.color}
+                title={item.projectName}
+              />
+            ))}
+        </List>
+        <MenuHeaderText>프로젝트 탐색</MenuHeaderText>
+        <List>
+          {projectListData &&
+            projectListData.map((item) => (
+              <Project
+                key={`${item.projectUID}`}
+                color={item.color}
+                title={item.projectName}
+              />
+            ))}
+        </List>
       </Contents>
       {isNewProjectModalOpen && <NewProjectModal />}
     </Container>
@@ -64,7 +80,12 @@ const HeaderText = styled.p`
 `;
 
 const Contents = styled.div`
-  padding: 15px 25px;
+  margin-top: 5px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: scroll;
+  padding: 5px 10px 30px 10px;
+  background-color: white;
 `;
 
 const ControlBtn = styled(motion.button)`
@@ -78,4 +99,18 @@ const ControlBtn = styled(motion.button)`
   padding: 0px 13px;
   box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.05);
   margin-left: 30px;
+`;
+
+const MenuHeaderText = styled.p`
+  width: 150px;
+  font-size: 22px;
+  font-weight: 700;
+  color: ${colors.font.black};
+  margin-bottom: 10px;
+  margin-left: 15px;
+  margin-top: 10px;
+`;
+
+const List = styled.div`
+  margin-bottom: 50px;
 `;

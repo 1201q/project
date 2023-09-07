@@ -5,6 +5,7 @@ const ProjectContext = createContext();
 export const ProjectProvider = ({ children }) => {
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   const [projectListData, setProjectListData] = useState([]);
+  const [joinedProjectList, setJoinedProjectList] = useState([]);
   return (
     <ProjectContext.Provider
       value={{
@@ -12,6 +13,8 @@ export const ProjectProvider = ({ children }) => {
         setIsNewProjectModalOpen,
         projectListData,
         setProjectListData,
+        joinedProjectList,
+        setJoinedProjectList,
       }}
     >
       {children}

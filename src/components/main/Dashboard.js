@@ -123,14 +123,6 @@ const ContentsContainer = styled.div`
   border-radius: 10px;
 `;
 
-const MenuHeaderText = styled.p`
-  width: 150px;
-  font-size: 22px;
-  font-weight: 700;
-  color: ${colors.font.black};
-  margin-bottom: 10px;
-`;
-
 const ContainerHeader = styled.div`
   width: 100%;
   padding: 20px 20px 15px 20px;
@@ -139,4 +131,13 @@ const ContainerHeader = styled.div`
   font-weight: 600;
   top: 0px;
   left: 0px;
+`;
+const MenuHeaderText = styled.p`
+  width: 150px;
+  font-size: 22px;
+  font-weight: 700;
+  color: ${colors.font.black};
+  margin-bottom: 10px;
+  margin-left: 15px;
+  margin-top: 10px;
 `;

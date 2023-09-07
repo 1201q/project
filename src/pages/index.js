@@ -71,7 +71,7 @@ export default function Home({ uid }) {
     setSelectedTeamMembersData,
   } = useTeam();
   const { currentTab, setCurrentTab } = useMain();
-  const { setProjectListData } = useProject();
+  const { setProjectListData, setJoinedProjectList } = useProject();
 
   useEffect(() => {
     const getScheduleData = (data) => {
@@ -122,8 +122,12 @@ export default function Home({ uid }) {
       };
 
       const getProjectData = (data) => {
-        console.log(data.data);
+        const myproject = data.data.filter((item) =>
+          item.projectMembers.includes(uid)
+        );
         setProjectListData(data.data);
+        setJoinedProjectList(myproject);
+        console.log(myproject);
         setIsTeamDataLoading(false);
       };
 

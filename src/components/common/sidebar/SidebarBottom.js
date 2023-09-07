@@ -12,6 +12,7 @@ import List from "../../../assets/list.svg";
 import PlusLogo from "../../../assets/plus-small.svg";
 import UserThumnail from "../../../assets/user-no-circle.svg";
 import Tags from "../../../assets/tags.svg";
+import ProjectIcon from "../../../assets/diagram-project.svg";
 
 import { useRouter } from "next/router";
 import { useTeam } from "@/utils/context/TeamContext";
@@ -28,7 +29,7 @@ export default function SidebarBottom() {
 
   const { selectedTeamMembersData, isTeamDataLoading } = useTeam();
   const { setCurrentTab } = useMain();
-  const { projectListData } = useProject();
+  const { projectListData, joinedProjectList } = useProject();
   const router = useRouter();
 
   return (
@@ -73,8 +74,8 @@ export default function SidebarBottom() {
             router.push({ query: { page: "project_explore" } });
           }}
         >
-          <Search width={18} height={18} fill="#f7f7f7" />
-          <MenuText>탐색</MenuText>
+          <ProjectIcon width={18} height={18} fill="#f7f7f7" />
+          <MenuText>프로젝트</MenuText>
         </Menu>
       </TopMenuContainer>
       <MenuContainer>
@@ -122,7 +123,7 @@ export default function SidebarBottom() {
             setIsSidebarProjectOpen((prev) => !prev);
           }}
         >
-          <p>프로젝트</p>
+          <p>내 프로젝트</p>
           <PlusLogo width={17} height={17} fill={colors.font.gray} />
         </MenuController>
         {isSidebarProjectOpen && !isTeamDataLoading && (
@@ -134,8 +135,8 @@ export default function SidebarBottom() {
             }}
             transition={{ duration: 0.2 }}
           >
-            {projectListData &&
-              projectListData.map((project) => (
+            {joinedProjectList &&
+              joinedProjectList.map((project) => (
                 <Project
                   key={project.projectUID}
                   onClick={() => {
