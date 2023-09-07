@@ -11,10 +11,12 @@ import Check from "../../../assets/check-circle.svg";
 import List from "../../../assets/list.svg";
 import PlusLogo from "../../../assets/plus-small.svg";
 import UserThumnail from "../../../assets/user-no-circle.svg";
+import Tags from "../../../assets/tags.svg";
 
 import { useRouter } from "next/router";
 import { useTeam } from "@/utils/context/TeamContext";
 import { useMain } from "@/utils/context/MainContext";
+import { useProject } from "@/utils/context/ProjectContext";
 
 export default function SidebarBottom() {
   const {
@@ -26,6 +28,7 @@ export default function SidebarBottom() {
 
   const { selectedTeamMembersData, isTeamDataLoading } = useTeam();
   const { setCurrentTab } = useMain();
+  const { projectListData } = useProject();
   const router = useRouter();
 
   return (
@@ -131,23 +134,22 @@ export default function SidebarBottom() {
             }}
             transition={{ duration: 0.2 }}
           >
-            {selectedTeamMembersData.map((user) => (
-              <User
-                key={user.uid}
+            {projectListData.map((project) => (
+              <Project
+                key={project.uid}
                 onClick={() => {
-                  console.log(user);
+                  console.log(project);
                 }}
               >
-                <UserProfileImage>
-                  <UserThumnail
-                    width={17}
-                    height={17}
-                    fill={"white"}
-                    style={{ marginTop: "7px" }}
+                <ProjectColor styledbg={colors.calendar[project.color]}>
+                  <Tags
+                    width={14}
+                    height={14}
+                    fill={colors.background.midnight}
                   />
-                </UserProfileImage>
-                <UserNameText>{user.name}</UserNameText>
-              </User>
+                </ProjectColor>
+                <UserNameText>{project.projectName}</UserNameText>
+              </Project>
             ))}
           </UserContainer>
         )}
@@ -252,6 +254,18 @@ const User = styled(motion.div)`
   }
 `;
 
+const Project = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 7px;
+
+  &:hover {
+    opacity: 0.7;
+  }
+`;
+
 const UserProfileImage = styled.div`
   display: flex;
   align-items: center;
@@ -263,8 +277,26 @@ const UserProfileImage = styled.div`
   overflow: hidden;
 `;
 
+const ProjectColor = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 21px;
+  height: 21px;
+  background-color: ${(props) => props.styledbg};
+  border-radius: 20%;
+  overflow: hidden;
+`;
+
 const UserNameText = styled.p`
   margin-left: 15px;
+  font-size: 15px;
+  font-weight: 400;
+  color: ${colors.font.white};
+`;
+
+const ProjectNameText = styled.p`
+  /* margin-left: 15px; */
   font-size: 15px;
   font-weight: 400;
   color: ${colors.font.white};

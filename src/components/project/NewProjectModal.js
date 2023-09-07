@@ -7,6 +7,7 @@ import * as colors from "../../styles/colors";
 
 // svg
 import X from "../../assets/x.svg";
+import Check from "../../assets/check.svg";
 import Checkbox from "../../assets/checkbox.svg";
 import Calendar from "../../assets/calendar.svg";
 import Ex from "../../assets/cross-small.svg";
@@ -21,8 +22,10 @@ import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 import { addSchedule } from "@/utils/firebase/calendar";
 import { useTeam } from "@/utils/context/TeamContext";
 import { addProject } from "@/utils/firebase/project";
+import { useProject } from "@/utils/context/ProjectContext";
 
-export default function NewProjectModal({ setIsNewProjectModalOpen }) {
+export default function NewProjectModal() {
+  const { setIsNewProjectModalOpen } = useProject();
   const { selectedTeamData, selectedTeamMembersData } = useTeam();
   const user = useAuth();
 
@@ -32,6 +35,7 @@ export default function NewProjectModal({ setIsNewProjectModalOpen }) {
   const [projectTitle, setProjectTitle] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [error, setError] = useState(false);
+  const [selectedColor, setSelectedColor] = useState("green");
   const controls = useAnimationControls();
 
   const handleCheckbox = (index) => {
@@ -71,6 +75,7 @@ export default function NewProjectModal({ setIsNewProjectModalOpen }) {
 
   const addNewProject = async (userArr) => {
     const data = {
+      color: selectedColor,
       teamUID: selectedTeamData.teamUID,
       teamDocId: selectedTeamData.docId,
       projectName: projectTitle,
@@ -136,7 +141,25 @@ export default function NewProjectModal({ setIsNewProjectModalOpen }) {
               onChange={onChange}
               value={projectDescription}
             />
-
+            <SmallHeaderText>프로젝트 색깔</SmallHeaderText>
+            <ColorPickerContainer>
+              {Object.keys(colors.calendar).map((key) => (
+                <ColorPickerButton
+                  key={key}
+                  styledbg={colors.calendar[key]}
+                  onClick={() => setSelectedColor(key)}
+                >
+                  {selectedColor === key && (
+                    <Check
+                      width={14}
+                      height={14}
+                      fill={"white"}
+                      style={{ marginTop: "2px" }}
+                    />
+                  )}
+                </ColorPickerButton>
+              ))}
+            </ColorPickerContainer>
             <Center>
               {error && (
                 <ErrorPopup
@@ -240,6 +263,16 @@ export default function NewProjectModal({ setIsNewProjectModalOpen }) {
   );
 }
 
+const ColorPickerButton = styled.button`
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  border: 2px solid ${colors.border.deepgray};
+  background-color: ${(props) => props.styledbg};
+`;
+
 // 컨테이너
 const Container = styled.div`
   position: absolute;
@@ -273,14 +306,11 @@ const ContentsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 30px;
-  /* background-color: gray; */
   height: 100%;
 `;
 
 const SidebarContainer = styled.div`
-  /* background-color: red; */
   width: 100%;
-  /* padding-right: 10px; */
 `;
 
 const ButtonContainer = styled.div`
@@ -312,8 +342,10 @@ const MemberListContainer = styled.div`
   width: 100%;
   height: 90%;
   border-radius: 7px;
-
-  /* padding: 10px; */
+`;
+const ColorPickerContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Center = styled.div`
@@ -435,5 +467,5 @@ const ErrorPopup = styled(motion.div)`
   font-weight: 700;
   font-size: 13px;
   padding: 7px 12px;
-  margin-top: 5px;
+  margin-top: 35px;
 `;

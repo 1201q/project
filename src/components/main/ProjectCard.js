@@ -5,12 +5,12 @@ import * as colors from "../../styles/colors";
 
 import User from "../../assets/users-alt.svg";
 
-export default function ProjectCard() {
+export default function ProjectCard({ title, color, members }) {
   return (
     <Card>
-      <CardColor styledcolor={colors.calendar.green}></CardColor>
+      <CardColor styledcolor={colors.calendar[color]}></CardColor>
       <Contents>
-        <CardTitle>나의 프로젝트!</CardTitle>
+        <CardTitle>{title}</CardTitle>
         <MemberSum>
           <User
             width={13}
@@ -18,7 +18,7 @@ export default function ProjectCard() {
             fill={colors.font.gray}
             style={{ marginRight: "10px", marginTop: "1px" }}
           />
-          <p>10</p>
+          {members && <p>{members.length}명</p>}
         </MemberSum>
       </Contents>
     </Card>
@@ -45,7 +45,8 @@ const CardColor = styled.div`
   width: 10px;
   min-width: 10px;
   height: 100%;
-  background-color: ${(props) => props.styledcolor};
+  background-color: ${(props) =>
+    props.styledcolor ? props.styledcolor : colors.calendar.green};
   border-top-left-radius: 7px;
   border-bottom-left-radius: 7px;
   border: 1px solid ${colors.border.gray};

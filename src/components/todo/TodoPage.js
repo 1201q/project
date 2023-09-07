@@ -15,7 +15,7 @@ dayjs.extend(customParseFormat);
 export default function TodoPage() {
   const { scheduleList } = useCalendar();
   const [isDropDownVisible, setIsDropDownVisible] = useState(false);
-  const [selectMenu, setSelectMenu] = useState("today");
+  const [selectMenu, setSelectMenu] = useState("week");
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [startDate, setStartDate] = useState(dayjs());
   const [endDate, setEndDate] = useState(dayjs());
@@ -216,6 +216,7 @@ const DropDown = styled.div`
   padding-top: 2px;
   background-color: white;
   border: 1px solid ${colors.border.deepgray};
+  z-index: 50;
 `;
 
 const DropDownMenu = styled.div`

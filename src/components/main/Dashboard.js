@@ -10,6 +10,7 @@ import ProjectCard from "./ProjectCard";
 import Welcome from "./Welcome";
 import Schedule from "./Schedule";
 import { useState, useEffect } from "react";
+import { useProject } from "@/utils/context/ProjectContext";
 
 dayjs.extend(isSameOrBefore);
 
@@ -17,6 +18,7 @@ dayjs.extend(isBetween);
 dayjs.extend(weekOfYear);
 
 export default function Dashboard() {
+  const { projectListData } = useProject();
   return (
     <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       {/* 상단 welcome */}
@@ -26,8 +28,14 @@ export default function Dashboard() {
       <MenuHeaderText>프로젝트</MenuHeaderText>
       {/* 프로젝트 */}
       <ProjectContainer>
-        <ProjectCard />
-        <ProjectCard />
+        {projectListData.map((item) => (
+          <ProjectCard
+            key={item.projectUID}
+            title={item.projectName}
+            color={item.color}
+            members={item.projectMembers}
+          />
+        ))}
       </ProjectContainer>
       <Div>
         <div style={{ width: "60%", minWidth: "814px" }}>
@@ -66,6 +74,7 @@ const TopInfoContainer = styled.div`
 
 const ProjectContainer = styled.div`
   width: 100%;
+  min-height: 140px;
   margin-bottom: 35px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);

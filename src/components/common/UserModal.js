@@ -16,6 +16,7 @@ import { useAuth } from "@/utils/context/auth/AuthProvider";
 import { useTeam } from "@/utils/context/TeamContext";
 import { updateTeamData } from "@/utils/firebase/team";
 import { useMain } from "@/utils/context/MainContext";
+import { useProject } from "@/utils/context/ProjectContext";
 
 export default function UserModal() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function UserModal() {
 
     setIsSidebarProjectOpen,
   } = useMain();
+  const { setProjectListData } = useProject();
 
   const onSelectTeam = async (selectData) => {
     const update = await updateTeamData(
@@ -39,6 +41,7 @@ export default function UserModal() {
       setIsSidebarChattingOpen(false);
       setIsSidebarProjectOpen(false);
       setSelectedTeamUid(selectData.teamUID);
+      setProjectListData([]);
     } else {
       console.log(update);
     }
@@ -61,7 +64,9 @@ export default function UserModal() {
           <Team
             key={item.teamUID}
             onClick={() => {
-              onSelectTeam(item);
+              if (item.teamUID !== selectedTeamUid) {
+                onSelectTeam(item);
+              }
             }}
           >
             <TeamProfileImg>팀</TeamProfileImg>

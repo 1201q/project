@@ -5,9 +5,11 @@ import * as colors from "../../styles/colors";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import NewProjectModal from "./NewProjectModal";
+import { useProject } from "@/utils/context/ProjectContext";
 
 export default function ProjectExplore() {
-  const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
+  const { isNewProjectModalOpen, setIsNewProjectModalOpen, projectListData } =
+    useProject();
   return (
     <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <HeaderContainer>
@@ -22,11 +24,17 @@ export default function ProjectExplore() {
         </ControlBtn>
       </HeaderContainer>
       <Contents>
-        <div>1</div>
+        {projectListData.map((item) => (
+          <div
+            onClick={() => {
+              console.log(item);
+            }}
+          >
+            {item.projectName}
+          </div>
+        ))}
       </Contents>
-      {isNewProjectModalOpen && (
-        <NewProjectModal setIsNewProjectModalOpen={setIsNewProjectModalOpen} />
-      )}
+      {isNewProjectModalOpen && <NewProjectModal />}
     </Container>
   );
 }

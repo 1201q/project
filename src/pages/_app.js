@@ -7,6 +7,7 @@ import "../styles/globals.css";
 import Head from "next/head";
 import { TeamProvider } from "@/utils/context/TeamContext";
 import { MainProvider } from "@/utils/context/MainContext";
+import { ProjectProvider } from "@/utils/context/ProjectContext";
 
 export default function App({
   Component,
@@ -19,15 +20,17 @@ export default function App({
         <link rel="manifest" href="/manifest.json" />
       </Head>
       <AuthProvider>
-        <TeamProvider>
-          <CalendarModalProvider>
-            <CalendarProvider>
-              <MainProvider>
-                <Component {...pageProps} />
-              </MainProvider>
-            </CalendarProvider>
-          </CalendarModalProvider>
-        </TeamProvider>
+        <ProjectProvider>
+          <TeamProvider>
+            <CalendarModalProvider>
+              <CalendarProvider>
+                <MainProvider>
+                  <Component {...pageProps} />
+                </MainProvider>
+              </CalendarProvider>
+            </CalendarModalProvider>
+          </TeamProvider>
+        </ProjectProvider>
       </AuthProvider>
     </>
   );

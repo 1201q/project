@@ -19,7 +19,7 @@ export default function Schedule() {
   const { scheduleList } = useCalendar();
   const [isHovered, setIsHovered] = useState(false);
   const [isDropDownVisible, setIsDropDownVisible] = useState(false);
-  const [selectMenu, setSelectMenu] = useState("today");
+  const [selectMenu, setSelectMenu] = useState("week");
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [startDate, setStartDate] = useState(dayjs());
   const [endDate, setEndDate] = useState(dayjs());

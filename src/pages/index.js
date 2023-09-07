@@ -23,6 +23,7 @@ import { useMain } from "@/utils/context/MainContext";
 import Dashboard from "@/components/main/Dashboard";
 import TodoPage from "@/components/todo/TodoPage";
 import ProjectExplorePage from "@/components/project/ProjectExplorePage";
+import { useProject } from "@/utils/context/ProjectContext";
 dayjs.extend(isSameOrBefore);
 
 export const getServerSideProps = async (ctx) => {
@@ -70,6 +71,7 @@ export default function Home({ uid }) {
     setSelectedTeamMembersData,
   } = useTeam();
   const { currentTab, setCurrentTab } = useMain();
+  const { setProjectListData } = useProject();
 
   useEffect(() => {
     const getScheduleData = (data) => {
@@ -117,6 +119,11 @@ export default function Home({ uid }) {
         );
 
         setSelectedTeamMembersData(sortArr);
+      };
+
+      const getProjectData = (data) => {
+        console.log(data.data);
+        setProjectListData(data.data);
         setIsTeamDataLoading(false);
       };
 
@@ -124,6 +131,11 @@ export default function Home({ uid }) {
         members = selectedTeamData[0].teamMembers;
         setSelectedTeamData(selectedTeamData[0]);
         observeCollectionData("users", members, callback);
+        observeDocumentChanges(
+          "project",
+          selectedTeamData[0].teamUID,
+          getProjectData
+        ); // 스케줄
       }
     }
   }, [selectedTeamUid]);
