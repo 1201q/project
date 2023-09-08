@@ -18,7 +18,7 @@ dayjs.extend(isBetween);
 dayjs.extend(weekOfYear);
 
 export default function Dashboard() {
-  const { projectListData } = useProject();
+  const { projectListData, joinedProjectList } = useProject();
   const projectContainerRef = useRef();
   const [isScrollbarVisible, setIsScrollbarVisible] = useState(false);
 
@@ -51,8 +51,8 @@ export default function Dashboard() {
         onMouseLeave={onMouseLeave}
         scrollbarVisible={isScrollbarVisible}
       >
-        {projectListData &&
-          projectListData.map((item) => (
+        {joinedProjectList &&
+          joinedProjectList.map((item) => (
             <ProjectCard
               key={item.projectUID}
               title={item.projectName}
@@ -106,7 +106,6 @@ const ProjectContainer = styled.div`
   overflow-x: scroll;
   padding-bottom: 10px;
   transition: all 0.5s;
-  scroll-behavior: smooth;
 
   ::-webkit-scrollbar {
     display: ${(props) => (props.scrollbarVisible ? "" : "none")};
@@ -138,6 +137,6 @@ const MenuHeaderText = styled.p`
   font-weight: 700;
   color: ${colors.font.black};
   margin-bottom: 10px;
-  margin-left: 15px;
+  /* margin-left: 15px; */
   margin-top: 10px;
 `;

@@ -8,6 +8,12 @@ import NewProjectModal from "./NewProjectModal";
 import { useProject } from "@/utils/context/ProjectContext";
 import Project from "./Project";
 
+import A from "../../assets/a.svg";
+import User from "../../assets/user.svg";
+import Users from "../../assets/users-alt.svg";
+import Info from "../../assets/info.svg";
+import Setting from "../../assets/settings (3).svg";
+
 export default function ProjectExplore() {
   const {
     isNewProjectModalOpen,
@@ -15,42 +21,93 @@ export default function ProjectExplore() {
     projectListData,
     joinedProjectList,
   } = useProject();
+
+  const [pageMode, setPageMode] = useState("all");
+
   return (
     <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <HeaderContainer>
-        <HeaderText>프로젝트</HeaderText>
+        <HeaderText>
+          {pageMode === "all" && "모든 프로젝트"}
+          {pageMode === "myproject" && "나의 프로젝트"}
+        </HeaderText>
         <ControlBtn
           whileTap={{ scale: 0.95 }}
           onClick={() => {
             setIsNewProjectModalOpen(true);
           }}
         >
-          프로젝트 생성{" "}
+          새로운 프로젝트 생성{" "}
         </ControlBtn>
+        {pageMode === "all" && (
+          <ControlBtn
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              setPageMode("myproject");
+            }}
+          >
+            내가 속한 프로젝트만 보기
+          </ControlBtn>
+        )}
+        {pageMode === "myproject" && (
+          <ControlBtn
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              setPageMode("all");
+            }}
+          >
+            전체 프로젝트 보기
+          </ControlBtn>
+        )}
       </HeaderContainer>
       <Contents>
-        <MenuHeaderText>내 프로젝트</MenuHeaderText>
-        <List>
-          {joinedProjectList &&
-            joinedProjectList.map((item) => (
-              <Project
-                key={`my-${item.projectUID}`}
-                color={item.color}
-                title={item.projectName}
-              />
-            ))}
-        </List>
-        <MenuHeaderText>프로젝트 탐색</MenuHeaderText>
-        <List>
-          {projectListData &&
-            projectListData.map((item) => (
-              <Project
-                key={`${item.projectUID}`}
-                color={item.color}
-                title={item.projectName}
-              />
-            ))}
-        </List>
+        <ListHeaderContainer>
+          <Box maxwidth={"70px"}></Box>
+          <Box maxwidth={"400px"}>
+            <A width={13} height={13} fill={colors.font.gray} />
+            프로젝트 이름
+          </Box>
+          <Box maxwidth={"100px"}>
+            <User width={16} height={16} fill={colors.font.gray} />
+            소유자
+          </Box>
+          <Box maxwidth={""}>
+            <Info width={16} height={16} fill={colors.font.gray} />
+            프로젝트 소개
+          </Box>{" "}
+          <Box maxwidth={"90px"}>
+            <Users width={13} height={13} fill={colors.font.gray} />
+            인원
+          </Box>
+        </ListHeaderContainer>
+
+        {pageMode === "all" &&
+          projectListData &&
+          projectListData.map((item, index) => (
+            <Project
+              idx={index + 1}
+              key={`my-${item.projectUID}`}
+              color={item.color}
+              title={item.projectName}
+              ownerName={item.projectOwnerKRname}
+              description={item.projectDescription}
+              members={item.projectMembers}
+            />
+          ))}
+
+        {pageMode === "myproject" &&
+          joinedProjectList &&
+          joinedProjectList.map((item, index) => (
+            <Project
+              idx={index + 1}
+              key={`my-${item.projectUID}`}
+              color={item.color}
+              title={item.projectName}
+              ownerName={item.projectOwnerKRname}
+              description={item.projectDescription}
+              members={item.projectMembers}
+            />
+          ))}
       </Contents>
       {isNewProjectModalOpen && <NewProjectModal />}
     </Container>
@@ -76,15 +133,15 @@ const HeaderText = styled.p`
   font-size: 25px;
   font-weight: 700;
   color: ${colors.font.black};
-  /* cursor: pointer; */
+  margin-right: 20px;
 `;
 
 const Contents = styled.div`
-  margin-top: 5px;
+  /* margin-top: 5px; */
   width: 100%;
   max-height: 90vh;
   overflow-y: scroll;
-  padding: 5px 10px 30px 10px;
+  /* padding: 5px 10px 30px 10px; */
   background-color: white;
 `;
 
@@ -98,19 +155,44 @@ const ControlBtn = styled(motion.button)`
   cursor: pointer;
   padding: 0px 13px;
   box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.05);
-  margin-left: 30px;
+  margin-left: 10px;
 `;
 
 const MenuHeaderText = styled.p`
-  width: 150px;
+  width: 100%;
   font-size: 22px;
   font-weight: 700;
   color: ${colors.font.black};
-  margin-bottom: 10px;
+
   margin-left: 15px;
-  margin-top: 10px;
 `;
 
 const List = styled.div`
   margin-bottom: 50px;
+`;
+
+const ListHeaderContainer = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  background-color: ${colors.background.gray};
+  /* border-top: 1px solid ${colors.border.gray}; */
+  border-bottom: 1px solid ${colors.border.gray};
+
+  svg {
+    margin-right: 8px;
+  }
+`;
+
+const Box = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  max-width: ${(props) => props.maxwidth};
+  color: ${colors.font.darkgray};
+  font-size: 15px;
+  font-weight: 700;
+  padding: 10px 10px;
 `;

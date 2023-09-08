@@ -8,6 +8,7 @@ import * as colors from "../../styles/colors";
 // svg
 import X from "../../assets/x.svg";
 import Check from "../../assets/check.svg";
+import User from "../../assets/user.svg";
 import Checkbox from "../../assets/checkbox.svg";
 import Calendar from "../../assets/calendar.svg";
 import Ex from "../../assets/cross-small.svg";
@@ -191,9 +192,9 @@ export default function NewProjectModal() {
                   />
                 </Box>
                 <Box>
-                  <A
-                    width={12}
-                    height={12}
+                  <User
+                    width={14}
+                    height={14}
                     fill={colors.font.gray}
                     style={{ marginRight: "5px" }}
                   />
