@@ -15,23 +15,44 @@ export default function Todo({
 }) {
   const isExpired = !isCompleted && dayjs(end).diff(dayjs(), "minutes") <= 0;
   const user = useAuth();
-  const getRemainingTime = () => {
-    const now = dayjs();
-    const diffDays = dayjs(end).diff(now, "days");
-    const diffHours = dayjs(end).diff(now, "hours");
-    const diffMinutes = dayjs(end).diff(now, "minutes");
+  const getTime = (minutes) => {
+    let min = minutes * -1;
 
-    let days = 0;
-    let hours = 0;
-    let min = 0;
-
-    if (diffDays >= 1) {
-      days = diffDays;
+    if (min < 0) {
+      return;
     }
-    hours = diffHours - days * 24;
-    min = diffMinutes - hours * 60 - days * 1440;
 
-    return { days, hours, min };
+    const days = Math.floor(min / (24 * 60));
+    min %= 24 * 60;
+
+    const hours = Math.floor(min / 60);
+    min %= 60;
+
+    return { day: days, hour: hours, min: min };
+  };
+
+  const getRemainingTimeText = (minutes) => {
+    const { day, hour, min } = getTime(minutes);
+
+    let renderText = "";
+
+    if (day > 0) {
+      renderText += `${day}일 `;
+    }
+
+    if (hour > 0) {
+      renderText += `${hour}시간 `;
+    }
+
+    if (day === 0 && min > 0) {
+      renderText += `${min}분 `;
+    }
+
+    if (day === 0 && hour === 0 && min <= 0) {
+      return "마감임박";
+    } else {
+      return renderText.trim() + " 남음";
+    }
   };
 
   const renderStatus = () => {
@@ -79,16 +100,7 @@ export default function Todo({
       <TodoTitle isdone={isExpired || isCompleted}>{title}</TodoTitle>
       {!isExpired && !isCompleted && (
         <TodoTime>
-          {getRemainingTime().days > 0 && (
-            <Time>{getRemainingTime().days}일</Time>
-          )}
-          {getRemainingTime().hours > 0 && (
-            <Time>{getRemainingTime().hours}시간</Time>
-          )}
-          {getRemainingTime().min > 0 && getRemainingTime().days === 0 && (
-            <Time>{getRemainingTime().min}분 </Time>
-          )}
-          {!isExpired && !isCompleted && <Time>남음</Time>}
+          <Time>{getRemainingTimeText(dayjs().diff(end, "minutes"))}</Time>
         </TodoTime>
       )}
     </Container>

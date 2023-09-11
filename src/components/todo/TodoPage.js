@@ -61,12 +61,6 @@ export default function TodoPage() {
     setIsDropDownVisible(false);
   }, [selectMenu]);
 
-  useEffect(() => {
-    scheduleList.map((item) => {
-      console.log(dayjs().diff(item.end, "hours"));
-    });
-  }, [selectMenu]);
-
   return (
     <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <HeaderContainer>
