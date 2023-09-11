@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import * as colors from "../../styles/colors";
 import { toggleScheduleComplete } from "@/utils/firebase/calendar";
@@ -30,6 +29,7 @@ export default function TodoDetail({
     hours = diffHours - days * 24;
     min = diffMinutes - hours * 60 - days * 1440;
 
+    console.log(days, hours, min);
     return { days, hours, min };
   };
 
