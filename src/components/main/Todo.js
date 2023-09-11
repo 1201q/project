@@ -16,9 +16,10 @@ export default function Todo({
   const isExpired = !isCompleted && dayjs(end).diff(dayjs(), "minutes") <= 0;
   const user = useAuth();
   const getRemainingTime = () => {
-    const diffDays = dayjs(end).diff(dayjs(), "days");
-    const diffHours = dayjs(end).diff(dayjs(), "hours");
-    const diffMinutes = dayjs(end).diff(dayjs(), "minutes");
+    const now = dayjs();
+    const diffDays = dayjs(end).diff(now, "days");
+    const diffHours = dayjs(end).diff(now, "hours");
+    const diffMinutes = dayjs(end).diff(now, "minutes");
 
     let days = 0;
     let hours = 0;
