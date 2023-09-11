@@ -77,7 +77,7 @@ export default function Todo({
       <TodoHeader>{renderStatus()}</TodoHeader>
 
       <TodoTitle isdone={isExpired || isCompleted}>{title}</TodoTitle>
-      {!isCompleted && (
+      {!isExpired && !isCompleted && (
         <TodoTime>
           {getRemainingTime().days > 0 && (
             <Time>{getRemainingTime().days}일</Time>

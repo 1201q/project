@@ -12,12 +12,13 @@ export default function TodoDetail({
   start,
   end,
 }) {
-  const isExpired = !isCompleted && dayjs(end).diff(dayjs(), "minutes") <= 0;
+  const isExpired = !isCompleted && dayjs(end).diff(dayjs(), "minutes") <= 0; // 만료됨 true , 만료x false
   const user = useAuth();
   const getRemainingTime = () => {
-    const diffDays = dayjs(end).diff(dayjs(), "days");
-    const diffHours = dayjs(end).diff(dayjs(), "hours");
-    const diffMinutes = dayjs(end).diff(dayjs(), "minutes");
+    const now = dayjs();
+    const diffDays = dayjs(end).diff(now, "days");
+    const diffHours = dayjs(end).diff(now, "hours");
+    const diffMinutes = dayjs(end).diff(now, "minutes");
 
     let days = 0;
     let hours = 0;
@@ -29,7 +30,6 @@ export default function TodoDetail({
     hours = diffHours - days * 24;
     min = diffMinutes - hours * 60 - days * 1440;
 
-    console.log(days, hours, min);
     return { days, hours, min };
   };
 
@@ -78,16 +78,18 @@ export default function TodoDetail({
         </Title>
         <Date>{dayjs(end).format("M월 D일 HH:mm")} 까지</Date>
       </FlexDiv>
-      {!isCompleted && (
+      {!isExpired && !isCompleted && (
         <>
           <TodoTime>
-            {getRemainingTime().days && (
+            {getRemainingTime().days > 0 && (
               <Time>{getRemainingTime().days}일</Time>
             )}
-            {getRemainingTime().hours && (
+            {getRemainingTime().hours > 0 && (
               <Time>{getRemainingTime().hours}시간</Time>
             )}
-            {getRemainingTime().min && <Time>{getRemainingTime().min}분 </Time>}
+            {getRemainingTime().min > 0 && getRemainingTime().days === 0 && (
+              <Time>{getRemainingTime().min}분 </Time>
+            )}
             {!isExpired && !isCompleted && <Time>남음</Time>}
           </TodoTime>
           <TodoTime>{dayjs().diff(end, "minutes")}</TodoTime>
