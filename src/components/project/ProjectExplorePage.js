@@ -13,6 +13,7 @@ import User from "../../assets/user.svg";
 import Users from "../../assets/users-alt.svg";
 import Info from "../../assets/info.svg";
 import Setting from "../../assets/settings (3).svg";
+import { useMain } from "@/utils/context/MainContext";
 
 export default function ProjectExplore() {
   const {
@@ -22,14 +23,14 @@ export default function ProjectExplore() {
     joinedProjectList,
   } = useProject();
 
-  const [pageMode, setPageMode] = useState("all");
+  const { projectPageMode, setProjectPageMode } = useMain();
 
   return (
     <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <HeaderContainer>
         <HeaderText>
-          {pageMode === "all" && "모든 프로젝트"}
-          {pageMode === "myproject" && "나의 프로젝트"}
+          {projectPageMode === "all" && "모든 프로젝트"}
+          {projectPageMode === "myproject" && "나의 프로젝트"}
         </HeaderText>
         <ControlBtn
           whileTap={{ scale: 0.95 }}
@@ -39,21 +40,31 @@ export default function ProjectExplore() {
         >
           새로운 프로젝트 생성{" "}
         </ControlBtn>
-        {pageMode === "all" && (
+        {projectPageMode === "all" && (
           <ControlBtn
             whileTap={{ scale: 0.95 }}
             onClick={() => {
-              setPageMode("myproject");
+              if (typeof window !== "undefined") {
+                setProjectPageMode(() => {
+                  localStorage.setItem("projectPageMode", "myproject");
+                  return "myproject";
+                });
+              }
             }}
           >
             내가 속한 프로젝트만 보기
           </ControlBtn>
         )}
-        {pageMode === "myproject" && (
+        {projectPageMode === "myproject" && (
           <ControlBtn
             whileTap={{ scale: 0.95 }}
             onClick={() => {
-              setPageMode("all");
+              if (typeof window !== "undefined") {
+                setProjectPageMode(() => {
+                  localStorage.setItem("projectPageMode", "all");
+                  return "all";
+                });
+              }
             }}
           >
             전체 프로젝트 보기
@@ -81,7 +92,7 @@ export default function ProjectExplore() {
           </Box>
         </ListHeaderContainer>
 
-        {pageMode === "all" &&
+        {projectPageMode === "all" &&
           projectListData &&
           projectListData.map((item, index) => (
             <Project
@@ -95,7 +106,7 @@ export default function ProjectExplore() {
             />
           ))}
 
-        {pageMode === "myproject" &&
+        {projectPageMode === "myproject" &&
           joinedProjectList &&
           joinedProjectList.map((item, index) => (
             <Project
