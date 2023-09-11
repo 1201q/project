@@ -81,15 +81,13 @@ export default function TodoDetail({
       {!isCompleted && (
         <>
           <TodoTime>
-            {getRemainingTime().days > 0 && (
+            {getRemainingTime().days && (
               <Time>{getRemainingTime().days}일</Time>
             )}
-            {getRemainingTime().hours > 0 && (
+            {getRemainingTime().hours && (
               <Time>{getRemainingTime().hours}시간</Time>
             )}
-            {getRemainingTime().min > 0 && getRemainingTime().days === 0 && (
-              <Time>{getRemainingTime().min}분 </Time>
-            )}
+            {getRemainingTime().min && <Time>{getRemainingTime().min}분 </Time>}
             {!isExpired && !isCompleted && <Time>남음</Time>}
           </TodoTime>
           <TodoTime>{dayjs().diff(end, "minutes")}</TodoTime>
