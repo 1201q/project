@@ -11,6 +11,7 @@ import Welcome from "./Welcome";
 import Schedule from "./Schedule";
 import { useState, useEffect, useRef } from "react";
 import { useProject } from "@/utils/context/ProjectContext";
+import { Ring } from "@uiball/loaders";
 
 dayjs.extend(isSameOrBefore);
 
@@ -18,7 +19,8 @@ dayjs.extend(isBetween);
 dayjs.extend(weekOfYear);
 
 export default function Dashboard() {
-  const { projectListData, joinedProjectList } = useProject();
+  const { projectListData, joinedProjectList, isProjectDataLoading } =
+    useProject();
   const projectContainerRef = useRef();
   const [isScrollbarVisible, setIsScrollbarVisible] = useState(false);
 
@@ -51,15 +53,23 @@ export default function Dashboard() {
         onMouseLeave={onMouseLeave}
         scrollbarVisible={isScrollbarVisible}
       >
-        {joinedProjectList &&
-          joinedProjectList.map((item) => (
-            <ProjectCard
-              key={item.projectUID}
-              title={item.projectName}
-              color={item.color}
-              members={item.projectMembers}
-            />
-          ))}
+        {isProjectDataLoading ? (
+          <LoadingContainer>
+            <Ring />
+          </LoadingContainer>
+        ) : (
+          <>
+            {joinedProjectList &&
+              joinedProjectList.map((item) => (
+                <ProjectCard
+                  key={item.projectUID}
+                  title={item.projectName}
+                  color={item.color}
+                  members={item.projectMembers}
+                />
+              ))}
+          </>
+        )}
       </ProjectContainer>
       <Div>
         <div style={{ width: "60%", minWidth: "814px" }}>
@@ -120,6 +130,16 @@ const ContentsContainer = styled.div`
 
   background-color: white;
   border-radius: 10px;
+`;
+
+const LoadingContainer = styled.div`
+  width: 100%;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  background-color: rgba(0, 0, 0, 0.03);
 `;
 
 const ContainerHeader = styled.div`

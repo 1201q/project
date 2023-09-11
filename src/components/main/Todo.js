@@ -83,9 +83,6 @@ export default function Todo({
   return (
     <Container
       onClick={() => {
-        console.log(getRemainingTime());
-        console.log(scheduleData);
-
         toggleScheduleComplete(
           "schedule",
           user.user.uid,

@@ -6,6 +6,7 @@ const CalendarModalContext = createContext();
 
 // calendar
 export const CalendarProvider = ({ children }) => {
+  const [isCalendarDataLoading, setIsCalendarDataLoading] = useState(true);
   const [currentDate, setCurrentDate] = useState(dayjs()); // 캘린더 전달 다음달 이동시 사용
   const [selectedDate, setSelectedDate] = useState(null); // 선택한 요일
   const [selectedTodoData, setSelectedTodoData] = useState(null); // 선택한 하나의 단일 스케줄
@@ -15,6 +16,8 @@ export const CalendarProvider = ({ children }) => {
   return (
     <CalendarContext.Provider
       value={{
+        isCalendarDataLoading,
+        setIsCalendarDataLoading,
         currentDate,
         setCurrentDate,
         selectedDate,

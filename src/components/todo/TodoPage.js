@@ -15,29 +15,29 @@ dayjs.extend(customParseFormat);
 export default function TodoPage() {
   const { scheduleList } = useCalendar();
   const [isDropDownVisible, setIsDropDownVisible] = useState(false);
-  const [selectMenu, setSelectMenu] = useState("week");
+  const { todoMode, setTodoMode } = useMain();
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [startDate, setStartDate] = useState(dayjs());
   const [endDate, setEndDate] = useState(dayjs());
   const router = useRouter();
 
   const renderMenuText = () => {
-    if (selectMenu === "today") {
+    if (todoMode === "today") {
       return <div>오늘</div>;
-    } else if (selectMenu === "week") {
+    } else if (todoMode === "week") {
       return <div>이번 주</div>;
-    } else if (selectMenu === "month") {
+    } else if (todoMode === "month") {
       return <div>이번 달</div>;
-    } else if (selectMenu === "all") {
+    } else if (todoMode === "all") {
       return <div>전체</div>;
     }
   };
 
   useEffect(() => {
-    if (selectMenu === "today") {
+    if (todoMode === "today") {
       setStartDate(currentDate.startOf("day"));
       setEndDate(currentDate.endOf("day"));
-    } else if (selectMenu === "week") {
+    } else if (todoMode === "week") {
       const isSunday = currentDate.get("day") === 0;
       if (isSunday) {
         // current date가 일요일일 경우
@@ -51,15 +51,15 @@ export default function TodoPage() {
         setStartDate(currentDate.startOf("week").add(1, "day"));
         setEndDate(currentDate.endOf("week").add(1, "day"));
       }
-    } else if (selectMenu === "month") {
+    } else if (todoMode === "month") {
       setStartDate(currentDate.startOf("month"));
       setEndDate(currentDate.endOf("month"));
-    } else if (selectMenu === "all") {
+    } else if (todoMode === "all") {
       setStartDate(dayjs("2023-01-01"));
       setEndDate(dayjs("2032-01-01"));
     }
     setIsDropDownVisible(false);
-  }, [selectMenu]);
+  }, [todoMode]);
 
   return (
     <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -81,28 +81,48 @@ export default function TodoPage() {
             <DropDown>
               <DropDownMenu
                 onClick={() => {
-                  setSelectMenu("today");
+                  if (typeof window !== "undefined") {
+                    setTodoMode(() => {
+                      localStorage.setItem("todoMode", "today");
+                      return "today";
+                    });
+                  }
                 }}
               >
                 오늘
               </DropDownMenu>
               <DropDownMenu
                 onClick={() => {
-                  setSelectMenu("week");
+                  if (typeof window !== "undefined") {
+                    setTodoMode(() => {
+                      localStorage.setItem("todoMode", "week");
+                      return "week";
+                    });
+                  }
                 }}
               >
                 이번 주
               </DropDownMenu>
               <DropDownMenu
                 onClick={() => {
-                  setSelectMenu("month");
+                  if (typeof window !== "undefined") {
+                    setTodoMode(() => {
+                      localStorage.setItem("todoMode", "month");
+                      return "month";
+                    });
+                  }
                 }}
               >
                 이번 달
               </DropDownMenu>
               <DropDownMenu
                 onClick={() => {
-                  setSelectMenu("all");
+                  if (typeof window !== "undefined") {
+                    setTodoMode(() => {
+                      localStorage.setItem("todoMode", "all");
+                      return "all";
+                    });
+                  }
                 }}
               >
                 전체
@@ -110,31 +130,31 @@ export default function TodoPage() {
             </DropDown>
           )}
         </ControlBtn>
-        {selectMenu !== "all" && (
+        {todoMode !== "all" && (
           <DateText>{endDate.format(`YYYY년 MM월 DD일`)}까지</DateText>
         )}
       </HeaderContainer>
       <Contents>
         {scheduleList
           .filter((item) => {
-            if (selectMenu === "today") {
+            if (todoMode === "today") {
               return (
                 dayjs(item.start).isBetween(dayjs(startDate), dayjs(endDate)) ||
                 dayjs(item.end).isBetween(dayjs(startDate), dayjs(endDate)) ||
                 (dayjs(item.start).isBefore(dayjs(startDate)) &&
                   dayjs(item.end).isAfter(dayjs(endDate)))
               );
-            } else if (selectMenu === "week") {
+            } else if (todoMode === "week") {
               return (
                 dayjs(item.start).isBetween(dayjs(startDate), dayjs(endDate)) ||
                 dayjs(item.end).isBetween(dayjs(startDate), dayjs(endDate))
               );
-            } else if (selectMenu === "month") {
+            } else if (todoMode === "month") {
               return (
                 dayjs(item.start).isBetween(dayjs(startDate), dayjs(endDate)) ||
                 dayjs(item.end).isBetween(dayjs(startDate), dayjs(endDate))
               );
-            } else if (selectMenu === "all") {
+            } else if (todoMode === "all") {
               return true;
             }
           })

@@ -9,17 +9,17 @@ import { useCalendar } from "@/utils/context/CalendarContext";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useMain } from "@/utils/context/MainContext";
 import { useRouter } from "next/router";
-
+import { Ring } from "@uiball/loaders";
 import Plus from "../../assets/plus-small.svg";
 
 dayjs.extend(customParseFormat);
 
 export default function Schedule() {
   const router = useRouter();
-  const { scheduleList } = useCalendar();
+  const { scheduleList, isCalendarDataLoading } = useCalendar();
+  const { todoMode, setTodoMode } = useMain();
   const [isHovered, setIsHovered] = useState(false);
   const [isDropDownVisible, setIsDropDownVisible] = useState(false);
-  const [selectMenu, setSelectMenu] = useState("week");
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [startDate, setStartDate] = useState(dayjs());
   const [endDate, setEndDate] = useState(dayjs());
@@ -33,22 +33,22 @@ export default function Schedule() {
   };
 
   const renderMenuText = () => {
-    if (selectMenu === "today") {
+    if (todoMode === "today") {
       return <div>오늘</div>;
-    } else if (selectMenu === "week") {
+    } else if (todoMode === "week") {
       return <div>이번 주</div>;
-    } else if (selectMenu === "month") {
+    } else if (todoMode === "month") {
       return <div>이번 달</div>;
-    } else if (selectMenu === "all") {
+    } else if (todoMode === "all") {
       return <div>전체</div>;
     }
   };
 
   useEffect(() => {
-    if (selectMenu === "today") {
+    if (todoMode === "today") {
       setStartDate(currentDate.startOf("day"));
       setEndDate(currentDate.endOf("day"));
-    } else if (selectMenu === "week") {
+    } else if (todoMode === "week") {
       const isSunday = currentDate.get("day") === 0;
       if (isSunday) {
         // current date가 일요일일 경우
@@ -62,15 +62,15 @@ export default function Schedule() {
         setStartDate(currentDate.startOf("week").add(1, "day"));
         setEndDate(currentDate.endOf("week").add(1, "day"));
       }
-    } else if (selectMenu === "month") {
+    } else if (todoMode === "month") {
       setStartDate(currentDate.startOf("month"));
       setEndDate(currentDate.endOf("month"));
-    } else if (selectMenu === "all") {
+    } else if (todoMode === "all") {
       setStartDate(dayjs("2023-01-01"));
       setEndDate(dayjs("2032-01-01"));
     }
     setIsDropDownVisible(false);
-  }, [selectMenu]);
+  }, [todoMode]);
 
   return (
     <Container
@@ -96,28 +96,48 @@ export default function Schedule() {
             <DropDown>
               <DropDownMenu
                 onClick={() => {
-                  setSelectMenu("today");
+                  if (typeof window !== "undefined") {
+                    setTodoMode(() => {
+                      localStorage.setItem("todoMode", "today");
+                      return "today";
+                    });
+                  }
                 }}
               >
                 오늘
               </DropDownMenu>
               <DropDownMenu
                 onClick={() => {
-                  setSelectMenu("week");
+                  if (typeof window !== "undefined") {
+                    setTodoMode(() => {
+                      localStorage.setItem("todoMode", "week");
+                      return "week";
+                    });
+                  }
                 }}
               >
                 이번 주
               </DropDownMenu>
               <DropDownMenu
                 onClick={() => {
-                  setSelectMenu("month");
+                  if (typeof window !== "undefined") {
+                    setTodoMode(() => {
+                      localStorage.setItem("todoMode", "month");
+                      return "month";
+                    });
+                  }
                 }}
               >
                 이번 달
               </DropDownMenu>
               <DropDownMenu
                 onClick={() => {
-                  setSelectMenu("all");
+                  if (typeof window !== "undefined") {
+                    setTodoMode(() => {
+                      localStorage.setItem("todoMode", "all");
+                      return "all";
+                    });
+                  }
                 }}
               >
                 전체
@@ -125,7 +145,7 @@ export default function Schedule() {
             </DropDown>
           )}
         </ControlBtn>
-        {selectMenu !== "all" && (
+        {todoMode !== "all" && (
           <HeaderText>{endDate.format(`YYYY년 M월 D일`)}까지</HeaderText>
         )}
         <TodoDetailBtn
@@ -137,58 +157,73 @@ export default function Schedule() {
           <Plus width={23} height={23} fill={colors.font.gray} />
         </TodoDetailBtn>
       </Header>
-      <Contents>
-        {scheduleList
-          .filter((item) => {
-            if (selectMenu === "today") {
-              return (
-                dayjs(item.start).isBetween(dayjs(startDate), dayjs(endDate)) ||
-                dayjs(item.end).isBetween(dayjs(startDate), dayjs(endDate)) ||
-                (dayjs(item.start).isBefore(dayjs(startDate)) &&
-                  dayjs(item.end).isAfter(dayjs(endDate)))
-              );
-            } else if (selectMenu === "week") {
-              return (
-                dayjs(item.start).isBetween(dayjs(startDate), dayjs(endDate)) ||
-                dayjs(item.end).isBetween(dayjs(startDate), dayjs(endDate))
-              );
-            } else if (selectMenu === "month") {
-              return (
-                dayjs(item.start).isBetween(dayjs(startDate), dayjs(endDate)) ||
-                dayjs(item.end).isBetween(dayjs(startDate), dayjs(endDate))
-              );
-            } else if (selectMenu === "all") {
-              return true;
-            }
-          })
-          .sort(
-            (a, b) =>
-              dayjs(a.end).diff(dayjs(), "minutes") -
-              dayjs(b.end).diff(dayjs(), "minutes")
-          )
-          .sort((a, b) => {
-            const aa = dayjs(a.end).diff(dayjs(), "minutes");
-            const bb = dayjs(b.end).diff(dayjs(), "minutes");
+      {isCalendarDataLoading ? (
+        <LoadingContainer>
+          <Ring />
+        </LoadingContainer>
+      ) : (
+        <Contents>
+          {scheduleList
+            .filter((item) => {
+              if (todoMode === "today") {
+                return (
+                  dayjs(item.start).isBetween(
+                    dayjs(startDate),
+                    dayjs(endDate)
+                  ) ||
+                  dayjs(item.end).isBetween(dayjs(startDate), dayjs(endDate)) ||
+                  (dayjs(item.start).isBefore(dayjs(startDate)) &&
+                    dayjs(item.end).isAfter(dayjs(endDate)))
+                );
+              } else if (todoMode === "week") {
+                return (
+                  dayjs(item.start).isBetween(
+                    dayjs(startDate),
+                    dayjs(endDate)
+                  ) ||
+                  dayjs(item.end).isBetween(dayjs(startDate), dayjs(endDate))
+                );
+              } else if (todoMode === "month") {
+                return (
+                  dayjs(item.start).isBetween(
+                    dayjs(startDate),
+                    dayjs(endDate)
+                  ) ||
+                  dayjs(item.end).isBetween(dayjs(startDate), dayjs(endDate))
+                );
+              } else if (todoMode === "all") {
+                return true;
+              }
+            })
+            .sort(
+              (a, b) =>
+                dayjs(a.end).diff(dayjs(), "minutes") -
+                dayjs(b.end).diff(dayjs(), "minutes")
+            )
+            .sort((a, b) => {
+              const aa = dayjs(a.end).diff(dayjs(), "minutes");
+              const bb = dayjs(b.end).diff(dayjs(), "minutes");
 
-            if (aa > 0 && bb > 0) {
-              return 0;
-            } else {
-              return -1;
-            }
-          })
-          .sort((a, b) => a.isCompleted - b.isCompleted)
-          .map((item) => (
-            <Todo
-              key={item.id}
-              scheduleData={item}
-              color={colors.calendar[item.color]}
-              title={item.title}
-              isCompleted={item.isCompleted}
-              start={item.start}
-              end={item.end}
-            />
-          ))}
-      </Contents>
+              if (aa > 0 && bb > 0) {
+                return 0;
+              } else {
+                return -1;
+              }
+            })
+            .sort((a, b) => a.isCompleted - b.isCompleted)
+            .map((item) => (
+              <Todo
+                key={item.id}
+                scheduleData={item}
+                color={colors.calendar[item.color]}
+                title={item.title}
+                isCompleted={item.isCompleted}
+                start={item.start}
+                end={item.end}
+              />
+            ))}
+        </Contents>
+      )}
     </Container>
   );
 }
@@ -276,4 +311,12 @@ const Contents = styled.div`
   width: 100%;
   padding: 5px 10px 30px 10px;
   background-color: white;
+`;
+
+const LoadingContainer = styled.div`
+  width: 100%;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

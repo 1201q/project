@@ -106,7 +106,6 @@ export const observeCollectionData = (
 ) => {
   // 전체 유저정보를 가져옵니다.
   // callback 함수로 재활용 가능
-  console.log("실행됩니다.");
   const collectionRef = collection(dbService, collectionName);
 
   const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
@@ -119,7 +118,6 @@ export const observeCollectionData = (
         }
       });
     });
-    console.log("unsubscribe");
     callback(dataArr);
     unsubscribe();
   });

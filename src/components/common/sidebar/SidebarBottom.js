@@ -81,7 +81,12 @@ export default function SidebarBottom() {
       <MenuContainer>
         <MenuController
           onClick={() => {
-            setIsSidebarChattingOpen((prev) => !prev);
+            if (typeof window !== "undefined") {
+              setIsSidebarChattingOpen((prev) => {
+                localStorage.setItem("isChattingOpen", !prev);
+                return !prev;
+              });
+            }
           }}
         >
           <p>멤버</p>
@@ -120,7 +125,12 @@ export default function SidebarBottom() {
       <MenuContainer>
         <MenuController
           onClick={() => {
-            setIsSidebarProjectOpen((prev) => !prev);
+            if (typeof window !== "undefined") {
+              setIsSidebarProjectOpen((prev) => {
+                localStorage.setItem("isProjectOpen", !prev);
+                return !prev;
+              });
+            }
           }}
         >
           <p>내 프로젝트</p>

@@ -59,7 +59,8 @@ export const getServerSideProps = async (ctx) => {
 export default function Home({ uid }) {
   const user = useAuth();
   const router = useRouter();
-  const { setScheduleList } = useCalendar();
+  const { setScheduleList, isCalendarDataLoading, setIsCalendarDataLoading } =
+    useCalendar();
   const {
     isTeamDataLoading,
     setIsTeamDataLoading,
@@ -71,11 +72,17 @@ export default function Home({ uid }) {
     setSelectedTeamMembersData,
   } = useTeam();
   const { currentTab, setCurrentTab } = useMain();
-  const { setProjectListData, setJoinedProjectList } = useProject();
+  const {
+    setProjectListData,
+    setJoinedProjectList,
+    isProjectDataLoading,
+    setIsProjectDataLoading,
+  } = useProject();
 
   useEffect(() => {
     const getScheduleData = (data) => {
       setScheduleList(data.data);
+      setIsCalendarDataLoading(false);
     };
 
     const getTeamListData = (data) => {
@@ -99,6 +106,7 @@ export default function Home({ uid }) {
     }
 
     router.push("/");
+
     observeCollectionData("users", [uid], getSelectTeamUID); // 내 유저 db 가져오기
     observeDocumentChanges("schedule", uid, getScheduleData); // 스케줄
     observeJoinedTeamChanges("team", getTeamListData);
@@ -119,6 +127,7 @@ export default function Home({ uid }) {
         );
 
         setSelectedTeamMembersData(sortArr);
+        setIsTeamDataLoading(false);
       };
 
       const getProjectData = (data) => {
@@ -127,8 +136,8 @@ export default function Home({ uid }) {
         );
         setProjectListData(data.data);
         setJoinedProjectList(myproject);
-        console.log(myproject);
-        setIsTeamDataLoading(false);
+
+        setIsProjectDataLoading(false);
       };
 
       if (selectedTeamData[0]) {
@@ -172,7 +181,10 @@ export default function Home({ uid }) {
 
   return (
     <>
-      {!user.user && isTeamDataLoading ? (
+      {!user.user &&
+      isTeamDataLoading &&
+      isCalendarDataLoading &&
+      isProjectDataLoading ? (
         <Loading text="로딩중..." />
       ) : (
         <Container>
