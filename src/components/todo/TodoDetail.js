@@ -16,27 +16,21 @@ export default function TodoDetail({
   const isExpired = !isCompleted && dayjs(end).diff(dayjs(), "minutes") <= 0;
   const user = useAuth();
   const getRemainingTime = () => {
-    const now = dayjs(); // 현재 시간
-    const elevenAM = dayjs().set("hour", 11).set("minute", 0).set("second", 0); // 오전 11시
-    const elevenPM = dayjs().set("hour", 23).set("minute", 0).set("second", 0); // 오후 11시
+    const diffDays = dayjs(end).diff(dayjs(), "days");
+    const diffHours = dayjs(end).diff(dayjs(), "hours");
+    const diffMinutes = dayjs(end).diff(dayjs(), "minutes");
 
-    let end;
+    let days = 0;
+    let hours = 0;
+    let min = 0;
 
-    // 현재 시간이 오전 11시 이전인 경우
-    if (now.isBefore(elevenAM)) {
-      end = elevenAM;
-    } else {
-      end = elevenPM;
+    if (diffDays >= 1) {
+      days = diffDays;
     }
+    hours = diffHours - days * 24;
+    min = diffMinutes - hours * 60 - days * 1440;
 
-    const diff = end.diff(now);
-    const diffDays = Math.floor(diff / (24 * 60 * 60 * 1000)); // 일 단위
-    const diffHours = Math.floor(
-      (diff % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
-    ); // 시간 단위
-    const diffMinutes = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000)); // 분 단위
-
-    return { days: diffDays, hours: diffHours, minutes: diffMinutes };
+    return { days, hours, min };
   };
 
   const renderStatus = () => {
@@ -67,8 +61,6 @@ export default function TodoDetail({
   return (
     <Container
       onClick={() => {
-        console.log(getRemainingTime());
-        console.log(dayjs().diff(end, "minutes"));
         toggleScheduleComplete(
           "schedule",
           user.user.uid,
@@ -87,18 +79,21 @@ export default function TodoDetail({
         <Date>{dayjs(end).format("M월 D일 HH:mm")} 까지</Date>
       </FlexDiv>
       {!isCompleted && (
-        <TodoTime>
-          {getRemainingTime().days > 0 && (
-            <Time>{getRemainingTime().days}일</Time>
-          )}
-          {getRemainingTime().hours > 0 && (
-            <Time>{getRemainingTime().hours}시간</Time>
-          )}
-          {getRemainingTime().min > 0 && getRemainingTime().days === 0 && (
-            <Time>{getRemainingTime().min}분 </Time>
-          )}
-          {!isExpired && !isCompleted && <Time>남음</Time>}
-        </TodoTime>
+        <>
+          <TodoTime>
+            {getRemainingTime().days > 0 && (
+              <Time>{getRemainingTime().days}일</Time>
+            )}
+            {getRemainingTime().hours > 0 && (
+              <Time>{getRemainingTime().hours}시간</Time>
+            )}
+            {getRemainingTime().min > 0 && getRemainingTime().days === 0 && (
+              <Time>{getRemainingTime().min}분 </Time>
+            )}
+            {!isExpired && !isCompleted && <Time>남음</Time>}
+          </TodoTime>
+          <TodoTime>{dayjs().diff(end, "minutes")}</TodoTime>
+        </>
       )}
     </Container>
   );

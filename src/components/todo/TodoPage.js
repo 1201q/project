@@ -61,6 +61,12 @@ export default function TodoPage() {
     setIsDropDownVisible(false);
   }, [selectMenu]);
 
+  useEffect(() => {
+    scheduleList.map((item) => {
+      console.log(dayjs().diff(item.end, "hours"));
+    });
+  }, [selectMenu]);
+
   return (
     <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <HeaderContainer>
@@ -118,7 +124,12 @@ export default function TodoPage() {
         {scheduleList
           .filter((item) => {
             if (selectMenu === "today") {
-              return currentDate.isSame(dayjs(item.end), "day");
+              return (
+                dayjs(item.start).isBetween(dayjs(startDate), dayjs(endDate)) ||
+                dayjs(item.end).isBetween(dayjs(startDate), dayjs(endDate)) ||
+                (dayjs(item.start).isBefore(dayjs(startDate)) &&
+                  dayjs(item.end).isAfter(dayjs(endDate)))
+              );
             } else if (selectMenu === "week") {
               return (
                 dayjs(item.start).isBetween(dayjs(startDate), dayjs(endDate)) ||
