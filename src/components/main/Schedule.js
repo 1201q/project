@@ -236,6 +236,8 @@ const Container = styled.div`
   background-color: white;
   overflow-y: auto;
   transition-duration: 0.3s;
+  box-shadow: rgba(50, 50, 93, 0.1) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.1) 0px 1px 1px -1px;
 `;
 
 const Header = styled.div`

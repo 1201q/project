@@ -1,18 +1,18 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
-import * as colors from "../../styles/colors";
+import * as colors from "../../../styles/colors";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import NewProjectModal from "./NewProjectModal";
 import { useProject } from "@/utils/context/ProjectContext";
 import Project from "./Project";
 
-import A from "../../assets/a.svg";
-import User from "../../assets/user.svg";
-import Users from "../../assets/users-alt.svg";
-import Info from "../../assets/info.svg";
-import Setting from "../../assets/settings (3).svg";
+import A from "../../../assets/a.svg";
+import User from "../../../assets/user.svg";
+import Users from "../../../assets/users-alt.svg";
+import Info from "../../../assets/info.svg";
+import Setting from "../../../assets/settings (3).svg";
 import { useMain } from "@/utils/context/MainContext";
 
 export default function ProjectExplore() {

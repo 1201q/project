@@ -163,7 +163,8 @@ const ModalContainer = styled(motion.div)`
   background-color: white;
   z-index: 101;
   border-radius: 10px;
-  box-shadow: 5px 5px 30px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: rgba(50, 50, 93, 0.1) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.1) 0px 1px 1px -1px;
 `;
 
 const ProfileContainer = styled.div`

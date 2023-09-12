@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import * as colors from "../../styles/colors";
+import * as colors from "../../../styles/colors";
 import { useAuth } from "@/utils/context/auth/AuthProvider";
 
 export default function Project({

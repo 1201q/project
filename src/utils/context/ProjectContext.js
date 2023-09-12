@@ -7,6 +7,11 @@ export const ProjectProvider = ({ children }) => {
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   const [projectListData, setProjectListData] = useState([]);
   const [joinedProjectList, setJoinedProjectList] = useState([]);
+  const [selectedProjectUid, setSelectedProjectUid] = useState(null);
+  const [selectedProjectData, setSelectedProjectData] = useState(null); // 선택한 프로젝트 데이터
+  const [selectedProjectMembersData, setSelectedProjectMembersData] = useState(
+    []
+  ); // 선택한 프로젝트 멤버의 데이터 배열
   return (
     <ProjectContext.Provider
       value={{
@@ -18,6 +23,12 @@ export const ProjectProvider = ({ children }) => {
         setProjectListData,
         joinedProjectList,
         setJoinedProjectList,
+        selectedProjectUid,
+        setSelectedProjectUid,
+        selectedProjectData,
+        setSelectedProjectData,
+        selectedProjectMembersData,
+        setSelectedProjectMembersData,
       }}
     >
       {children}

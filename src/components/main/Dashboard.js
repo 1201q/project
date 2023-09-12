@@ -66,6 +66,7 @@ export default function Dashboard() {
                   title={item.projectName}
                   color={item.color}
                   members={item.projectMembers}
+                  projectuid={item.projectUID}
                 />
               ))}
           </>
@@ -130,6 +131,8 @@ const ContentsContainer = styled.div`
 
   background-color: white;
   border-radius: 10px;
+  box-shadow: rgba(50, 50, 93, 0.1) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.1) 0px 1px 1px -1px;
 `;
 
 const LoadingContainer = styled.div`

@@ -3,20 +3,17 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useAnimationControls } from "framer-motion";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
-import * as colors from "../../styles/colors";
+import * as colors from "../../../styles/colors";
 
 // svg
-import X from "../../assets/x.svg";
-import Check from "../../assets/check.svg";
-import User from "../../assets/user.svg";
-import Checkbox from "../../assets/checkbox.svg";
-import Calendar from "../../assets/calendar.svg";
-import Ex from "../../assets/cross-small.svg";
+import X from "../../../assets/x.svg";
+import Check from "../../../assets/check.svg";
+import User from "../../../assets/user.svg";
+import Checkbox from "../../../assets/checkbox.svg";
+import Ex from "../../../assets/cross-small.svg";
 
-import A from "../../assets/a.svg";
 // 함수, context
 import { useAuth } from "@/utils/context/auth/AuthProvider";
-import { useCalendar, useCalendarModal } from "@/utils/context/CalendarContext";
 
 // datepicker
 

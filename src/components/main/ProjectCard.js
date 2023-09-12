@@ -4,10 +4,19 @@ import dayjs from "dayjs";
 import * as colors from "../../styles/colors";
 
 import User from "../../assets/users-alt.svg";
+import { useRouter } from "next/router";
+import { useMain } from "@/utils/context/MainContext";
 
-export default function ProjectCard({ title, color, members }) {
+export default function ProjectCard({ title, color, members, projectuid }) {
+  const router = useRouter();
+  const { setCurrentTab } = useMain();
   return (
-    <Card>
+    <Card
+      onClick={() => {
+        setCurrentTab("project");
+        router.push({ query: { page: "project", projectid: projectuid } });
+      }}
+    >
       <CardColor styledcolor={colors.calendar[color]}></CardColor>
       <Contents>
         <CardTitle>{title}</CardTitle>
@@ -39,6 +48,8 @@ const Card = styled.div`
   background-color: white;
   display: flex;
   cursor: pointer;
+  box-shadow: rgba(50, 50, 93, 0.1) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.1) 0px 1px 1px -1px;
 `;
 
 const CardColor = styled.div`

@@ -150,7 +150,13 @@ export default function SidebarBottom() {
                 <Project
                   key={project.projectUID}
                   onClick={() => {
-                    console.log(project);
+                    setCurrentTab("project");
+                    router.push({
+                      query: {
+                        page: "project",
+                        projectid: project.projectUID,
+                      },
+                    });
                   }}
                 >
                   <ProjectColor styledbg={colors.calendar[project.color]}>

@@ -22,8 +22,9 @@ import { useRouter } from "next/router";
 import { useMain } from "@/utils/context/MainContext";
 import Dashboard from "@/components/main/Dashboard";
 import TodoPage from "@/components/todo/TodoPage";
-import ProjectExplorePage from "@/components/project/ProjectExplorePage";
+import ProjectExplorePage from "@/components/project/explore/ProjectExplorePage";
 import { useProject } from "@/utils/context/ProjectContext";
+import ProjectPage from "@/components/project/detail/ProjectPage";
 dayjs.extend(isSameOrBefore);
 
 export const getServerSideProps = async (ctx) => {
@@ -162,6 +163,8 @@ export default function Home({ uid }) {
       setCurrentTab("calendar");
     } else if (router.query?.page === "project_explore") {
       setCurrentTab("projectExplore");
+    } else if (router.query?.page === "project") {
+      setCurrentTab("project");
     }
   }, [router.query]);
 
@@ -171,6 +174,7 @@ export default function Home({ uid }) {
       calendar: Calendar,
       todo: TodoPage,
       projectExplore: ProjectExplorePage,
+      project: ProjectPage,
     };
 
     const SelectedComponent = menu[currentTab];
