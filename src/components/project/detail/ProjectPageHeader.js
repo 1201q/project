@@ -37,6 +37,7 @@ export default function ProjectPageHeader({ menuArr, setTab }) {
           <ButtonContainer>
             {menuArr.map((item, idx) => (
               <Menu
+                key={`${idx * 8}`}
                 onClick={() => {
                   setTab(item);
                   setUnderBar(idx);
