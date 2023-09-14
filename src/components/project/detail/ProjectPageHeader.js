@@ -60,7 +60,7 @@ const FlexDiv = styled.div`
   justify-content: center;
 `;
 const Container = styled.div`
-  height: 135px;
+  height: 120px;
   border-bottom: 1px solid ${colors.border.gray};
   padding: 20px 30px;
   background-color: white;

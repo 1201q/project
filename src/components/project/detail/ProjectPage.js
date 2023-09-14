@@ -78,8 +78,9 @@ const FlexDiv = styled.div`
 
 const Container = styled(motion.div)`
   width: 100%;
-  max-height: 100vh;
+  max-height: 99vh;
   background-color: ${colors.background.gray2};
+  overflow-y: hidden;
 `;
 
 const LoadingContainer = styled.div`
@@ -90,6 +91,6 @@ const LoadingContainer = styled.div`
 `;
 
 const ContentsContainer = styled.div`
-  /* height: 100%; */
+  height: 100%;
   overflow-y: scroll;
 `;
