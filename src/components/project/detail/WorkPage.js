@@ -249,8 +249,8 @@ export default function WorkPage() {
         </GroupBtn>
         그룹입니다.
       </Group>
-      {data.tasks.map((item) => (
-        <Row>
+      {data.tasks.map((item, index) => (
+        <Row key={index}>
           <Box style={{ alignItems: "flex-start", paddingLeft: "30px" }}>
             {item.name}
           </Box>
