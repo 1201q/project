@@ -58,3 +58,40 @@ export const removeProject = async (
     return error;
   }
 };
+
+export const addGroup = async (collectionId, documentId, pid, value) => {
+  try {
+    const docRef = doc(dbService, collectionId, documentId);
+    const docSnap = await getDoc(docRef);
+
+    const index = docSnap
+      .data()
+      .data.findIndex((item) => item.projectUID === pid);
+    console.log(docSnap.data().data[index]);
+    console.log(docRef);
+  } catch (error) {}
+};
+
+export const addTest = async (collectionId, documentId, field, value) =>
+  // 컬렉션 / 내 uid / 추가할 필드 / 추가할 value
+  // 캘린더에 스케줄을 추가합니다.
+  // 해당 uid에 처음 스케줄이 추가된다면 [value]로 초기값을 설정합니다.
+  // 완료시 null을 return합니다.
+  {
+    try {
+      const docRef = doc(dbService, collectionId, documentId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        await updateDoc(docRef, {
+          [`${field}`]: { projectGroup: [value] },
+        });
+      } else {
+        setDoc(docRef, { [field]: [value] });
+      }
+      return null;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };

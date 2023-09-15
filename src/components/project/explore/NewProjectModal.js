@@ -83,6 +83,7 @@ export default function NewProjectModal() {
       projectOwner: user.user.uid,
       projectOwnerKRname: user.user.displayName,
       projectMembers: [user.user.uid, ...userArr],
+      projectGroup: ["기본"],
     };
     const update = await addProject(
       "project",

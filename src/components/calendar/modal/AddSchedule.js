@@ -163,7 +163,7 @@ export default function AddScheduleModal() {
               minDate={startDate}
               customInput={
                 <InputDatePicker>
-                  {dayjs(endDate).format("YYYY-MM-DD HH:mm")}{" "}
+                  {dayjs(endDate).format("YYYY-MM-DD HH:mm")}
                   <Calendar
                     width={13}
                     height={13}

@@ -4,14 +4,22 @@ import dayjs from "dayjs";
 import * as colors from "../../../styles/colors";
 import { useEffect, useState, useRef } from "react";
 import Play from "../../../assets/play.svg";
+
 import ArrowDown from "../../../assets/arrow-small-down.svg";
 import ArrowUp from "../../../assets/arrow-small-up.svg";
 import Emergency from "../../../assets/light-emergency-on.svg";
 import Minus from "../../../assets/minus-small.svg";
+
 import Search from "../../../assets/search.svg";
 import AddWorkModal from "./modal/AddWorkModal";
+import { useProject } from "@/utils/context/ProjectContext";
+import { addGroup, addTest } from "@/utils/firebase/project";
+import { useTeam } from "@/utils/context/TeamContext";
 
 export default function WorkPage() {
+  const { selectedTeamUid } = useTeam();
+  const { selectedProjectUid, selectedProjectData } = useProject();
+  const newGroupInputRef = useRef();
   const data = {
     tasks: [
       {
@@ -210,6 +218,33 @@ export default function WorkPage() {
   };
 
   const [isAddWorkModalOpen, setIsAddWorkModalOpen] = useState(false);
+  const [isAddGroupMode, setIsAddGroupMode] = useState(false);
+
+  useEffect(() => {
+    const handleOutSideClick = (e) => {
+      if (
+        isAddGroupMode &&
+        newGroupInputRef.current &&
+        !newGroupInputRef.current.contains(e.target)
+      ) {
+        setIsAddGroupMode(false);
+      }
+    };
+
+    if (isAddGroupMode) {
+      document.addEventListener("mousedown", handleOutSideClick);
+    }
+
+    return () => {
+      document.addEventListener("mousedown", handleOutSideClick);
+    };
+  }, [isAddGroupMode]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      setIsAddGroupMode(false);
+    }
+  };
 
   return (
     <Container>
@@ -229,7 +264,9 @@ export default function WorkPage() {
           />
         </div>
         <div>
-          <ControllerBtn>그룹 추가</ControllerBtn>
+          <ControllerBtn onClick={() => setIsAddGroupMode(true)}>
+            그룹 추가
+          </ControllerBtn>
           <ControllerBtn onClick={() => setIsAddWorkModalOpen(true)}>
             업무 추가
           </ControllerBtn>
@@ -243,6 +280,16 @@ export default function WorkPage() {
         <HeaderBox maxwidth={"150px"}>시작일</HeaderBox>
         <HeaderBox maxwidth={"150px"}>마감일</HeaderBox>
       </TableHeaderContainer>
+      {isAddGroupMode && (
+        <NewGroup>
+          <input
+            type="text"
+            placeholder="새로운 그룹을 추가합니다. 추가할 그룹명을 입력하세요."
+            ref={newGroupInputRef}
+            onKeyDown={handleKeyDown}
+          />
+        </NewGroup>
+      )}
       <Group>
         <GroupBtn>
           <Play width={10} height={10} fill={colors.font.black} />
@@ -370,6 +417,26 @@ const GroupBtn = styled.button`
   align-items: center;
   justify-content: center;
   outline: none;
+`;
+
+const NewGroup = styled.div`
+  display: flex;
+  align-items: center;
+  height: 40px;
+  /* background-color: #f5f3ff; */
+  padding-left: 30px;
+  font-weight: 700;
+
+  input {
+    font-size: 14px;
+    width: 100%;
+    background-color: #f5f3ff;
+    border-radius: 7px;
+    border: 2px solid rgba(139, 0, 234, 0.4);
+    outline: none;
+    height: 28px;
+    padding: 10px;
+  }
 `;
 
 const Status = styled.div`

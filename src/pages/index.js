@@ -132,7 +132,7 @@ export default function Home({ uid }) {
       };
 
       const getProjectData = (data) => {
-        const myproject = data.data.filter((item) =>
+        const myproject = data?.data?.filter((item) =>
           item.projectMembers.includes(uid)
         );
         setProjectListData(data.data);
