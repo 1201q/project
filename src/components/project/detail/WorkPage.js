@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import * as colors from "../../../styles/colors";
 import { useEffect, useState, useRef } from "react";
 import Play from "../../../assets/play.svg";
+import { v4 as uuidv4 } from "uuid";
 
 import ArrowDown from "../../../assets/arrow-small-down.svg";
 import ArrowUp from "../../../assets/arrow-small-up.svg";
@@ -304,7 +305,7 @@ export default function WorkPage() {
         </NewGroup>
       )}
       {selectedProjectData.projectGroup.map((item) => (
-        <Group>
+        <Group key={uuidv4()}>
           <GroupBtn>
             <Play width={10} height={10} fill={colors.font.black} />
           </GroupBtn>
