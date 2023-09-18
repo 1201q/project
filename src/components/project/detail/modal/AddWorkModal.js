@@ -25,16 +25,20 @@ import ArrowUp from "../../../../assets/arrow-small-up.svg";
 import Emergency from "../../../../assets/light-emergency-on.svg";
 import Minus from "../../../../assets/minus-small.svg";
 import { useProject } from "@/utils/context/ProjectContext";
+import { addProject } from "@/utils/firebase/project";
 
 export default function AddWorkModal({ setIsAddWorkModalOpen }) {
   const controls = useAnimationControls();
-  const { selectedProjectMembersData, setSelectedProjectMembersData } =
-    useProject();
+  const {
+    selectedProjectMembersData,
+    setSelectedProjectMembersData,
+    selectedProjectUid,
+  } = useProject();
 
   const modalRef = useRef();
   const managerModalRef = useRef();
   const priorityModalRef = useRef();
-  const status = ["요청", "진행", "완료", "피드백", "만료"];
+  const status = ["요청", "진행", "완료", "피드백", "보류"];
   const statusColor = ["#00B2FF", "#00B01C", "#402A9D", "#FD7900", "#777777"];
   const [statusArrSelect, setStatusArrSelect] = useState([
     true,
@@ -46,19 +50,33 @@ export default function AddWorkModal({ setIsAddWorkModalOpen }) {
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date(dayjs().endOf("day")));
+  const [workStatus, setWorkStatus] = useState("request");
+  const [workPriority, setWorkPriority] = useState(null);
+  const [managerArr, setManagerArr] = useState([]);
   const [isPriorityModalOpen, setIsPriorityModalOpen] = useState(false);
   const [isManagerModalOpen, setIsManagerModalOpen] = useState(false);
 
-  const handlerStatus = (index) => {
-    let arr = new Array(5).fill(false);
-    arr[index] = true;
-    setStatusArrSelect(arr);
-  };
+  const test = async () => {
+    const data = {
+      title: title,
+      workUID: uuidv4(),
+      projectUID: selectedProjectUid,
+      status: workStatus,
+      priority: workPriority,
+      start: dayjs(startDate).format(""),
+      end: dayjs(endDate).format(""),
+      manager: managerArr.map((user) => user.uid),
+    };
 
-  const test = () => {
-    console.log(title);
-    console.log(dayjs(startDate).format(""));
-    console.log(dayjs(endDate).format(""));
+    const update = await addProject(
+      "project-work",
+      selectedProjectUid,
+      "work",
+      data
+    );
+    if (update === null) {
+      setIsAddWorkModalOpen(false);
+    }
   };
 
   useEffect(() => {
@@ -100,12 +118,86 @@ export default function AddWorkModal({ setIsAddWorkModalOpen }) {
     };
   }, [isManagerModalOpen]);
 
-  const handlerPriority = () => {
+  const handlerStatus = (index) => {
+    let arr = new Array(5).fill(false);
+    let status = "request";
+    arr[index] = true;
+    setStatusArrSelect(arr);
+
+    if (index === 0) {
+      status = "request";
+    } else if (index === 1) {
+      status = "progress";
+    } else if (index === 2) {
+      status = "complete";
+    } else if (index === 3) {
+      status = "feedback";
+    } else if (index === 4) {
+      status = "pending";
+    }
+    setWorkStatus(status);
+  };
+
+  const handlerPriority = (name) => {
+    setWorkPriority(name);
     setIsPriorityModalOpen(false);
   };
 
-  const handlerManager = () => {
+  const handlerManager = (name) => {
+    handlerManagerArr(name);
     setIsManagerModalOpen(false);
+  };
+
+  const handlerManagerArr = (user) => {
+    const newUser = user;
+    if (managerArr.includes(user)) {
+      return;
+    }
+
+    if (managerArr.length === 0) {
+      setManagerArr([newUser]);
+    } else if (managerArr.length < 2) {
+      setManagerArr([...managerArr, newUser]);
+    }
+  };
+
+  const handlerRemoveManager = (clickedUser) => {
+    let newArr = [...managerArr];
+    let index = managerArr.findIndex((user) => user.uid === clickedUser.uid);
+
+    if (index !== -1) {
+      newArr.splice(index, 1);
+      if (newArr.length === 0) {
+        newArr = [];
+      }
+      setManagerArr(newArr);
+    }
+  };
+
+  const getPriorityText = () => {
+    if (workPriority === "urgent") {
+      return "우선순위 긴급";
+    } else if (workPriority === "high") {
+      return "우선순위 높음";
+    } else if (workPriority === "medium") {
+      return "우선순위 중간";
+    } else if (workPriority === "low") {
+      return "우선순위 낮음";
+    } else {
+      return "우선순위 없음";
+    }
+  };
+
+  const renderPriorityImg = () => {
+    if (workPriority === "urgent") {
+      return <Emergency fill={colors.calendar.red} width={15} height={15} />;
+    } else if (workPriority === "high") {
+      return <ArrowUp fill={colors.calendar.red} width={15} height={15} />;
+    } else if (workPriority === "medium") {
+      return <Minus fill={colors.calendar.blue} width={15} height={15} />;
+    } else if (workPriority === "low") {
+      return <ArrowDown fill={colors.calendar.gray} width={15} height={15} />;
+    }
   };
 
   return (
@@ -142,6 +234,7 @@ export default function AddWorkModal({ setIsAddWorkModalOpen }) {
                 styledfontcolor={
                   statusArrSelect[index] ? "white" : colors.font.gray
                 }
+                name={status[index]}
                 key={uuidv4()}
               >
                 {item}
@@ -159,16 +252,28 @@ export default function AddWorkModal({ setIsAddWorkModalOpen }) {
                 setIsManagerModalOpen((prev) => !prev);
               }}
             />
-            <User>
-              황준서
-              <UserXBtn>
-                <X width={8} height={8} fill={colors.font.darkgray} />
-              </UserXBtn>
-            </User>
+            {managerArr.map((user) => (
+              <User key={user.uid}>
+                {user.name}
+                <UserXBtn
+                  onClick={() => {
+                    handlerRemoveManager(user);
+                  }}
+                >
+                  <X width={8} height={8} fill={colors.font.darkgray} />
+                </UserXBtn>
+              </User>
+            ))}
+
             {isManagerModalOpen && (
               <ManagerModal ref={managerModalRef}>
                 {selectedProjectMembersData.map((item, index) => (
-                  <InviteUser key={item.uid} onClick={handlerManager}>
+                  <InviteUser
+                    key={item.uid}
+                    onClick={() => {
+                      handlerManager(item);
+                    }}
+                  >
                     {item.name}
                   </InviteUser>
                 ))}
@@ -241,23 +346,40 @@ export default function AddWorkModal({ setIsAddWorkModalOpen }) {
               setIsPriorityModalOpen((prev) => !prev);
             }}
           >
-            우선순위 없음
+            {renderPriorityImg()}
+            {getPriorityText()}
           </ClickText>
           {isPriorityModalOpen && (
             <PriorityModal ref={priorityModalRef}>
-              <Priority onClick={handlerPriority}>
+              <Priority
+                onClick={() => {
+                  handlerPriority("urgent");
+                }}
+              >
                 <Emergency fill={colors.calendar.red} width={15} height={15} />
                 긴급
               </Priority>
-              <Priority onClick={handlerPriority}>
+              <Priority
+                onClick={() => {
+                  handlerPriority("high");
+                }}
+              >
                 <ArrowUp fill={colors.calendar.red} width={15} height={15} />
                 높음
               </Priority>
-              <Priority onClick={handlerPriority}>
+              <Priority
+                onClick={(e) => {
+                  handlerPriority("medium");
+                }}
+              >
                 <Minus fill={colors.calendar.blue} width={15} height={15} />
                 중간
               </Priority>
-              <Priority onClick={handlerPriority}>
+              <Priority
+                onClick={(e) => {
+                  handlerPriority("low");
+                }}
+              >
                 <ArrowDown fill={colors.calendar.gray} width={15} height={15} />
                 낮음
               </Priority>
@@ -465,7 +587,7 @@ const User = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 150px;
-  /* padding-right: 30px; */
+  margin-right: 10px;
   width: fit-content;
   height: 25px;
 
@@ -502,6 +624,7 @@ const UserXBtn = styled.div`
 `;
 
 const ClickText = styled.p`
+  display: flex;
   width: fit-content;
   font-size: 15px;
   font-weight: 700;
@@ -509,6 +632,10 @@ const ClickText = styled.p`
   cursor: pointer;
   :hover {
     text-decoration: underline;
+  }
+  svg {
+    margin-top: 1px;
+    margin-right: 5px;
   }
 `;
 
@@ -529,7 +656,7 @@ const PriorityModal = styled.div`
   padding: 5px;
 `;
 
-const Priority = styled.div`
+const Priority = styled.button`
   svg {
     margin-top: 2px;
     margin-right: 7px;
@@ -538,6 +665,8 @@ const Priority = styled.div`
   font-size: 16px;
   padding-top: 1px;
   /* margin-bottom: 2px; */
+  border: none;
+  background: none;
   cursor: pointer;
   :hover {
     color: ${colors.font.darkgray};

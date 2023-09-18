@@ -43,6 +43,7 @@ export default function UserModal() {
       setSelectedTeamUid(selectData.teamUID);
       setProjectListData([]);
       setJoinedProjectList([]);
+      router.push("/");
     } else {
       console.log(update);
     }

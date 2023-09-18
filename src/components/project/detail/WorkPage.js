@@ -13,15 +13,13 @@ import Minus from "../../../assets/minus-small.svg";
 import Search from "../../../assets/search.svg";
 import AddWorkModal from "./modal/AddWorkModal";
 import { useProject } from "@/utils/context/ProjectContext";
-import {
-  addGroup,
-  addTest,
-  observeProjectChanges,
-} from "@/utils/firebase/project";
+import { updateProjectData } from "@/utils/firebase/project";
 import { useTeam } from "@/utils/context/TeamContext";
+import { useRouter } from "next/router";
 
 export default function WorkPage() {
-  const { selectedTeamUid } = useTeam();
+  const router = useRouter();
+  const { selectedTeamUid, selectedTeamData } = useTeam();
   const { selectedProjectUid, selectedProjectData } = useProject();
   const newGroupInputRef = useRef(null);
   const data = {
@@ -247,12 +245,13 @@ export default function WorkPage() {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
+      let originData = selectedProjectData;
+      let groupArr = originData.projectGroup;
+      groupArr.push(e.target.value);
+      originData.projectGroup = groupArr;
+
+      updateProjectData("project", selectedTeamUid, "data", originData);
       setIsAddGroupMode(false);
-      addGroup(
-        "project",
-        selectedTeamUid,
-        "36969c36-38fa-48d8-9374-822ba4413208"
-      );
     }
   };
 
@@ -304,12 +303,15 @@ export default function WorkPage() {
           />
         </NewGroup>
       )}
-      <Group>
-        <GroupBtn>
-          <Play width={10} height={10} fill={colors.font.black} />
-        </GroupBtn>
-        그룹입니다.
-      </Group>
+      {selectedProjectData.projectGroup.map((item) => (
+        <Group>
+          <GroupBtn>
+            <Play width={10} height={10} fill={colors.font.black} />
+          </GroupBtn>
+          {item}
+        </Group>
+      ))}
+
       {data.tasks.map((item, index) => (
         <Row key={index}>
           <Box style={{ alignItems: "flex-start", paddingLeft: "30px" }}>

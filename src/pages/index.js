@@ -143,7 +143,6 @@ export default function Home({ uid }) {
           item.projectMembers.includes(uid)
         );
         setProjectListData(data.data);
-
         setJoinedProjectList(myproject);
         setIsProjectDataLoading(false);
 

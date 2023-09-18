@@ -60,50 +60,46 @@ export const removeProject = async (
   }
 };
 
-export const addGroup = async (
-  collectionId,
-  documentId,
-  projectId,
-  callback
-) => {
+export const addGroup = async (collectionId, documentId, field, value) => {
   try {
     const docRef = doc(dbService, collectionId, documentId);
     const docSnap = await getDoc(docRef);
 
-    const index = docSnap
-      .data()
-      .data.findIndex((item) => item.projectUID === projectId);
-    console.log(docSnap.data().data[index].projectGroup);
+    if (docSnap.exists()) {
+      await updateDoc(docRef, { [field]: arrayUnion(value) });
+    }
+    return null;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
 
-export const observeProjectChanges = async (
-  collectionName,
+export const updateProjectData = async (
+  collectionId,
   teamId,
-  projectId,
-  callback
+  field,
+  updatedItem
 ) => {
   try {
-    const q = query(collection(dbService, collectionName));
-    let projectData = [];
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      snapshot.forEach((doc) => {
-        if (doc.id === teamId) {
-          projectData.push(
-            doc.data().data.filter((item) => item.projectUID === projectId)[0]
-          );
-        }
-      });
+    const docRef = doc(dbService, collectionId, teamId);
+    const docSnap = await getDoc(docRef);
 
-      if (projectData.length !== 0) {
-        callback(projectData[0]);
-      }
-      return unsubscribe;
-    });
+    const dataArray = docSnap.data().data;
+
+    const updateIndex = dataArray.findIndex(
+      (item) => item.projectUID === updatedItem.projectUID
+    );
+
+    if (updateIndex !== -1) {
+      dataArray[updateIndex] = updatedItem;
+
+      await updateDoc(docRef, { [field]: dataArray });
+    }
+
     return null;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };

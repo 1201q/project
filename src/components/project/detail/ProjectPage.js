@@ -21,6 +21,7 @@ export default function ProjectPage() {
     setSelectedProjectData,
     setSelectedProjectMembersData,
     selectedProjectMembersData,
+    joinedProjectList,
   } = useProject();
 
   const menuArr = ["work", "feed", "gantt", "schedule", "setting"];
@@ -47,7 +48,8 @@ export default function ProjectPage() {
       const projectMemberUidList = selectprojectData?.projectMembers;
       let members = selectedTeamMembersData.filter((memberData) => {
         return (
-          projectMemberUidList.findIndex((uid) => uid === memberData.uid) !== -1
+          projectMemberUidList?.findIndex((uid) => uid === memberData.uid) !==
+          -1
         );
       });
 
@@ -56,23 +58,7 @@ export default function ProjectPage() {
       setSelectedProjectData(selectprojectData);
       setSelectedProjectMembersData(members);
     }
-  }, [router.query]);
-
-  // useEffect(() => {
-  //   const callback = (d) => {
-  //     console.log(d);
-  //   };
-  //   observeProjectChanges(
-  //     "project",
-  //     selectedTeamUid,
-  //     selectedProjectUid,
-  //     callback
-  //   );
-  // }, [selectedProjectUid]);
-
-  // useEffect(() => {
-  //   console.log(selectedProjectData);
-  // }, [selectedProjectData]);
+  }, [router.query, joinedProjectList]);
 
   return selectedProjectData ? (
     <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
