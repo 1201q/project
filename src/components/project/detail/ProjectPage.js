@@ -58,6 +58,22 @@ export default function ProjectPage() {
     }
   }, [router.query]);
 
+  // useEffect(() => {
+  //   const callback = (d) => {
+  //     console.log(d);
+  //   };
+  //   observeProjectChanges(
+  //     "project",
+  //     selectedTeamUid,
+  //     selectedProjectUid,
+  //     callback
+  //   );
+  // }, [selectedProjectUid]);
+
+  // useEffect(() => {
+  //   console.log(selectedProjectData);
+  // }, [selectedProjectData]);
+
   return selectedProjectData ? (
     <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <ProjectPageHeader menuArr={menuArr} setTab={setTab} />

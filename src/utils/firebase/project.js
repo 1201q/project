@@ -10,6 +10,7 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
+  query,
 } from "firebase/firestore";
 
 export const addProject = async (collectionId, documentId, field, value) => {
@@ -59,39 +60,50 @@ export const removeProject = async (
   }
 };
 
-export const addGroup = async (collectionId, documentId, pid, value) => {
+export const addGroup = async (
+  collectionId,
+  documentId,
+  projectId,
+  callback
+) => {
   try {
     const docRef = doc(dbService, collectionId, documentId);
     const docSnap = await getDoc(docRef);
 
     const index = docSnap
       .data()
-      .data.findIndex((item) => item.projectUID === pid);
-    console.log(docSnap.data().data[index]);
-    console.log(docRef);
-  } catch (error) {}
+      .data.findIndex((item) => item.projectUID === projectId);
+    console.log(docSnap.data().data[index].projectGroup);
+  } catch (error) {
+    return error;
+  }
 };
 
-export const addTest = async (collectionId, documentId, field, value) =>
-  // 컬렉션 / 내 uid / 추가할 필드 / 추가할 value
-  // 캘린더에 스케줄을 추가합니다.
-  // 해당 uid에 처음 스케줄이 추가된다면 [value]로 초기값을 설정합니다.
-  // 완료시 null을 return합니다.
-  {
-    try {
-      const docRef = doc(dbService, collectionId, documentId);
-      const docSnap = await getDoc(docRef);
+export const observeProjectChanges = async (
+  collectionName,
+  teamId,
+  projectId,
+  callback
+) => {
+  try {
+    const q = query(collection(dbService, collectionName));
+    let projectData = [];
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      snapshot.forEach((doc) => {
+        if (doc.id === teamId) {
+          projectData.push(
+            doc.data().data.filter((item) => item.projectUID === projectId)[0]
+          );
+        }
+      });
 
-      if (docSnap.exists()) {
-        await updateDoc(docRef, {
-          [`${field}`]: { projectGroup: [value] },
-        });
-      } else {
-        setDoc(docRef, { [field]: [value] });
+      if (projectData.length !== 0) {
+        callback(projectData[0]);
       }
-      return null;
-    } catch (error) {
-      console.log(error);
-      return error;
-    }
-  };
+      return unsubscribe;
+    });
+    return null;
+  } catch (error) {
+    return error;
+  }
+};

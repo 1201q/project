@@ -12,6 +12,8 @@ export const ProjectProvider = ({ children }) => {
   const [selectedProjectMembersData, setSelectedProjectMembersData] = useState(
     []
   ); // 선택한 프로젝트 멤버의 데이터 배열
+
+  const [selectedProjectGroup, setSelectedProjectGroup] = useState([]);
   return (
     <ProjectContext.Provider
       value={{
@@ -29,6 +31,8 @@ export const ProjectProvider = ({ children }) => {
         setSelectedProjectData,
         selectedProjectMembersData,
         setSelectedProjectMembersData,
+        selectedProjectGroup,
+        setSelectedProjectGroup,
       }}
     >
       {children}

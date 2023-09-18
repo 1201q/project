@@ -84,6 +84,7 @@ export default function Home({ uid }) {
     const getScheduleData = (data) => {
       setScheduleList(data.data);
       setIsCalendarDataLoading(false);
+      console.log("스케줄 데이터를 갱신합니다.");
     };
 
     const getTeamListData = (data) => {
@@ -94,11 +95,14 @@ export default function Home({ uid }) {
       } else {
         setJoinedTeamList(myteam);
       }
+      console.log("팀 리스트와 데이터를 갱신합니다.");
     };
 
     const getSelectTeamUID = (data) => {
       const myTeamUid = data[0].selectedTeamUid;
       setSelectedTeamUid(myTeamUid);
+
+      console.log("팀 선택을 변경합니다.");
     };
 
     if (user === null) {
@@ -108,10 +112,12 @@ export default function Home({ uid }) {
 
     router.push("/");
 
-    observeCollectionData("users", [uid], getSelectTeamUID); // 내 유저 db 가져오기
-    observeDocumentChanges("schedule", uid, getScheduleData); // 스케줄
-    observeJoinedTeamChanges("team", getTeamListData);
-  }, [user]);
+    if (uid) {
+      observeCollectionData("users", [uid], getSelectTeamUID); // 내 유저 db 가져오기
+      observeDocumentChanges("schedule", uid, getScheduleData); // 스케줄
+      observeJoinedTeamChanges("team", getTeamListData);
+    }
+  }, [uid]);
 
   useEffect(() => {
     let members = [];
@@ -129,6 +135,7 @@ export default function Home({ uid }) {
 
         setSelectedTeamMembersData(sortArr);
         setIsTeamDataLoading(false);
+        console.log("팀 멤버 데이터를 갱신합니다.");
       };
 
       const getProjectData = (data) => {
@@ -136,9 +143,11 @@ export default function Home({ uid }) {
           item.projectMembers.includes(uid)
         );
         setProjectListData(data.data);
-        setJoinedProjectList(myproject);
 
+        setJoinedProjectList(myproject);
         setIsProjectDataLoading(false);
+
+        console.log("프로젝트 데이터를 갱신합니다.");
       };
 
       if (selectedTeamData[0]) {

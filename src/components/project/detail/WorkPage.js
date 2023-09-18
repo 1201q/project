@@ -13,13 +13,17 @@ import Minus from "../../../assets/minus-small.svg";
 import Search from "../../../assets/search.svg";
 import AddWorkModal from "./modal/AddWorkModal";
 import { useProject } from "@/utils/context/ProjectContext";
-import { addGroup, addTest } from "@/utils/firebase/project";
+import {
+  addGroup,
+  addTest,
+  observeProjectChanges,
+} from "@/utils/firebase/project";
 import { useTeam } from "@/utils/context/TeamContext";
 
 export default function WorkPage() {
   const { selectedTeamUid } = useTeam();
   const { selectedProjectUid, selectedProjectData } = useProject();
-  const newGroupInputRef = useRef();
+  const newGroupInputRef = useRef(null);
   const data = {
     tasks: [
       {
@@ -228,6 +232,7 @@ export default function WorkPage() {
         !newGroupInputRef.current.contains(e.target)
       ) {
         setIsAddGroupMode(false);
+        console.log();
       }
     };
 
@@ -243,6 +248,11 @@ export default function WorkPage() {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       setIsAddGroupMode(false);
+      addGroup(
+        "project",
+        selectedTeamUid,
+        "36969c36-38fa-48d8-9374-822ba4413208"
+      );
     }
   };
 
@@ -264,7 +274,11 @@ export default function WorkPage() {
           />
         </div>
         <div>
-          <ControllerBtn onClick={() => setIsAddGroupMode(true)}>
+          <ControllerBtn
+            onClick={() => {
+              setIsAddGroupMode(true);
+            }}
+          >
             그룹 추가
           </ControllerBtn>
           <ControllerBtn onClick={() => setIsAddWorkModalOpen(true)}>
