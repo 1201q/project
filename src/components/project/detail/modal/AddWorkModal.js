@@ -33,11 +33,13 @@ export default function AddWorkModal({ setIsAddWorkModalOpen }) {
     selectedProjectMembersData,
     setSelectedProjectMembersData,
     selectedProjectUid,
+    selectedProjectData,
   } = useProject();
 
   const modalRef = useRef();
   const managerModalRef = useRef();
   const priorityModalRef = useRef();
+  const groupSelectModalRef = useRef();
   const status = ["요청", "진행", "완료", "피드백", "보류"];
   const statusColor = ["#00B2FF", "#00B01C", "#402A9D", "#FD7900", "#777777"];
   const [statusArrSelect, setStatusArrSelect] = useState([
@@ -52,15 +54,18 @@ export default function AddWorkModal({ setIsAddWorkModalOpen }) {
   const [endDate, setEndDate] = useState(new Date(dayjs().endOf("day")));
   const [workStatus, setWorkStatus] = useState("request");
   const [workPriority, setWorkPriority] = useState(null);
+  const [group, setGroup] = useState(null);
   const [managerArr, setManagerArr] = useState([]);
   const [isPriorityModalOpen, setIsPriorityModalOpen] = useState(false);
   const [isManagerModalOpen, setIsManagerModalOpen] = useState(false);
+  const [isGroupSelectModalOpen, setIsGroupSelectModalOpen] = useState(false);
 
   const test = async () => {
     const data = {
       title: title,
       workUID: uuidv4(),
       projectUID: selectedProjectUid,
+      group: group,
       status: workStatus,
       priority: workPriority,
       start: dayjs(startDate).format(""),
@@ -118,6 +123,25 @@ export default function AddWorkModal({ setIsAddWorkModalOpen }) {
     };
   }, [isManagerModalOpen]);
 
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (
+        isGroupSelectModalOpen &&
+        groupSelectModalRef.current &&
+        !groupSelectModalRef.current.contains(e.target)
+      ) {
+        setIsGroupSelectModalOpen(false);
+      }
+    };
+    if (isGroupSelectModalOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    }
+
+    return () => {
+      document.addEventListener("mousedown", handleOutsideClick);
+    };
+  }, [isGroupSelectModalOpen]);
+
   const handlerStatus = (index) => {
     let arr = new Array(5).fill(false);
     let status = "request";
@@ -146,6 +170,11 @@ export default function AddWorkModal({ setIsAddWorkModalOpen }) {
   const handlerManager = (name) => {
     handlerManagerArr(name);
     setIsManagerModalOpen(false);
+  };
+
+  const handlerGroup = (group) => {
+    setGroup(group);
+    setIsGroupSelectModalOpen(false);
   };
 
   const handlerManagerArr = (user) => {
@@ -387,10 +416,31 @@ export default function AddWorkModal({ setIsAddWorkModalOpen }) {
           )}
         </PriorityContainer>
         {/* 그룹 */}
-        <ContentsContainer>
+        <GroupSelectContainer>
           <SmallHeaderText>그룹</SmallHeaderText>
-          <ClickText>그룹 없음</ClickText>
-        </ContentsContainer>
+          <ClickText
+            onClick={() => {
+              setIsGroupSelectModalOpen((prev) => !prev);
+            }}
+          >
+            {!group ? "그룹 없음" : group}
+          </ClickText>
+
+          {isGroupSelectModalOpen && (
+            <GroupSelectModal ref={groupSelectModalRef}>
+              {selectedProjectData.projectGroup.map((item, index) => (
+                <Group
+                  key={uuidv4()}
+                  onClick={() => {
+                    handlerGroup(item);
+                  }}
+                >
+                  {item}
+                </Group>
+              ))}
+            </GroupSelectModal>
+          )}
+        </GroupSelectContainer>
 
         {/* 버튼 컨테이너 */}
         <ButtonContainer>
@@ -405,7 +455,6 @@ export default function AddWorkModal({ setIsAddWorkModalOpen }) {
           >
             취소
           </SaveButton>
-
           <SaveButton
             styledfont={"white"}
             whileHover={{ opacity: 0.8 }}
@@ -490,6 +539,11 @@ const InputDatePicker = styled.div`
 `;
 
 const PriorityContainer = styled.div`
+  margin-bottom: 30px;
+  position: relative;
+`;
+
+const GroupSelectContainer = styled.div`
   margin-bottom: 30px;
   position: relative;
 `;
@@ -654,6 +708,7 @@ const PriorityModal = styled.div`
   box-shadow: rgba(0, 0, 0, 0.16) 0px 2px 3px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
   border-radius: 5px;
   padding: 5px;
+  z-index: 70;
 `;
 
 const Priority = styled.button`
@@ -688,6 +743,29 @@ const ManagerModal = styled.div`
 `;
 
 const InviteUser = styled.div`
+  font-size: 15px;
+  padding-top: 1px;
+  margin-bottom: 3px;
+  cursor: pointer;
+  :hover {
+    color: ${colors.font.darkgray};
+  }
+`;
+
+const GroupSelectModal = styled.div`
+  width: 100px;
+  height: 100px;
+  background-color: white;
+  position: absolute;
+  margin-top: 10px;
+  border: 1px solid ${colors.font.black};
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 2px 3px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  border-radius: 5px;
+  padding: 5px;
+  z-index: 70;
+  overflow-y: scroll;
+`;
+const Group = styled.div`
   font-size: 15px;
   padding-top: 1px;
   margin-bottom: 3px;

@@ -10,6 +10,7 @@ import ArrowDown from "../../../assets/arrow-small-down.svg";
 import ArrowUp from "../../../assets/arrow-small-up.svg";
 import Emergency from "../../../assets/light-emergency-on.svg";
 import Minus from "../../../assets/minus-small.svg";
+import { Ring } from "@uiball/loaders";
 
 import Search from "../../../assets/search.svg";
 import AddWorkModal from "./modal/AddWorkModal";
@@ -17,6 +18,7 @@ import { useProject } from "@/utils/context/ProjectContext";
 import { updateProjectData } from "@/utils/firebase/project";
 import { useTeam } from "@/utils/context/TeamContext";
 import { useRouter } from "next/router";
+import { observeDocumentChanges } from "@/utils/firebase/db";
 
 export default function WorkPage() {
   const router = useRouter();
@@ -220,6 +222,8 @@ export default function WorkPage() {
     }
   };
 
+  const [isWorkLoading, setIsWorkLoading] = useState(true);
+  const [work, setWork] = useState([]);
   const [isAddWorkModalOpen, setIsAddWorkModalOpen] = useState(false);
   const [isAddGroupMode, setIsAddGroupMode] = useState(false);
 
@@ -244,6 +248,17 @@ export default function WorkPage() {
     };
   }, [isAddGroupMode]);
 
+  useEffect(() => {
+    setWork([]);
+    const callback = (data) => {
+      setWork(data?.work);
+      setIsWorkLoading(false);
+    };
+    if (selectedProjectUid) {
+      observeDocumentChanges("project-work", selectedProjectUid, callback);
+    }
+  }, [selectedProjectUid]);
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       let originData = selectedProjectData;
@@ -257,78 +272,85 @@ export default function WorkPage() {
   };
 
   return (
-    <Container>
-      <ControllerContainer>
-        <div style={{ position: "relative" }}>
-          <SearchInput placeholder="업무명을 검색해보세요." />
-          <Search
-            width={14}
-            height={14}
-            fill={colors.font.darkgray}
-            style={{
-              position: "absolute",
-              left: 0,
-              top: "26%",
-              marginLeft: "15px",
-            }}
-          />
-        </div>
-        <div>
-          <ControllerBtn
-            onClick={() => {
-              setIsAddGroupMode(true);
-            }}
-          >
-            그룹 추가
-          </ControllerBtn>
-          <ControllerBtn onClick={() => setIsAddWorkModalOpen(true)}>
-            업무 추가
-          </ControllerBtn>
-        </div>
-      </ControllerContainer>
-      <TableHeaderContainer>
-        <HeaderBox>업무명</HeaderBox>
-        <HeaderBox maxwidth={"150px"}> 상태</HeaderBox>
-        <HeaderBox maxwidth={"150px"}>우선순위</HeaderBox>
-        <HeaderBox maxwidth={"150px"}>담당자</HeaderBox>
-        <HeaderBox maxwidth={"150px"}>시작일</HeaderBox>
-        <HeaderBox maxwidth={"150px"}>마감일</HeaderBox>
-      </TableHeaderContainer>
-      {isAddGroupMode && (
-        <NewGroup>
-          <input
-            type="text"
-            placeholder="새로운 그룹을 추가합니다. 추가할 그룹명을 입력하세요."
-            ref={newGroupInputRef}
-            onKeyDown={handleKeyDown}
-          />
-        </NewGroup>
+    <>
+      {isWorkLoading ? (
+        <Ring />
+      ) : (
+        <Container>
+          <ControllerContainer>
+            <div style={{ position: "relative" }}>
+              <SearchInput placeholder="업무명을 검색해보세요." />
+              <Search
+                width={14}
+                height={14}
+                fill={colors.font.darkgray}
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  top: "26%",
+                  marginLeft: "15px",
+                }}
+              />
+            </div>
+            <div>
+              <ControllerBtn
+                onClick={() => {
+                  setIsAddGroupMode(true);
+                }}
+              >
+                그룹 추가
+              </ControllerBtn>
+              <ControllerBtn onClick={() => setIsAddWorkModalOpen(true)}>
+                업무 추가
+              </ControllerBtn>
+            </div>
+          </ControllerContainer>
+          <TableHeaderContainer>
+            <HeaderBox>업무명</HeaderBox>
+            <HeaderBox maxwidth={"150px"}> 상태</HeaderBox>
+            <HeaderBox maxwidth={"150px"}>우선순위</HeaderBox>
+            <HeaderBox maxwidth={"150px"}>담당자</HeaderBox>
+            <HeaderBox maxwidth={"150px"}>시작일</HeaderBox>
+            <HeaderBox maxwidth={"150px"}>마감일</HeaderBox>
+          </TableHeaderContainer>
+          {isAddGroupMode && (
+            <NewGroup>
+              <input
+                type="text"
+                placeholder="새로운 그룹을 추가합니다. 추가할 그룹명을 입력하세요."
+                ref={newGroupInputRef}
+                onKeyDown={handleKeyDown}
+              />
+            </NewGroup>
+          )}
+          <Group>
+            {selectedProjectData.projectGroup.map((item) => (
+              <GroupHeader key={uuidv4()}>
+                <GroupBtn>
+                  <Play width={10} height={10} fill={colors.font.black} />
+                </GroupBtn>
+                {item}
+              </GroupHeader>
+            ))}
+            {work.map((item, index) => (
+              <Row key={index}>
+                <Box style={{ alignItems: "flex-start", paddingLeft: "30px" }}>
+                  {item.title}
+                </Box>
+                <Box maxwidth={"150px"}>{renderStatus(item.status)}</Box>
+                <Box maxwidth={"150px"}>{renderPriority(item.priority)}</Box>
+                <Box maxwidth={"150px"}>{item.assignee}</Box>
+                <Box maxwidth={"150px"}>{item.startDate}</Box>
+                <Box maxwidth={"150px"}>{item.dueDate}</Box>
+              </Row>
+            ))}
+          </Group>
+          {isAddWorkModalOpen && (
+            <AddWorkModal setIsAddWorkModalOpen={setIsAddWorkModalOpen} />
+          )}
+        </Container>
       )}
-      {selectedProjectData.projectGroup.map((item) => (
-        <Group key={uuidv4()}>
-          <GroupBtn>
-            <Play width={10} height={10} fill={colors.font.black} />
-          </GroupBtn>
-          {item}
-        </Group>
-      ))}
-
-      {data.tasks.map((item, index) => (
-        <Row key={index}>
-          <Box style={{ alignItems: "flex-start", paddingLeft: "30px" }}>
-            {item.name}
-          </Box>
-          <Box maxwidth={"150px"}>{renderStatus(item.status)}</Box>
-          <Box maxwidth={"150px"}>{renderPriority(item.priority)}</Box>
-          <Box maxwidth={"150px"}>{item.assignee}</Box>
-          <Box maxwidth={"150px"}>{item.startDate}</Box>
-          <Box maxwidth={"150px"}>{item.dueDate}</Box>
-        </Row>
-      ))}
-      {isAddWorkModalOpen && (
-        <AddWorkModal setIsAddWorkModalOpen={setIsAddWorkModalOpen} />
-      )}
-    </Container>
+    </>
   );
 }
 
@@ -409,7 +431,9 @@ const Row = styled.div`
   background-color: white;
 `;
 
-const Group = styled.div`
+const Group = styled.div``;
+
+const GroupHeader = styled.div`
   display: flex;
   align-items: center;
   height: 40px;
