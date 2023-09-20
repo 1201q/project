@@ -26,7 +26,8 @@ export default function ProjectPage() {
 
   const menuArr = ["work", "feed", "gantt", "schedule", "setting"];
   const [tab, setTab] = useState("work");
-
+  const [isAddGroupMode, setIsAddGroupMode] = useState(false);
+  const contentsContainerRef = useRef();
   const renderContents = () => {
     const menu = {
       work: WorkPage,
@@ -35,7 +36,12 @@ export default function ProjectPage() {
     const RenderComponents = menu[tab];
 
     if (RenderComponents) {
-      return <RenderComponents />;
+      return (
+        <RenderComponents
+          isAddGroupMode={isAddGroupMode}
+          setIsAddGroupMode={setIsAddGroupMode}
+        />
+      );
     }
   };
 
@@ -60,10 +66,18 @@ export default function ProjectPage() {
     }
   }, [router.query, joinedProjectList]);
 
+  useEffect(() => {
+    if (isAddGroupMode) {
+      contentsContainerRef.current.scrollTop = 0;
+    }
+  }, [isAddGroupMode]);
+
   return selectedProjectData ? (
     <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <ProjectPageHeader menuArr={menuArr} setTab={setTab} />
-      <ContentsContainer>{renderContents()}</ContentsContainer>
+      <ContentsContainer ref={contentsContainerRef}>
+        {renderContents()}
+      </ContentsContainer>
     </Container>
   ) : (
     <LoadingContainer>

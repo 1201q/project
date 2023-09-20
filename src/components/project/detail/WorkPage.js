@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import dayjs from "dayjs";
 import * as colors from "../../../styles/colors";
 import { useEffect, useState, useRef } from "react";
@@ -19,8 +19,9 @@ import { updateProjectData } from "@/utils/firebase/project";
 import { useTeam } from "@/utils/context/TeamContext";
 import { useRouter } from "next/router";
 import { observeDocumentChanges } from "@/utils/firebase/db";
+import SettingModal from "./modal/SettingModal";
 
-export default function WorkPage() {
+export default function WorkPage({ isAddGroupMode, setIsAddGroupMode }) {
   const router = useRouter();
   const { selectedTeamUid, selectedTeamData } = useTeam();
   const {
@@ -29,7 +30,6 @@ export default function WorkPage() {
     selectedProjectMembersData,
   } = useProject();
   const newGroupInputRef = useRef(null);
-  const workContentsContainerRef = useRef(null);
 
   const renderStatus = (status) => {
     if (status === "request") {
@@ -82,7 +82,7 @@ export default function WorkPage() {
   const [isWorkLoading, setIsWorkLoading] = useState(true);
   const [work, setWork] = useState([]);
   const [isAddWorkModalOpen, setIsAddWorkModalOpen] = useState(false);
-  const [isAddGroupMode, setIsAddGroupMode] = useState(false);
+
   const [groupCount, setGroupCount] = useState(0);
 
   useEffect(() => {
@@ -98,6 +98,7 @@ export default function WorkPage() {
     };
 
     if (isAddGroupMode) {
+      newGroupInputRef.current.focus();
       document.addEventListener("mousedown", handleOutSideClick);
     }
 
@@ -136,6 +137,7 @@ export default function WorkPage() {
       originData.projectGroup = groupArr;
 
       updateProjectData("project", selectedTeamUid, "data", originData);
+
       setIsAddGroupMode(false);
     }
   };
@@ -174,7 +176,13 @@ export default function WorkPage() {
             </GroupHeader>
             {sortedWorkArr[gidx].map((work, iidx) => (
               <Row key={`r-${iidx}`}>
-                <Box style={{ alignItems: "flex-start", paddingLeft: "30px" }}>
+                <Box
+                  style={{
+                    alignItems: "flex-start",
+                    paddingLeft: "30px",
+                    minWidth: "200px",
+                  }}
+                >
                   {work.title}
                 </Box>
                 <Box maxwidth={"150px"}>{renderStatus(work.status)}</Box>
@@ -208,11 +216,12 @@ export default function WorkPage() {
             분류 없음
           </GroupHeader>
           {ungroupedWorkArr.map((work) => (
-            <Row key={uuidv4()}>
+            <Row key={uuidv4()} draggable="true">
               <Box
                 style={{
                   alignItems: "flex-start",
                   paddingLeft: "30px",
+                  minWidth: "200px",
                 }}
               >
                 {work.title}
@@ -278,7 +287,7 @@ export default function WorkPage() {
             </div>
           </ControllerContainer>
           <TableHeaderContainer>
-            <HeaderBox>업무명</HeaderBox>
+            <HeaderBox style={{ minWidth: "200px" }}>업무명</HeaderBox>
             <HeaderBox maxwidth={"150px"}> 상태</HeaderBox>
             <HeaderBox maxwidth={"150px"}>우선순위</HeaderBox>
             <HeaderBox maxwidth={"150px"}>담당자</HeaderBox>
@@ -301,6 +310,8 @@ export default function WorkPage() {
           {isAddWorkModalOpen && (
             <AddWorkModal setIsAddWorkModalOpen={setIsAddWorkModalOpen} />
           )}
+
+          <SettingModal />
         </Container>
       )}
     </>
