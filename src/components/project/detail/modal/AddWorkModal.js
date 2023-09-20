@@ -185,7 +185,7 @@ export default function AddWorkModal({ setIsAddWorkModalOpen }) {
 
     if (managerArr.length === 0) {
       setManagerArr([newUser]);
-    } else if (managerArr.length < 2) {
+    } else if (managerArr.length < 3) {
       setManagerArr([...managerArr, newUser]);
     }
   };

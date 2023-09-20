@@ -23,7 +23,11 @@ import { observeDocumentChanges } from "@/utils/firebase/db";
 export default function WorkPage() {
   const router = useRouter();
   const { selectedTeamUid, selectedTeamData } = useTeam();
-  const { selectedProjectUid, selectedProjectData } = useProject();
+  const {
+    selectedProjectUid,
+    selectedProjectData,
+    selectedProjectMembersData,
+  } = useProject();
   const newGroupInputRef = useRef(null);
   const workContentsContainerRef = useRef(null);
 
@@ -71,7 +75,7 @@ export default function WorkPage() {
         </Priority>
       );
     } else {
-      return <Priority>우선순위없음</Priority>;
+      return <Priority>-</Priority>;
     }
   };
 
@@ -109,6 +113,7 @@ export default function WorkPage() {
       setIsWorkLoading(false);
       setGroupCount(selectedProjectData?.projectGroup?.length);
     };
+
     if (selectedProjectUid) {
       const update = observeDocumentChanges(
         "project-work",
@@ -118,6 +123,7 @@ export default function WorkPage() {
 
       if (!update) {
         setIsWorkLoading(false);
+        console.log(selectedProjectMembersData);
       }
     }
   }, [selectedProjectUid]);
@@ -146,6 +152,16 @@ export default function WorkPage() {
       (work) => !groupData.includes(work.group)
     );
 
+    const getUserName = (uidArr) => {
+      let nameArr = [];
+      uidArr?.map((uid) => {
+        nameArr.push(
+          selectedProjectMembersData.find((user) => user.uid === uid)?.name
+        );
+      });
+      return nameArr.join(",");
+    };
+
     return (
       <>
         {groupData?.map((group, gidx) => (
@@ -163,9 +179,23 @@ export default function WorkPage() {
                 </Box>
                 <Box maxwidth={"150px"}>{renderStatus(work.status)}</Box>
                 <Box maxwidth={"150px"}>{renderPriority(work.priority)}</Box>
-                <Box maxwidth={"150px"}>{work.assignee}</Box>
-                <Box maxwidth={"150px"}>{work.startDate}</Box>
-                <Box maxwidth={"150px"}>{work.dueDate}</Box>
+                <Box maxwidth={"150px"}>
+                  {work?.manager.length > 0 ? getUserName(work?.manager) : "-"}
+                </Box>
+                <Box maxwidth={"150px"}>
+                  {dayjs(work.start).format(
+                    `${
+                      dayjs().isSame(work.start, "D") ? "오늘" : ` M월 D일`
+                    } HH:mm`
+                  )}
+                </Box>
+                <Box maxwidth={"150px"}>
+                  {dayjs(work.end).format(
+                    `${
+                      dayjs().isSame(work.end, "D") ? "오늘" : ` M월 D일`
+                    } HH:mm`
+                  )}
+                </Box>
               </Row>
             ))}
           </Group>
@@ -187,11 +217,25 @@ export default function WorkPage() {
               >
                 {work.title}
               </Box>
-              <Box maxwidth={"150px"}>{renderStatus(work.status)}</Box>
-              <Box maxwidth={"150px"}>{renderPriority(work.priority)}</Box>
-              <Box maxwidth={"150px"}>{work.assignee}</Box>
-              <Box maxwidth={"150px"}>{work.startDate}</Box>
-              <Box maxwidth={"150px"}>{work.dueDate}</Box>
+              <Box maxwidth={"150px"}>{renderStatus(work?.status)}</Box>
+              <Box maxwidth={"150px"}>{renderPriority(work?.priority)}</Box>
+              <Box maxwidth={"150px"}>
+                {work?.manager.length > 0 ? getUserName(work?.manager) : "-"}
+              </Box>
+              <Box maxwidth={"150px"}>
+                {" "}
+                {dayjs(work?.start).format(
+                  `${
+                    dayjs().isSame(work.start, "D") ? "오늘" : ` M월 D일`
+                  } HH:mm`
+                )}
+              </Box>
+              <Box maxwidth={"150px"}>
+                {" "}
+                {dayjs(work.end).format(
+                  `${dayjs().isSame(work.end, "D") ? "오늘" : ` M월 D일`} HH:mm`
+                )}
+              </Box>
             </Row>
           ))}
         </Group>
@@ -329,7 +373,9 @@ const Box = styled.div`
   font-size: 14px;
 
   color: ${colors.font.gray};
-
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   :hover {
     border: 2px solid rgba(139, 0, 234, 0.4);
     background-color: #f5f3ff;
