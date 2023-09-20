@@ -135,6 +135,8 @@ export const observeDocumentChanges = (collectionName, docId, callback) => {
       }
     });
   });
+
+  return null;
 };
 
 export const observeJoinedTeamChanges = (collectionName, callback) => {

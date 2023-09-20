@@ -25,154 +25,7 @@ export default function WorkPage() {
   const { selectedTeamUid, selectedTeamData } = useTeam();
   const { selectedProjectUid, selectedProjectData } = useProject();
   const newGroupInputRef = useRef(null);
-  const data = {
-    tasks: [
-      {
-        id: 1,
-        name: "Design Landing Page",
-        status: "request",
-        priority: "high",
-        assignee: "John Doe",
-        startDate: "2023-09-15",
-        dueDate: "2023-09-30",
-      },
-      {
-        id: 2,
-        name: "Implement User Registration",
-        status: "progress",
-        priority: "medium",
-        assignee: "Jane Smith",
-        startDate: "2023-09-20",
-        dueDate: "2023-10-05",
-      },
-      {
-        id: 3,
-        name: "Set Up Database",
-        status: "feedback",
-        priority: "high",
-        assignee: "Mark Johnson",
-        startDate: "2023-09-22",
-        dueDate: "2023-10-07",
-      },
-      {
-        id: 4,
-        name: "Implement API",
-        status: "pending",
-        priority: "medium",
-        assignee: "Emily Wilson",
-        startDate: "2023-09-25",
-        dueDate: "2023-10-10",
-      },
-      {
-        id: 5,
-        name: "Wireframing",
-        status: "complete",
-        priority: "medium",
-        assignee: "David Lee",
-        startDate: "2023-09-18",
-        dueDate: "2023-10-03",
-      },
-      {
-        id: 6,
-        name: "Build User Interface",
-        status: "request",
-        priority: "high",
-        assignee: "Sophia Brown",
-        startDate: "2023-09-23",
-        dueDate: "2023-10-08",
-      },
-      {
-        id: 7,
-        name: "Implement Features",
-        status: "pending",
-        priority: "medium",
-        assignee: "Michael Clark",
-        startDate: "2023-09-26",
-        dueDate: "2023-10-11",
-      },
-      {
-        id: 8,
-        name: "Write Documentation",
-        status: "progress",
-        priority: "low",
-        assignee: "Linda Evans",
-        startDate: "2023-09-30",
-        dueDate: "2023-10-15",
-      },
-      {
-        id: 9,
-        name: "Perform Testing",
-        status: "progress",
-        priority: "medium",
-        assignee: "Thomas Wilson",
-        startDate: "2023-10-03",
-        dueDate: "2023-10-20",
-      },
-      {
-        id: 10,
-        name: "Deployment",
-        status: "request",
-        priority: "urgent",
-        assignee: "Olivia White",
-        startDate: "2023-10-05",
-        dueDate: "2023-10-25",
-      },
-      {
-        id: 1,
-        name: "Design Landing Page",
-        status: "request",
-        priority: "high",
-        assignee: "John Doe",
-        startDate: "2023-09-15",
-        dueDate: "2023-09-30",
-      },
-      {
-        id: 1,
-        name: "Design Landing Page",
-        status: "request",
-        priority: "high",
-        assignee: "John Doe",
-        startDate: "2023-09-15",
-        dueDate: "2023-09-30",
-      },
-      {
-        id: 1,
-        name: "Design Landing Page",
-        status: "request",
-        priority: "high",
-        assignee: "John Doe",
-        startDate: "2023-09-15",
-        dueDate: "2023-09-30",
-      },
-      {
-        id: 1,
-        name: "Design Landing Page",
-        status: "request",
-        priority: "high",
-        assignee: "John Doe",
-        startDate: "2023-09-15",
-        dueDate: "2023-09-30",
-      },
-      {
-        id: 1,
-        name: "Design Landing Page",
-        status: "request",
-        priority: "high",
-        assignee: "John Doe",
-        startDate: "2023-09-15",
-        dueDate: "2023-09-30",
-      },
-      {
-        id: 1,
-        name: "Design Landing Page",
-        status: "request",
-        priority: "high",
-        assignee: "John Doe",
-        startDate: "2023-09-15",
-        dueDate: "2023-09-30",
-      },
-    ],
-  };
+  const workContentsContainerRef = useRef(null);
 
   const renderStatus = (status) => {
     if (status === "request") {
@@ -226,6 +79,7 @@ export default function WorkPage() {
   const [work, setWork] = useState([]);
   const [isAddWorkModalOpen, setIsAddWorkModalOpen] = useState(false);
   const [isAddGroupMode, setIsAddGroupMode] = useState(false);
+  const [groupCount, setGroupCount] = useState(0);
 
   useEffect(() => {
     const handleOutSideClick = (e) => {
@@ -253,9 +107,18 @@ export default function WorkPage() {
     const callback = (data) => {
       setWork(data?.work);
       setIsWorkLoading(false);
+      setGroupCount(selectedProjectData?.projectGroup?.length);
     };
     if (selectedProjectUid) {
-      observeDocumentChanges("project-work", selectedProjectUid, callback);
+      const update = observeDocumentChanges(
+        "project-work",
+        selectedProjectUid,
+        callback
+      );
+
+      if (!update) {
+        setIsWorkLoading(false);
+      }
     }
   }, [selectedProjectUid]);
 
@@ -269,6 +132,71 @@ export default function WorkPage() {
       updateProjectData("project", selectedTeamUid, "data", originData);
       setIsAddGroupMode(false);
     }
+  };
+
+  const groupingWorkRender = () => {
+    const groupData = selectedProjectData.projectGroup;
+    const workData = work;
+
+    const sortedWorkArr = groupData?.map((group) =>
+      workData?.filter((work) => work.group === group)
+    );
+
+    const ungroupedWorkArr = workData.filter(
+      (work) => !groupData.includes(work.group)
+    );
+
+    return (
+      <>
+        {groupData?.map((group, gidx) => (
+          <Group key={uuidv4()}>
+            <GroupHeader key={`h-${gidx}`}>
+              <GroupBtn>
+                <Play width={10} height={10} fill={colors.font.black} />
+              </GroupBtn>
+              {group}
+            </GroupHeader>
+            {sortedWorkArr[gidx].map((work, iidx) => (
+              <Row key={`r-${iidx}`}>
+                <Box style={{ alignItems: "flex-start", paddingLeft: "30px" }}>
+                  {work.title}
+                </Box>
+                <Box maxwidth={"150px"}>{renderStatus(work.status)}</Box>
+                <Box maxwidth={"150px"}>{renderPriority(work.priority)}</Box>
+                <Box maxwidth={"150px"}>{work.assignee}</Box>
+                <Box maxwidth={"150px"}>{work.startDate}</Box>
+                <Box maxwidth={"150px"}>{work.dueDate}</Box>
+              </Row>
+            ))}
+          </Group>
+        ))}
+        <Group>
+          <GroupHeader key={uuidv4()}>
+            <GroupBtn>
+              <Play width={10} height={10} fill={colors.font.black} />
+            </GroupBtn>
+            분류 없음
+          </GroupHeader>
+          {ungroupedWorkArr.map((work) => (
+            <Row key={uuidv4()}>
+              <Box
+                style={{
+                  alignItems: "flex-start",
+                  paddingLeft: "30px",
+                }}
+              >
+                {work.title}
+              </Box>
+              <Box maxwidth={"150px"}>{renderStatus(work.status)}</Box>
+              <Box maxwidth={"150px"}>{renderPriority(work.priority)}</Box>
+              <Box maxwidth={"150px"}>{work.assignee}</Box>
+              <Box maxwidth={"150px"}>{work.startDate}</Box>
+              <Box maxwidth={"150px"}>{work.dueDate}</Box>
+            </Row>
+          ))}
+        </Group>
+      </>
+    );
   };
 
   return (
@@ -313,38 +241,19 @@ export default function WorkPage() {
             <HeaderBox maxwidth={"150px"}>시작일</HeaderBox>
             <HeaderBox maxwidth={"150px"}>마감일</HeaderBox>
           </TableHeaderContainer>
-          {isAddGroupMode && (
-            <NewGroup>
-              <input
-                type="text"
-                placeholder="새로운 그룹을 추가합니다. 추가할 그룹명을 입력하세요."
-                ref={newGroupInputRef}
-                onKeyDown={handleKeyDown}
-              />
-            </NewGroup>
-          )}
-          <Group>
-            {selectedProjectData.projectGroup.map((item) => (
-              <GroupHeader key={uuidv4()}>
-                <GroupBtn>
-                  <Play width={10} height={10} fill={colors.font.black} />
-                </GroupBtn>
-                {item}
-              </GroupHeader>
-            ))}
-            {work.map((item, index) => (
-              <Row key={index}>
-                <Box style={{ alignItems: "flex-start", paddingLeft: "30px" }}>
-                  {item.title}
-                </Box>
-                <Box maxwidth={"150px"}>{renderStatus(item.status)}</Box>
-                <Box maxwidth={"150px"}>{renderPriority(item.priority)}</Box>
-                <Box maxwidth={"150px"}>{item.assignee}</Box>
-                <Box maxwidth={"150px"}>{item.startDate}</Box>
-                <Box maxwidth={"150px"}>{item.dueDate}</Box>
-              </Row>
-            ))}
-          </Group>
+          <ContentsContainer groupcount={groupCount}>
+            {isAddGroupMode && (
+              <NewGroup>
+                <input
+                  type="text"
+                  placeholder="새로운 그룹을 추가합니다. 추가할 그룹명을 입력하세요."
+                  ref={newGroupInputRef}
+                  onKeyDown={handleKeyDown}
+                />
+              </NewGroup>
+            )}
+            {groupingWorkRender()}
+          </ContentsContainer>
           {isAddWorkModalOpen && (
             <AddWorkModal setIsAddWorkModalOpen={setIsAddWorkModalOpen} />
           )}
@@ -354,11 +263,7 @@ export default function WorkPage() {
   );
 }
 
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  margin-bottom: 200px;
-`;
+const Container = styled.div``;
 
 const TableHeaderContainer = styled.div`
   display: flex;
@@ -379,6 +284,11 @@ const ControllerContainer = styled.div`
   background-color: white;
   position: sticky;
   top: 0;
+`;
+
+const ContentsContainer = styled.div`
+  overflow-y: scroll;
+  margin-bottom: ${(props) => `${40 * props.groupcount}px`};
 `;
 
 const HeaderBox = styled.div`
@@ -405,6 +315,7 @@ const HeaderBox = styled.div`
 const Box = styled.div`
   width: 100%;
   max-width: ${(props) => props.maxwidth};
+
   height: 100%;
   box-sizing: border-box;
   border-left: 1px solid ${colors.border.deepgray};
@@ -414,7 +325,6 @@ const Box = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* text-align: center; */
   cursor: pointer;
   font-size: 14px;
 
