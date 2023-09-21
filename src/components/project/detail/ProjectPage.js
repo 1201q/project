@@ -8,7 +8,7 @@ import { useTeam } from "@/utils/context/TeamContext";
 import { useProject } from "@/utils/context/ProjectContext";
 import { Ring } from "@uiball/loaders";
 import ProjectPageHeader from "./ProjectPageHeader";
-import WorkPage from "./WorkPage";
+import WorkPage from "./work/WorkPage";
 
 export default function ProjectPage() {
   const router = useRouter();
@@ -22,6 +22,7 @@ export default function ProjectPage() {
     setSelectedProjectMembersData,
     selectedProjectMembersData,
     joinedProjectList,
+    isOptionPopupVisible,
   } = useProject();
 
   const menuArr = ["work", "feed", "gantt", "schedule", "setting"];
@@ -86,15 +87,9 @@ export default function ProjectPage() {
   );
 }
 
-const FlexDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
 const Container = styled(motion.div)`
   width: 100%;
-  max-height: 99vh;
+  max-height: 100vh;
   background-color: ${colors.background.gray2};
   overflow-y: hidden;
 `;

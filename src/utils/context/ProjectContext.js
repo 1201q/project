@@ -14,6 +14,9 @@ export const ProjectProvider = ({ children }) => {
   ); // 선택한 프로젝트 멤버의 데이터 배열
 
   const [selectedProjectGroup, setSelectedProjectGroup] = useState([]);
+
+  // work
+  const [isOptionPopupVisible, setIsOptionPopupVisible] = useState(false);
   return (
     <ProjectContext.Provider
       value={{
@@ -33,6 +36,8 @@ export const ProjectProvider = ({ children }) => {
         setSelectedProjectMembersData,
         selectedProjectGroup,
         setSelectedProjectGroup,
+        isOptionPopupVisible,
+        setIsOptionPopupVisible,
       }}
     >
       {children}

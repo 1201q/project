@@ -282,13 +282,14 @@ export default function AddWorkModal({ setIsAddWorkModalOpen }) {
               }}
             />
             {managerArr.map((user) => (
-              <User key={user.uid}>
+              <User
+                key={user.uid}
+                onClick={() => {
+                  handlerRemoveManager(user);
+                }}
+              >
                 {user.name}
-                <UserXBtn
-                  onClick={() => {
-                    handlerRemoveManager(user);
-                  }}
-                >
+                <UserXBtn>
                   <X width={8} height={8} fill={colors.font.darkgray} />
                 </UserXBtn>
               </User>
