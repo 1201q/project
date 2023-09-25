@@ -15,7 +15,8 @@ import WorkTable from "./WorkTable";
 
 export default function WorkPage({ isAddGroupMode, setIsAddGroupMode }) {
   const { selectedTeamUid } = useTeam();
-  const { selectedProjectUid, selectedProjectData } = useProject();
+  const { selectedProjectUid, selectedProjectData, isOptionPopupVisible } =
+    useProject();
   const newGroupInputRef = useRef(null);
 
   const [isWorkLoading, setIsWorkLoading] = useState(true);
@@ -31,7 +32,6 @@ export default function WorkPage({ isAddGroupMode, setIsAddGroupMode }) {
         !newGroupInputRef.current.contains(e.target)
       ) {
         setIsAddGroupMode(false);
-        console.log();
       }
     };
 

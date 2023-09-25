@@ -1,21 +1,28 @@
 import styled from "styled-components";
 import * as colors from "../../../../styles/colors";
+import { useProject } from "@/utils/context/ProjectContext";
 import { useRef } from "react";
 
 export default function TableBox({ text, data, id, onClick, width, style }) {
   const boxRef = useRef();
+  const { selectedProjectData, isOptionPopupVisible, setIsOptionPopupVisible } =
+    useProject();
   return (
-    <Box
-      ref={boxRef}
-      maxwidth={width}
-      id={`${id}`}
-      onClick={(event) => {
-        onClick(event, data, boxRef.current);
-      }}
-      style={style}
-    >
-      {text}
-    </Box>
+    <>
+      <Box
+        ref={boxRef}
+        maxwidth={width}
+        id={`${id}`}
+        style={style}
+        onClick={(event) => {
+          const rect = boxRef.current.getBoundingClientRect();
+          onClick(event, rect, id, data);
+          setIsOptionPopupVisible(true);
+        }}
+      >
+        {text}
+      </Box>
+    </>
   );
 }
 
@@ -40,6 +47,8 @@ const Box = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  pointer-events: auto;
   :hover {
     border: 2px solid rgba(139, 0, 234, 0.4);
     background-color: #f5f3ff;
