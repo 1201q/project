@@ -137,7 +137,7 @@ export default function WorkPage({ isAddGroupMode, setIsAddGroupMode }) {
           {isAddWorkModalOpen && (
             <AddWorkModal setIsAddWorkModalOpen={setIsAddWorkModalOpen} />
           )}
-          <SettingModal />
+          {/* <SettingModal /> */}
         </Container>
       )}
     </>
@@ -170,7 +170,6 @@ const ControllerContainer = styled.div`
 `;
 
 const ContentsContainer = styled.div`
-  overflow-y: scroll;
   margin-bottom: ${(props) => `${40 * props.groupcount}px`};
 `;
 

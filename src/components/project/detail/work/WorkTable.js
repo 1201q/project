@@ -24,6 +24,8 @@ export default function WorkTable({ work }) {
     (work) => !groupData.includes(work.group)
   );
 
+  console.log(popupPosition);
+
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (
@@ -61,11 +63,30 @@ export default function WorkTable({ work }) {
         setWorkId={setWorkId}
         setClickedWorkData={setClickedWorkData}
       />
-      {isOptionPopupVisible && (
+      {isOptionPopupVisible && workId !== "date" && (
         <Popup
           ref={optionPopupRef}
-          styledtop={popupPosition?.y}
+          styledtop={
+            popupPosition?.top > 449
+              ? popupPosition?.top - 210
+              : popupPosition?.top
+          }
           styledleft={popupPosition?.x}
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+        >
+          <OptionPopup id={workId} workData={clickedWorkData} />
+        </Popup>
+      )}
+      {isOptionPopupVisible && workId === "date" && (
+        <Popup
+          ref={optionPopupRef}
+          styledtop={
+            popupPosition?.top > 350
+              ? popupPosition?.top - 370
+              : popupPosition?.top
+          }
+          styledleft={popupPosition?.x - 250}
           initial={{ y: -10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
         >
@@ -78,9 +99,8 @@ export default function WorkTable({ work }) {
 
 const Popup = styled(motion.div)`
   position: absolute;
-  top: ${(props) => `${props.styledtop + 45}px`};
+  top: ${(props) => `${props.styledtop + 40}px`};
   left: ${(props) => `${props.styledleft + 25}px`};
-  width: min-content;
   min-width: 100px;
   height: min-content;
   background-color: white;

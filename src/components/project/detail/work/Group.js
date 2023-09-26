@@ -83,7 +83,6 @@ export default function Group({
     setPopupPosition(ref);
     setWorkId(workid);
     setClickedWorkData(data);
-    console.log(event, ref, workid, data);
   };
 
   return (
@@ -131,7 +130,7 @@ export default function Group({
           />
           <TableBox
             width={"150px"}
-            id={"start"}
+            id={"date"}
             text={dayjs(work.start).format(
               `${dayjs().isSame(work.start, "D") ? "오늘" : ` M월 D일`} HH:mm`
             )}
@@ -140,7 +139,7 @@ export default function Group({
           />
           <TableBox
             width={"150px"}
-            id={"end"}
+            id={"date"}
             text={dayjs(work.end).format(
               `${dayjs().isSame(work.end, "D") ? "오늘" : ` M월 D일`} HH:mm`
             )}

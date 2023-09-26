@@ -76,7 +76,10 @@ export default function ProjectPage() {
   return selectedProjectData ? (
     <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <ProjectPageHeader menuArr={menuArr} setTab={setTab} />
-      <ContentsContainer ref={contentsContainerRef}>
+      <ContentsContainer
+        ref={contentsContainerRef}
+        isOptionPopupVisible={isOptionPopupVisible}
+      >
         {renderContents()}
       </ContentsContainer>
     </Container>
@@ -103,5 +106,5 @@ const LoadingContainer = styled.div`
 
 const ContentsContainer = styled.div`
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: ${(props) => (props.isOptionPopupVisible ? "hidden" : "scroll")};
 `;
